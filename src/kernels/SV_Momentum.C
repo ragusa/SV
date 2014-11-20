@@ -13,9 +13,12 @@
 /****************************************************************/
 
 #include "SV_Momentum.h"
+
 /**
-This function computes the x, y and z momentum equationS. It is dimension agnostic. 
- */
+This function computes the x, y and z momentum equations for the SV system. 
+It is dimension-agnostic. 
+*/
+ 
 template<>
 InputParameters validParams<EelMomentum>()
 {
@@ -44,9 +47,9 @@ SV_Momentum::SV_Momentum(const std::string & name,
     _h(coupledValue("h")),
     // Parameters:
     _component(getParam<int>("component")),
-    _gravity(getParam<RealVectorValue>("gravity")),
+    _gravity(  getParam<RealVectorValue>("gravity")),
     // Parameters for jacobian:
-    _rhoA_nb(coupled("rhoA")),
+    _h_nb(coupled("h")),
     _q_x_nb(coupled("q_x")),
     _q_y_nb(isCoupled("q_y") ? coupled("q_y") : -1),
     _q_z_nb(isCoupled("q_z") ? coupled("q_z") : -1),
@@ -54,81 +57,78 @@ SV_Momentum::SV_Momentum(const std::string & name,
 
 {
     if ( _component > 2 )
-        mooseError("ERROR: the integer variable 'component' can only take three values: 0, 1 and 2 that correspond to x, y and z momentum components, respectively.");
+        mooseError("ERROR: the integer variable 'component' can only take values: 0, 1 or 2 that correspond to x, y and z momentum components, respectively.");
+    if ( _component > 1 )
+        mooseError("ERROR: the integer variable 'component' can only take values: 0 or 1 for the shallow water system!");
 }
 
 Real SV_Momentum::computeQpResidual()
 {
-  // Convection term: _u = rho*vel*vel*A
-    RealVectorValue _vector_vel( _q_x[_qp]/_rhoA[_qp], _q_y[_qp]/_rhoA[_qp], _q_z[_qp]/_rhoA[_qp] );
-    RealVectorValue _advection = _u[_qp] * _vector_vel;
-    
-  // Pressure term:
-    Real _press = _pressure[_qp]*_area[_qp];
-    
-  // Source term: P*dA/dx
-    Real _PdA = _pressure[_qp]*_grad_area[_qp](_component);
-    
-  // Wall friction term:
-    Real _wall_friction = 0.5 * _friction * _rhoA[_qp] * _vector_vel.size() * _vector_vel(_component) / _Dh;
-    
-  // Gravity force:
-    Real _gravity_force = _gravity(_component) * _rhoA[_qp];
-    
-  // Return the kernel value:
-    return -( _advection*_grad_test[_i][_qp] + _press*_grad_test[_i][_qp](_component) + (_PdA - _wall_friction - _gravity_force)*_test[_i][_qp] );
+  // vector q
+  RealVectorValue _vector_q( _q_x[_qp], _q_y[_qp], _q_z[_qp] );
+  // u/h is the current qx, qy, or qz value, divided by h
+  if( _h[_qp] < 0. )
+    mooseError("h < 0");
+
+  // the "-" comes from the integration by parts
+  RealVectorValue _advection = -_u[_qp]/_h[_qp] * _vector_q ;
+        
+  // Hydrostatic pressure term:
+  // the "-" comes from the integration by parts
+  // jcr_note: not sure about the gravity here. it may depend on the orientation
+  Real _P = -0.5 * _gravity(_component) * std::pow(_h[_qp],2);
+  //  Real _PdA = _pressure[_qp]*_grad_area[_qp](_component);
+
+  // Source term: gravity * h * grad(B)
+  // jcr_note: we could also integrate this term by parts. 
+  Real _source_term = _gravity(_component) * _h[_qp] * grad_bathymetry[_qp](_component);
+     
+  // Return the kernel value (convention: lhs of the = sign):
+  return ( _advection*_grad_test[_i][_qp] + _P*_grad_test[_i][_qp](_component) + _source_term*test[_i][_qp] ); 
 }
 
 Real SV_Momentum::computeQpJacobian()
 {
-    // Compute the momentum vector q:
-    RealVectorValue _q_vec(_q_x[_qp], _q_y[_qp], _q_z[_qp]);
+  // Compute the momentum vector q:
+  RealVectorValue _vector_q(_q_x[_qp], _q_y[_qp], _q_z[_qp]);
+
+  // Compute the velocity vector:
+  RealVectorValue _vector_vel = _vector_q / h[_qp];
+  _vector_vel(_component) *= 2.;
     
-    // Compute the velocity vector:
-    RealVectorValue _vector_vel( _q_x[_qp]/_rhoA[_qp], _q_y[_qp]/_rhoA[_qp], _q_z[_qp]/_rhoA[_qp] );
-    _vector_vel(_component) *= 2.;
-    
-    // Compute the derivative of \partial_(x,y,z) (AP) - P \partial_(x,y,z) A:
-    Real _press_term = _eos.dAp_dq(_rhoA[_qp], _u[_qp], _rhoEA[_qp])*(_grad_area[_qp](_component)/_area[_qp]*_test[_i][_qp] + _grad_test[_i][_qp](_component));
-    
-    // Return the value of the jacobian:
-    return -_phi[_j][_qp] * ( _vector_vel * _grad_test[_i][_qp] + _press_term );
+  // Compute the derivative of hydrostatic pressure
+  //Real _press_term = _eos.dAp_dq(_rhoA[_qp], _u[_qp], _rhoEA[_qp])*(...
+  
+  // Return the value of the jacobian:
+  return -_phi[_j][_qp] * ( _vector_vel * _grad_test[_i][_qp] );
 }
 
 Real SV_Momentum::computeQpOffDiagJacobian( unsigned int _jvar)
 {
-    // Compute q_vec:
-    RealVectorValue _q_vec(_q_x[_qp], _q_y[_qp], _q_z[_qp]);
+  // Compute the momentum vector q:
+  RealVectorValue _vector_q(_q_x[_qp], _q_y[_qp], _q_z[_qp]);
+
+  // Compute the velocity vector:
+  RealVectorValue _vector_vel = _vector_q / h[_qp];
+
+  // density h:
+  if (_jvar == _h_nb) {
+    Real _Psrc_term = _gravity(_component) * (_h[_qp] - grad_bathymetry[_qp](_component));
+    return _phi[_j][_qp] * (_u[_qp]/_h[_qp] * _vector_vel * _grad_test[_i][_qp] + _Psrc_term );
+  }
     
-    // Compute the velocity vector:
-    RealVectorValue _vector_vel( _q_x[_qp]/_rhoA[_qp], _q_y[_qp]/_rhoA[_qp], _q_z[_qp]/_rhoA[_qp] );
-    
-    // density (rho*A):
-    if (_jvar == _rhoA_nb) {
-        Real _press_term = _eos.dAp_drhoA(_rhoA[_qp], _q_vec.size(), _rhoEA[_qp])*(_grad_area[_qp](_component)/_area[_qp]*_test[_i][_qp]+_grad_test[_i][_qp](_component));
-        return _phi[_j][_qp] * (_u[_qp] / _rhoA[_qp] * _vector_vel * _grad_test[_i][_qp] - _press_term );
-    }
-    
-    // x-momentum component:
-    else if (_jvar == _q_x_nb ) {
-        Real _press_term = _eos.dAp_dq(_rhoA[_qp], _q_x[_qp], _rhoEA[_qp])*(_grad_area[_qp](_component)/_area[_qp]*_test[_i][_qp]+_grad_test[_i][_qp](_component));
-        return -_phi[_j][_qp] * ( _grad_test[_i][_qp](0)*_u[_qp]/_rhoA[_qp] + _press_term );
-    }
-    // y-momentum component:
-    else if (_jvar == _q_y_nb && _mesh.dimension()>=2 ) {
-        Real _press_term = _eos.dAp_dq(_rhoA[_qp], _q_y[_qp], _rhoEA[_qp])*(_grad_area[_qp](_component)/_area[_qp]*_test[_i][_qp]+_grad_test[_i][_qp](_component));
-        return -_phi[_j][_qp] * ( _grad_test[_i][_qp](1)*_u[_qp]/_rhoA[_qp] + _press_term );
-    }
-    // z-momentum component:
-    else if (_jvar == _q_z_nb && _mesh.dimension()==3 ) {
-        Real _press_term = _eos.dAp_dq(_rhoA[_qp], _q_z[_qp], _rhoEA[_qp])*(_grad_area[_qp](_component)/_area[_qp]*_test[_i][_qp]+_grad_test[_i][_qp](_component));
-        return -_phi[_j][_qp] * ( _grad_test[_i][_qp](2)*_u[_qp]/_rhoA[_qp] + _press_term );
-    }
-    
-    // energy (rho*E*A):
-    else if (_jvar == _rhoEA_nb) {
-        return -_phi[_j][_qp] * _eos.dAp_drhoEA(_rhoA[_qp], _q_vec.size(), _rhoEA[_qp]) * (_grad_area[_qp](_component)/_area[_qp]*_test[_i][_qp]+_grad_test[_i][_qp](_component));
-    }
-    else
-        return 0.;
+  // x-momentum component:
+  else if (_jvar == _q_x_nb ) {
+   return -_phi[_j][_qp] * ( _grad_test[_i][_qp](0)*_u[_qp]/_h[_qp] );
+  }
+  // y-momentum component:
+  else if (_jvar == _q_y_nb && _mesh.dimension()>=2 ) {
+   return -_phi[_j][_qp] * ( _grad_test[_i][_qp](1)*_u[_qp]/_h[_qp] );
+  }
+  // z-momentum component:
+  else if (_jvar == _q_z_nb && _mesh.dimension()==3 ) {
+    mooseError("ERROR: mesh dimension can only take values: 0 or 1 for the shallow water system!");
+  }
+  else
+    return 0.;
 }

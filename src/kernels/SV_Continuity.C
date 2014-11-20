@@ -43,11 +43,11 @@ SV_Continuity::SV_Continuity(const std::string & name,
 
 Real SV_Continuity::computeQpResidual()
 {
-    // Compute convective part of the continuity equation:
-    RealVectorValue _conv(_q_x[_qp], _q_y[_qp], _q_z[_qp]);
+    // Compute inviscid flux for the continuity equation:
+    RealVectorValue _q(_q_x[_qp], _q_y[_qp], _q_z[_qp]);
     
-    // Return the total expression for the continuity equation:
-    return -_conv * _grad_test[_i][_qp];
+    // Returns: - \vec{q} \cdot grad_test[i] (- sign comes from int.by.parts):
+    return -_q * _grad_test[_i][_qp];
 }
 
 Real SV_Continuity::computeQpJacobian()
