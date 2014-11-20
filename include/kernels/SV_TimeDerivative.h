@@ -18,16 +18,16 @@
 #include "TimeDerivative.h"
 #include "Function.h"
 
-class SVTimeDerivative;
+class SV_TimeDerivative;
 
 template<>
-InputParameters validParams<SVTimeDerivative>();
+InputParameters validParams<SV_TimeDerivative>();
 
-class SVTimeDerivative : public TimeDerivative
+class SV_TimeDerivative : public TimeDerivative
 {
 public:
 
-  SVTimeDerivative(const std::string & name,
+  SV_TimeDerivative(const std::string & name,
                         InputParameters parameters);
 
 protected:

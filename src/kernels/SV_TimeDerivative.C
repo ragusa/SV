@@ -12,28 +12,26 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "EelTimeDerivative.h"
+#include "SV_TimeDerivative.h"
 
 template<>
-InputParameters validParams<EelTimeDerivative>()
+InputParameters validParams<SV_TimeDerivative>()
 {
   InputParameters params = validParams<TimeDerivative>();
   return params;
 }
 
-EelTimeDerivative::EelTimeDerivative(const std::string & name,
+SV_TimeDerivative::SV_TimeDerivative(const std::string & name,
                                              InputParameters parameters) :
     TimeDerivative(name,parameters)
 {}
 
-Real
-EelTimeDerivative::computeQpResidual()
+Real SV_TimeDerivative::computeQpResidual()
 {
     return TimeDerivative::computeQpResidual();
 }
 
-Real
-EelTimeDerivative::computeQpJacobian()
+Real SV_TimeDerivative::computeQpJacobian()
 {
     return TimeDerivative::computeQpJacobian();
 }
