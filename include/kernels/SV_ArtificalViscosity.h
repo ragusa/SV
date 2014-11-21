@@ -18,16 +18,16 @@
 #include "Kernel.h"
 
 // Forward Declarations
-class SVArtificialVisc;
+class SV_ArtificialVisc;
 
 template<>
-InputParameters validParams<SVArtificialVisc>();
+InputParameters validParams<SV_ArtificialVisc>();
 
-class SVArtificialVisc : public Kernel
+class SV_ArtificialVisc : public Kernel
 {
 public:
 
-  SVArtificialVisc(const std::string & name,
+  SV_ArtificialVisc(const std::string & name,
                    InputParameters parameters);
 
 protected:
@@ -61,7 +61,6 @@ private:
     MooseEnum _equ_type;
     MooseEnum _diff_type;
     // Coupled aux variables:
-    VariableValue & _h;
     VariableGradient & _grad_h;
     VariableValue & _vel_x;
     VariableValue & _vel_y;
@@ -69,8 +68,6 @@ private:
     VariableGradient & _grad_vel_x;
     VariableGradient & _grad_vel_y;
     VariableGradient & _grad_vel_z;
-    VariableValue & _norm_vel;
-    VariableGradient & _grad_norm_vel;
     // Material property: viscosity coefficient.
     MaterialProperty<Real> & _mu;
     MaterialProperty<Real> & _kappa;

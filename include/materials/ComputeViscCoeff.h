@@ -23,11 +23,9 @@ private:
     // Viscosity types
     enum ViscosityType
     {
-        LAPIDUS = 0,
+        NONE = 0,
         FIRST_ORDER = 1,
-        FIRST_ORDER_MACH = 2,
-        ENTROPY = 3,
-        PRESSURE_BASED = 4
+        ENTROPY = 2
     };
     std::string _visc_name;
     MooseEnum _visc_type;
@@ -81,4 +79,4 @@ private:
 
 };
 
-#endif //ComputeViscCoeff_H
+#endif // ComputeViscCoeff_H
