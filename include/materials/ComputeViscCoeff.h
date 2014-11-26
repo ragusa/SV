@@ -43,12 +43,13 @@ private:
     VariableGradient & _grad_vel_y;
     VariableGradient & _grad_vel_z;
     
-    // Coupled aux variables: entropy
-    VariableValue & _s;
-    VariableValue & _s_old;
-    VariableValue & _s_older;
-    VariableGradient & _grad_s;
-    VariableGradient & _grad_s_old;
+    // Coupled aux variables: entropy pair
+    VariableValue    & _s;
+    VariableValue    & _s_dot;
+    VariableValue    & _s_old;
+    VariableValue    & _s_older;
+    VariableGradient & _grad_psi;
+    VariableGradient & _grad_psi_old;
 
     
     // Coupled aux variable: norm of velocity

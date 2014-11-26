@@ -28,7 +28,7 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name, InputParameters par
     Material(name, parameters),
     // Declare viscosity types
     _visc_name(getParam<std::string>("viscosity_name")),
-    _visc_type("NONE, FIRST_ORDER, ENTROPY, INVALID", _visc_name),
+    _visc_type("NONE, FIRST_ORDER, ENTROPY, INVALID", _visc_name), // jcr so what about that enum?
     // Booleans
     _isJumpOn(getParam<bool>("isJumpOn")),
     _isShock(getParam<bool>("isShock")),
@@ -75,9 +75,6 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name, InputParameters par
 {
     if (_Ce < 0.) || (_Ce > 2.)
         mooseError("The coefficient Ce has to be positive and cannot be larger than 2.");
-    if (isCoupled("PBVisc")==false && _visc_type==PRESSURE_BASED) {
-        mooseError("The pressure-based option cannot be run without coupling the PBVisc variable.");
-    }
 }
 
 void
@@ -96,7 +93,7 @@ ComputeViscCoeff::computeQpProperties()
     Real eps = std::sqrt(std::numeric_limits<Real>::min());
     
     // Compute Mach number and velocity variable to use in the normalization parameter:
-    Real press_pps = std::max(getPostprocessorValueByName(_entropy_pps_name), eps);
+    Real entropy_pps = std::max(getPostprocessorValueByName(_entropy_pps_name), eps);
         
     // Initialize some vector, values, ... for entropy viscosity method:
     RealVectorValue vel(_vel_x[_qp], _vel_y[_qp], _vel_z[_qp]);
