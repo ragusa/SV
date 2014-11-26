@@ -40,7 +40,7 @@ public:
 protected:
   virtual Real computeValue();
 
-  bool _implicit;
+  bool _implicit; // jcr why?
   VariableValue & _h;
   VariableValue & _q;
 };

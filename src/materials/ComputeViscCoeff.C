@@ -25,7 +25,7 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name, InputParameters par
     Material(name, parameters),
     // Declare viscosity types
     _visc_name(getParam<std::string>("viscosity_name")),
-    _visc_type("NONE, FIRST_ORDER, ENTROPY, INVALID", _visc_name),
+    _visc_type("NONE, FIRST_ORDER, ENTROPY, INVALID", _visc_name), // jcr so what about that enum?
     // Booleans
     _isJumpOn(getParam<bool>("isJumpOn")), // jcr note: purpose?
     _isShock(getParam<bool>("isShock")),
@@ -60,7 +60,6 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name, InputParameters par
 {
     if (_Ce < 0.) || (_Ce > 2.)
         mooseError("The coefficient Ce has to be positive and cannot be larger than 2.");
-    }
 }
 
 void

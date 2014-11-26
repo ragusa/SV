@@ -31,8 +31,7 @@ VelocityAux::VelocityAux(const std::string & name, InputParameters parameters) :
     _q(coupledValue("q"))
 {}
 
-Real
-VelocityAux::computeValue()
+Real VelocityAux::computeValue()
 {
   return _q[_qp] / _h[_qp];
 }
