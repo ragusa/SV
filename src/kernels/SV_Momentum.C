@@ -25,11 +25,10 @@ InputParameters validParams<EelMomentum>()
   InputParameters params = validParams<Kernel>();
     params.addRequiredCoupledVar("q_x", "x component of momentum");
     params.addCoupledVar("q_y", "y component of momentum");
-    params.addCoupledVar("q_z", "z component of momentum");
     params.addCoupledVar("h"  , "h: water height");
 //    params.addRequiredCoupledVar("pressure", "pressure");
 //    params.addRequiredParam<UserObjectName>("eos", "Equation of state");
-    params.addParam<int>("component", 0, "component of the momentum equation to compute (0,1,2)->(x,y,z)");
+    params.addParam<int>("component", 0, "component of the momentum equation to compute (0,1)->(x,y)");
     params.addParam<RealVectorValue>("gravity", (0., 0., 0.), "Gravity vector.");
   return params;
 }
@@ -37,10 +36,9 @@ InputParameters validParams<EelMomentum>()
 SV_Momentum::SV_Momentum(const std::string & name,
                        InputParameters parameters) :
   Kernel(name, parameters),
-    // Coupled auxilary variables
+    // Coupled auxiliary variables
     _q_x(coupledValue("q_x")),
     _q_y(_mesh.dimension()>=2 ? coupledValue("q_y") : _zero),
-    _q_z(_mesh.dimension()==3 ? coupledValue("q_z") : _zero),
     //_pressure(coupledValue("pressure")),
     // Equation of state:
     //_eos(getUserObject<EquationOfState>("eos")),
@@ -52,12 +50,9 @@ SV_Momentum::SV_Momentum(const std::string & name,
     _h_nb(coupled("h")),
     _q_x_nb(coupled("q_x")),
     _q_y_nb(isCoupled("q_y") ? coupled("q_y") : -1),
-    _q_z_nb(isCoupled("q_z") ? coupled("q_z") : -1),
 
 
 {
-    if ( _component > 2 )
-        mooseError("ERROR: the integer variable 'component' can only take values: 0, 1 or 2 that correspond to x, y and z momentum components, respectively.");
     if ( _component > 1 )
         mooseError("ERROR: the integer variable 'component' can only take values: 0 or 1 for the shallow water system!");
 }
@@ -65,8 +60,8 @@ SV_Momentum::SV_Momentum(const std::string & name,
 Real SV_Momentum::computeQpResidual()
 {
   // vector q
-  RealVectorValue _vector_q( _q_x[_qp], _q_y[_qp], _q_z[_qp] );
-  // u/h is the current qx, qy, or qz value, divided by h
+  RealVectorValue _vector_q( _q_x[_qp], _q_y[_qp], 0. );
+  // _u/h is one of the momentum components {qx, qy, or qz} divided by h
   if( _h[_qp] < 0. )
     mooseError("h < 0");
 
@@ -90,7 +85,7 @@ Real SV_Momentum::computeQpResidual()
 Real SV_Momentum::computeQpJacobian()
 {
   // Compute the momentum vector q:
-  RealVectorValue _vector_q(_q_x[_qp], _q_y[_qp], _q_z[_qp]);
+  RealVectorValue _vector_q(_q_x[_qp], _q_y[_qp], 0.);
 
   // Compute the velocity vector:
   RealVectorValue _vector_vel = _vector_q / h[_qp];
@@ -106,7 +101,7 @@ Real SV_Momentum::computeQpJacobian()
 Real SV_Momentum::computeQpOffDiagJacobian( unsigned int _jvar)
 {
   // Compute the momentum vector q:
-  RealVectorValue _vector_q(_q_x[_qp], _q_y[_qp], _q_z[_qp]);
+  RealVectorValue _vector_q(_q_x[_qp], _q_y[_qp], 0.);
 
   // Compute the velocity vector:
   RealVectorValue _vector_vel = _vector_q / h[_qp];
@@ -125,10 +120,7 @@ Real SV_Momentum::computeQpOffDiagJacobian( unsigned int _jvar)
   else if (_jvar == _q_y_nb && _mesh.dimension()>=2 ) {
    return -_phi[_j][_qp] * ( _grad_test[_i][_qp](1)*_u[_qp]/_h[_qp] );
   }
-  // z-momentum component:
-  else if (_jvar == _q_z_nb && _mesh.dimension()==3 ) {
-    mooseError("ERROR: mesh dimension can only take values: 0 or 1 for the shallow water system!");
-  }
+  //
   else
     return 0.;
 }

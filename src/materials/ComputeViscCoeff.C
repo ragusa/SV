@@ -9,10 +9,7 @@ InputParameters validParams<ComputeViscCoeff>()
     params.addParam<bool>("isShock", false, "Is a low Mach shock?.");
     params.addRequiredCoupledVar("velocity_x", "x component of the velocity");
     params.addCoupledVar("velocity_y", "y component of the velocity");
-    params.addCoupledVar("velocity_z", "z component of the velocity");
-    params.addRequiredCoupledVar("norm_velocity", "norm of the velocity vector");
-    params.addCoupledVar("jump_grad_press", "jump of pressure gradient");
-    params.addCoupledVar("jump_grad_dens", "jump of density gradient");
+    params.addCoupledVar("jump_grad_entropy", "jump of entropy gradient");
     // constant parameters:
     params.addParam<double>("Ce"   , 1.0, "Coefficient for entropy viscosity");
     params.addParam<double>("Cjump", 1.0, "Coefficient for jumps");
@@ -30,39 +27,27 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name, InputParameters par
     _visc_name(getParam<std::string>("viscosity_name")),
     _visc_type("NONE, FIRST_ORDER, ENTROPY, INVALID", _visc_name),
     // Booleans
-    _isJumpOn(getParam<bool>("isJumpOn")),
+    _isJumpOn(getParam<bool>("isJumpOn")), // jcr note: purpose?
     _isShock(getParam<bool>("isShock")),
     // Declare aux variables: velocity
     _vel_x(coupledValue("velocity_x")),
     _vel_y(_mesh.dimension()>=2 ? coupledValue("velocity_y") : _zero),
-    _vel_z(_mesh.dimension()==3 ? coupledValue("velocity_z") : _zero),
     _grad_vel_x(coupledGradient("velocity_x")),
     _grad_vel_y(_mesh.dimension()>=2 ? coupledGradient("velocity_y") : _grad_zero),
-    _grad_vel_z(_mesh.dimension()==3 ? coupledGradient("velocity_z") : _grad_zero),
-    // Pressure:
-    _pressure(coupledValue("pressure")),
-    _pressure_old(coupledValueOld("pressure")),
-    _pressure_older(coupledValueOlder("pressure")),
-    _grad_press(coupledGradient("pressure")),
-    // Density:
-    _rho(coupledValue("density")),
-    _rho_old(coupledValueOld("density")),
-    _rho_older(coupledValueOlder("density")),
-    _grad_rho(coupledGradient("density")),
-    // Norm of velocity vector:
-    _norm_vel(coupledValue("norm_velocity")),
-    _grad_norm_vel(coupledGradient("norm_velocity")),
-    // Jump of pressure and density gradients:
-    _jump_grad_press(isCoupled("jump_grad_press") ? coupledValue("jump_grad_press") : _zero),
-    _jump_grad_dens(isCoupled("jump_grad_dens") ? coupledValue("jump_grad_dens") : _zero),
-    _area(coupledValue("area")),
-    _grad_area(isCoupled("area") ? coupledGradient("area") : _grad_zero),
+    // entropy:
+    _entropy(coupledValue("entropy")),
+    _entropy_old(coupledValueOld("entropy")),
+    _entropy_older(coupledValueOlder("entropy")),
+    _grad_entropy(coupledGradient("entropy")),
+    // Jump of entropy gradients:
+    _jump_grad_entropy(isCoupled("jump_grad_entropy") ? coupledValue("jump_grad_entropy") : _zero),
+    //jcr note: _area(coupledValue("area")),
+    //_grad_area(isCoupled("area") ? coupledGradient("area") : _grad_zero),
     // Declare material properties
     _mu(declareProperty<Real>("mu")),
     _mu_max(declareProperty<Real>("mu_max")),
     _kappa(declareProperty<Real>("kappa")),
     _kappa_max(declareProperty<Real>("kappa_max")),
-    _l(declareProperty<RealVectorValue>("l_unit_vector")),
 //    _residual(declareProperty<Real>("residual")),
     // Get parameter Ce
     _Ce(getParam<double>("Ce")),
@@ -75,8 +60,6 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name, InputParameters par
 {
     if (_Ce < 0.) || (_Ce > 2.)
         mooseError("The coefficient Ce has to be positive and cannot be larger than 2.");
-    if (isCoupled("PBVisc")==false && _visc_type==PRESSURE_BASED) {
-        mooseError("The pressure-based option cannot be run without coupling the PBVisc variable.");
     }
 }
 
@@ -84,19 +67,18 @@ void
 ComputeViscCoeff::computeQpProperties()
 {
     // Determine h (length used in definition of first and second order viscosities):
-    Real _helem = _current_elem->hmin();///_qrule->get_order();
+    Real _h_min = _current_elem->hmin();// /_qrule->get_order();
     
     // Compute first order viscosity:
-    Real c = std::sqrt(_gravity(0)_h[_qp]));
-    _mu_max[_qp]    = _Cmax*_helem*_norm_vel[_qp];
-    _kappa_max[_qp] = _Cmax*_helem*(_norm_vel[_qp] + c);
+    Real c = std::sqrt(_gravity(0)*_h[_qp]));
+    _mu_max[_qp]    = _Cmax*_h_min*_norm_vel[_qp];
+    _kappa_max[_qp] = _Cmax*_h_min*(_norm_vel[_qp] + c);
     
     // Epsilon value normalization of unit vectors:
-//    _helem = _current_elem->hmin()/_qrule->get_order();
     Real eps = std::sqrt(std::numeric_limits<Real>::min());
     
     // Compute Mach number and velocity variable to use in the normalization parameter:
-    Real press_pps = std::max(getPostprocessorValueByName(_entropy_pps_name), eps);
+    Real entropy_pps = std::max(getPostprocessorValueByName(_entropy_pps_name), eps);
         
     // Initialize some vector, values, ... for entropy viscosity method:
     RealVectorValue vel(_vel_x[_qp], _vel_y[_qp], _vel_z[_qp]);
@@ -139,13 +121,13 @@ ComputeViscCoeff::computeQpProperties()
                 
                 // Compute kappa_e:
                 if (_isJumpOn)
-                    jump = _Cjump*_norm_vel[_qp]*std::max( _jump_grad_press[_qp], c*c*_jump_grad_dens[_qp] );
+                    jump = _Cjump*_norm_vel[_qp]*std::max( _jump_grad_entropy[_qp], c*c*_jump_grad_dens[_qp] );
                 else
                     jump = _Cjump*_norm_vel[_qp]*std::max( _grad_press[_qp].size(), c*c*_grad_rho[_qp].size() );
 //                norm = 0.5*(std::fabs(1.-Mach)*_rho[_qp]*c*c + Mach*_rho[_qp]*std::min(_norm_vel[_qp]*_norm_vel[_qp], c*c));
                 norm = 0.5 * _rho[_qp] * c * c;
-                kappa_e = _helem*_helem*(std::fabs(residual) + jump) / norm;
-                kappa_e += _helem*_helem*std::fabs(vel*_grad_area[_qp])/_area[_qp];
+                kappa_e = _h_min*_h_min*(std::fabs(residual) + jump) / norm;
+                kappa_e += _h_min*_h_min*std::fabs(vel*_grad_area[_qp])/_area[_qp];
 
                 // Compute mu_e:
                 if (_isJumpOn)
@@ -156,8 +138,8 @@ ComputeViscCoeff::computeQpProperties()
                 if (_isShock)
                     norm = 0.5 * std::max(_rho[_qp]*std::min(_norm_vel[_qp]*_norm_vel[_qp], c*c), (1.-Mach)*rhov2_pps );
                 
-                mu_e = _helem*_helem*(std::fabs(residual) + jump) / norm;
-                mu_e += _helem*_helem*std::fabs(vel*_grad_area[_qp])/_area[_qp];
+                mu_e = _h_min*_h_min*(std::fabs(residual) + jump) / norm;
+                mu_e += _h_min*_h_min*std::fabs(vel*_grad_area[_qp])/_area[_qp];
 
                 // Compute mu and kappa:
                 _mu[_qp]    = std::min( _kappa_max[_qp], mu_e);

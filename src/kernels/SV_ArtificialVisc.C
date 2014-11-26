@@ -27,7 +27,6 @@ InputParameters validParams<SV_ArtificialVisc>()
     params.addRequiredCoupledVar("h", "height of the fluid");
     params.addRequiredCoupledVar("velocity_x", "x component of the velocity");
     params.addCoupledVar("velocity_y", "y component of the velocity");
-    params.addCoupledVar("velocity_z", "z component of the velocity");
   return params;
 }
 
@@ -37,19 +36,15 @@ SV_ArtificialVisc::SV_ArtificialVisc(const std::string & name,
     // Declare equation types
     _equ_name(getParam<std::string>("equation_name")),
     _diff_name(getParam<std::string>("diffusion_name")),
-    _equ_type("CONTINUITY, XMOMENTUM, YMOMENTUM, ZMOMENTUM, INVALID", _equ_name),
+    _equ_type("CONTINUITY, XMOMENTUM, YMOMENTUM, INVALID", _equ_name),
     _diff_type("ENTROPY, PARABOLIC, NONE, INVALID",_diff_name),
     // Coupled auxiliary variables
     //_h(coupledValue("h")),
     _grad_h(coupledGradient("h")),
     _vel_x(coupledValue("velocity_x")),
     _vel_y(_mesh.dimension()>=2 ? coupledValue("velocity_y") : _zero),
-    _vel_z(_mesh.dimension()==3 ? coupledValue("velocity_z") : _zero),
     _grad_vel_x(coupledGradient("velocity_x")),
     _grad_vel_y(_mesh.dimension()>=2 ? coupledGradient("velocity_y") : _grad_zero),
-    _grad_vel_z(_mesh.dimension()==3 ? coupledGradient("velocity_z") : _grad_zero),
-    //_norm_vel(coupledValue("norm_velocity")),
-    //_grad_norm_vel(coupledGradient("norm_velocity")),
     // Material property: viscosity coefficient.
     _mu(getMaterialProperty<Real>("mu")),
     _kappa(getMaterialProperty<Real>("kappa"))
@@ -63,7 +58,7 @@ Real SV_ArtificialVisc::computeQpResidual()
     // Determine if cell is on boundary or not and then compute a unit vector 'l=grad(norm(vel))/norm(grad(norm(vel)))':
     Real isonbnd = 1.;
     if (_mesh.isBoundaryNode(_current_elem->node(_i))==true) {
-        isonbnd = 0.;
+        isonbnd = 0.; //jcr note: not used???
     }
 
     // If statement on diffusion type:
@@ -77,9 +72,6 @@ Real SV_ArtificialVisc::computeQpResidual()
                 break;
             case YMOMENTUM:
                 return _kappa[_qp]*(_h[_qp]*_grad_vel_y[_qp]+_vel_y[_qp]*_grad_h[_qp])*_grad_test[_i][_qp];
-                break;
-            case ZMOMENTUM:
-                return _kappa[_qp]*(_h[_qp]*_grad_vel_z[_qp]+_vel_z[_qp]*_grad_h[_qp])*_grad_test[_i][_qp];
                 break;
             default:
                 mooseError("INVALID equation name.");
@@ -104,9 +96,6 @@ Real SV_ArtificialVisc::computeQpResidual()
                     break;
                 case YMOMENTUM:
                     return isonbnd*( _vel_y[_qp]*f + grad_vel_tensor.row(1) ) * _grad_test[_i][_qp];
-                    break;
-                case ZMOMENTUM:
-                    return isonbnd*( _vel_z[_qp]*f + grad_vel_tensor.row(2) ) * _grad_test[_i][_qp];
                     break;
                 default:
                     mooseError("INVALID equation name.");

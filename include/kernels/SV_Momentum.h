@@ -30,7 +30,6 @@ private:
     // Aux variables:
     VariableValue & _q_x;
     VariableValue & _q_y;
-    VariableValue & _q_z;
     // VariableValue & _pressure;
     VariableValue & _h;
 
@@ -46,7 +45,6 @@ private:
     unsigned int _h_nb;
     unsigned int _q_x_nb;
     unsigned int _q_y_nb;
-    unsigned int _q_z_nb;
 };
 
 #endif // SV_MOMENTUM_H

@@ -12,35 +12,34 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef ENTROPYAUX_H
-#define ENTROPYAUX_H
+#ifndef BATHYMETRY_AUX_H
+#define BATHYMETRY_AUX_H
 
 #include "AuxKernel.h"
+#include "AreaFunction.h" //jcr note" ?
 
-class EntropyAux;
+//Forward Declarations
+class Bathymetry_Aux;
 
 template<>
-InputParameters validParams<EntropyAux>();
+InputParameters validParams<Bathymetry_Aux>();
 
-class EntropyAux : public AuxKernel
+/**
+ * Coupled auxiliary value
+ */
+class Bathymetry_Aux : public AuxKernel
 {
 public:
 
-  EntropyAux(const std::string & name, InputParameters parameters);
+  /**
+   * Factory constructor, takes parameters so that all derived classes can be built using the same
+   * constructor.
+   */
+  Bathymetry_Aux(const std::string & name, InputParameters parameters);
 
 protected:
-    virtual Real computeValue();
-    
-    // Implicit:
-    const bool & _isImplicit;
-    
-    // Aux variables:
-    VariableValue & _h;
-    VariableValue & _q_x;
-    VariableValue & _q_y;
-    
-    // Parameters:
-    RealVectorValue _gravity;
+  virtual Real computeValue();
+  Function & _bathy;
 };
 
-#endif // EntropyAux_H
+#endif // BATHYMETRY_AUX_H

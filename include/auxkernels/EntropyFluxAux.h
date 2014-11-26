@@ -12,21 +12,21 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef ENTROPYAUX_H
-#define ENTROPYAUX_H
+#ifndef ENTROPYFLUXAUX_H
+#define ENTROPYFLUXAUX_H
 
 #include "AuxKernel.h"
 
-class EntropyAux;
+class EntropyFluxAux;
 
 template<>
-InputParameters validParams<EntropyAux>();
+InputParameters validParams<EntropyFluxAux>();
 
-class EntropyAux : public AuxKernel
+class EntropyFluxAux : public AuxKernel
 {
 public:
 
-  EntropyAux(const std::string & name, InputParameters parameters);
+  EntropyFluxAux(const std::string & name, InputParameters parameters);
 
 protected:
     virtual Real computeValue();
@@ -43,4 +43,4 @@ protected:
     RealVectorValue _gravity;
 };
 
-#endif // EntropyAux_H
+#endif // ENTROPYFLUXAUX_H

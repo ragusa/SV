@@ -14,10 +14,10 @@
 /**
 This function computes the entropy used in the definition of the entropy viscosity coefficient.
 **/
-#include "EntropyAux.h"
+#include "EntropyFluxAux.h"
 
 template<>
-InputParameters validParams<EntropyAux>()
+InputParameters validParams<EntropyFluxAux>()
 {
   InputParameters params = validParams<AuxKernel>();
     params.addParam<bool>("isImplicit", true, "implicit or explicit schemes.");
@@ -29,7 +29,7 @@ InputParameters validParams<EntropyAux>()
   return params;
 }
 
-EntropyAux::EntropyAux(const std::string & name, InputParameters parameters) :
+EntropyFluxAux::EntropyFluxAux(const std::string & name, InputParameters parameters) :
     AuxKernel(name, parameters),
     // Implicit
     _isImplicit(getParam<bool>("isImplicit")),
@@ -41,8 +41,9 @@ EntropyAux::EntropyAux(const std::string & name, InputParameters parameters) :
 {
 }
 
-Real EntropyAux::computeValue()
+Real EntropyFluxAux::computeValue()
 {
-    Real entr = ( _gravity(0)*std::pow(_h[_qp],2) + ( std::pow(_q_x[_qp],2) + std::pow(_q_y[_qp],2) ) / _h[_qp] ) /2.;
-    return entr;
+    Real eflx = _gravity(0)*std::pow(_h[_qp],3) + 
+                ( std::pow(_q_x[_qp],3) + std::pow(_q_y[_qp],3) ) / ( std::pow(_h[_qp],2) * 2.);
+    return eflx;
 }
