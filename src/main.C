@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
   // This creates dynamic memory that we're responsible for deleting
   MooseApp * app = AppFactory::createApp("SvApp", argc, argv);
 
+  // jcr how long to keep this?
   app->legacyUoInitializationDefault() = false;
   app->legacyUoAuxComputationDefault() = false;
 
