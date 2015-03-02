@@ -17,21 +17,17 @@ public:
 protected:
  
   virtual Real computeQpResidual();
-
   virtual Real computeQpJacobian();
-
   virtual Real computeQpOffDiagJacobian( unsigned int jvar );
 
 private:
     // Coupled variables:
     VariableValue & _q_x;
     VariableValue & _q_y;
-    VariableValue & _q_z;
     
     // Parameters for jacobian:
-    unsigned int _q_x_nb;
-    unsigned int _q_y_nb;
-    unsigned int _q_z_nb;
+    unsigned int _q_x_var;
+    unsigned int _q_y_var;
 };
 
 #endif // SV_CONTINUITY_H
