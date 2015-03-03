@@ -52,7 +52,7 @@ public:
   // The derivative of pressure wrt x-momentum (q_x)
   virtual Real dp_dqx(Real h=0., RealVectorValue vector_q=0.) const;
 
-  // The derivative of pressure wrt x-momentum (q_y)
+  // The derivative of pressure wrt y-momentum (q_y)
   virtual Real dp_dqy(Real h=0., RealVectorValue vector_q=0.) const;
 
   // Sound speed squared

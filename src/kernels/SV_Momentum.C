@@ -48,7 +48,7 @@ SV_Momentum::SV_Momentum(const std::string & name,
     _grad_bathymetry(isCoupled("B") ? coupledGradient("B") : _grad_zero),
 	//_pressure(coupledValue("pressure")),
     // Equation of state:
-    _eos(getUserObject<EquationOfState>("eos")),
+    _eos(getUserObject<HydrostaticPressure>("eos")),
     // Parameters:
     _component(getParam<int>("component")),
     _gravity(  getParam<Real>("gravity")),
