@@ -26,8 +26,8 @@ private:
     VariableValue & _q_y;
     
     // Parameters for jacobian:
-    unsigned int _q_x_var;
-    unsigned int _q_y_var;
+    unsigned int _q_x_ivar;
+    unsigned int _q_y_ivar;
 };
 
 #endif // SV_CONTINUITY_H

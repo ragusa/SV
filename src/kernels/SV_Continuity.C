@@ -35,10 +35,10 @@ SV_Continuity::SV_Continuity(const std::string & name,
     _q_x(coupledValue("q_x")),
     _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero ),
     // Parameters for jacobian
-    _q_x_var(coupled("q_x")),
+    _q_x_ivar(coupled("q_x")),
     // jcr: another way
-    // _q_y_var(isCoupled("q_y") ? coupled("q_y") : 0)
-    _q_y_var(_mesh.dimension() == 2  ? coupled("q_y") :0)
+    // _q_y_ivar(isCoupled("q_y") ? coupled("q_y") : 0)
+    _q_y_ivar(_mesh.dimension() == 2  ? coupled("q_y") :0)
 {}
 
 Real SV_Continuity::computeQpResidual()
@@ -57,9 +57,9 @@ Real SV_Continuity::computeQpJacobian()
 
 Real SV_Continuity::computeQpOffDiagJacobian( unsigned int _jvar)
 {
-    if (_jvar == _q_x_var)
+    if (_jvar == _q_x_ivar)
         return -_phi[_j][_qp]*_grad_test[_i][_qp](0);
-    else if (_jvar == _q_y_var)
+    else if (_jvar == _q_y_ivar)
         return -_phi[_j][_qp]*_grad_test[_i][_qp](1);
     else
         return 0.;
