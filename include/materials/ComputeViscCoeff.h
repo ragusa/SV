@@ -73,7 +73,7 @@ private:
     double _Cmax;
     
     // UserObject: equation of state
-    // const EquationOfState & _eos;
+    const HydroStaticPressure & _eos;
     
     // Name of the postprocessor:
     std::string _entropy_pps_name;
