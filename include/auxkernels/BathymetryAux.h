@@ -16,18 +16,18 @@
 #define BATHYMETRY_AUX_H
 
 #include "AuxKernel.h"
-#include "AreaFunction.h" //jcr note" ?
+#include "Bathymetry1D_step.h" //jcr note" ?
 
 //Forward Declarations
-class Bathymetry_Aux;
+class BathymetryAux;
 
 template<>
-InputParameters validParams<Bathymetry_Aux>();
+InputParameters validParams<BathymetryAux>();
 
 /**
  * Coupled auxiliary value
  */
-class Bathymetry_Aux : public AuxKernel
+class BathymetryAux : public AuxKernel
 {
 public:
 
@@ -35,11 +35,11 @@ public:
    * Factory constructor, takes parameters so that all derived classes can be built using the same
    * constructor.
    */
-  Bathymetry_Aux(const std::string & name, InputParameters parameters);
+  BathymetryAux(const std::string & name, InputParameters parameters);
 
 protected:
   virtual Real computeValue();
-  Function & _bathy;
+  Function & _bathymetry;
 };
 
 #endif // BATHYMETRY_AUX_H

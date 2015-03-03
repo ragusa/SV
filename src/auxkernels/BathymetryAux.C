@@ -16,17 +16,17 @@ This function aims at computing the bathymetry data at the nodes and its gradien
 to rho_bar, m_bar and E_bar defined as the product of the usual density, momentum and energy, and the cross section
 A computed by the function AreaFunction.
 **/
-#include "Bathymetry_Aux.h"
+#include "BathymetryAux.h"
 
 template<>
-InputParameters validParams<Bathymetry_Aux>()
+InputParameters validParams<BathymetryAux>()
 {
   InputParameters params = validParams<AuxKernel>();
   params.addRequiredParam<FunctionName>("area", "function to compute the cross section");
   return params;
 }
 
-Bathymetry_Aux::Bathymetry_Aux(const std::string & name, InputParameters parameters) :
+BathymetryAux::BathymetryAux(const std::string & name, InputParameters parameters) :
     AuxKernel(name, parameters),
     _bathymetry(getFunction("bathymetry"))
 {}
@@ -37,7 +37,7 @@ Bathymetry_Aux::Bathymetry_Aux(const std::string & name, InputParameters paramet
  * them as "Elemental (Constant Monomial)" or "Nodal (First Lagrange)".  No changes to the
  * source are necessary to switch from one type or the other.
  */
-Real Bathymetry_Aux::computeValue()
+Real BathymetryAux::computeValue()
 {
   Point _node_coord = (*_current_node);
   return _bathymetry.value(0.0,_node_coord); 

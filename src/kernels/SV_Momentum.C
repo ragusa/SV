@@ -20,7 +20,7 @@ It is dimension-agnostic.
 **/
  
 template<>
-InputParameters validParams<EelMomentum>()
+InputParameters validParams<SV_Momentum>()
 {
   InputParameters params = validParams<Kernel>();
   // Coupled variables
@@ -89,7 +89,7 @@ Real SV_Momentum::computeQpResidual()
      
   // Return the kernel value (convention: LHS of the = sign):
   // the "-" in front of advection and pressure comes from the integration by parts
-  return ( -_advection*_grad_test[_i][_qp] - _P*_grad_test[_i][_qp](_component) + _source_term*test[_i][_qp] ); 
+  return ( -_advection*_grad_test[_i][_qp] - _P*_grad_test[_i][_qp](_component) + _source_term*_test[_i][_qp] ); 
 }
 
 Real SV_Momentum::computeQpJacobian()
@@ -98,7 +98,7 @@ Real SV_Momentum::computeQpJacobian()
   RealVectorValue _vector_q(_q_x[_qp], _q_y[_qp], 0.);
 
   // Compute the velocity vector:
-  RealVectorValue _vector_vel = _vector_q / h[_qp];
+  RealVectorValue _vector_vel = _vector_q / _h[_qp];
   _vector_vel(_component) *= 2.;
   
   // Compute the derivative of the advection term
@@ -123,7 +123,7 @@ Real SV_Momentum::computeQpOffDiagJacobian(unsigned int _jvar)
   RealVectorValue _vector_q(_q_x[_qp], _q_y[_qp], 0.);
 
   // Compute the velocity vector:
-  RealVectorValue _vector_vel = _vector_q / h[_qp];
+  RealVectorValue _vector_vel = _vector_q / _h[_qp];
 
   // density h:
   // 
@@ -136,7 +136,7 @@ Real SV_Momentum::computeQpOffDiagJacobian(unsigned int _jvar)
 	// pressure off-diag derivative: -d(0.5gh^2 gradb)/dh = -gh gradb
 	Real d_pressure_dh = _phi[_j][_qp]*_eos.dp_dh(_h[_qp], _vector_q)*_grad_test[_i][_qp](_component);
 	// bathymetry off-diag derivative: d(gh gradB b)/dh = g gradB b
-    Real d_bathy_dh  = _phi[_j][_qp] * _gravity *_grad_bathymetry[_qp](_component)) *_test[_i][_qp];
+    Real d_bathy_dh  = _phi[_j][_qp] * _gravity *_grad_bathymetry[_qp](_component) *_test[_i][_qp];
     return -d_advection_dh -d_pressure_dh +d_bathy_dh;
     // _phi[_j][_qp] * (_u[_qp]/_h[_qp] * _vector_vel * _grad_test[_i][_qp] + _Psrc_term );
   }

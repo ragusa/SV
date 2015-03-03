@@ -38,7 +38,7 @@ PressureAux::PressureAux(const std::string & name, InputParameters parameters) :
     _q_x(coupledValue("q_x")),
     _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero),
     // Equation of state:
-    _eos(getUserObject<HydroStaticPressure>("eos"))
+    _eos(getUserObject<HydrostaticPressure>("eos"))
 {}
 
 Real

@@ -6,7 +6,7 @@
 // kernels
 #include "SV_Continuity.h"
 #include "SV_Momentum.h"
-#include "SV_ArtificalViscFlux.h"
+#include "SV_ArtificialViscFlux.h"
 
 // auxkernels
 #include "BathymetryAux.h"
@@ -72,7 +72,7 @@ SvApp::registerObjects(Factory & factory)
   // kernels
   registerKernel(SV_Continuity);
   registerKernel(SV_Momentum);
-  registerKernel(SV_ArtificalViscFlux);
+  registerKernel(SV_ArtificialViscFlux);
 
   // auxkernels
   registerAux(BathymetryAux);

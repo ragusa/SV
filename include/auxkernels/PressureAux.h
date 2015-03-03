@@ -16,7 +16,7 @@
 #define PRESSUREAUX_H
 
 #include "AuxKernel.h"
-#include "HydroStaticPressure.h"
+#include "HydrostaticPressure.h"
 
 class PressureAux;
 
@@ -38,7 +38,7 @@ protected:
   VariableValue & _q_y;
 
   // Equation of state
-  const HydroStaticPressure & _eos;
+  const HydrostaticPressure & _eos;
 };
 
 #endif //PRESSUREAUX_H

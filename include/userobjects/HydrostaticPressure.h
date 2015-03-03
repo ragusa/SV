@@ -11,8 +11,7 @@ InputParameters validParams<HydrostaticPressure>();
 
 
 /**
- * The HydrostaticPressure object is responsible for
- * computing and returning:
+ * The HydrostaticPressure user object returns:
  * p = p(h, \vec{q}) where \vec{q} = (q_x, q_y) is the momentum vector
  * and various partial derivatives.
  *

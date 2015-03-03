@@ -3,7 +3,7 @@
 
 #include "Material.h"
 #include "MaterialProperty.h"
-// #include "EquationOfState.h"
+#include "HydrostaticPressure.h"
 
 //Forward Declarations
 class ComputeViscCoeff;
@@ -73,7 +73,7 @@ private:
     double _Cmax;
     
     // UserObject: equation of state
-    const HydroStaticPressure & _eos;
+    const HydrostaticPressure & _eos;
     
     // Name of the postprocessor:
     std::string _entropy_pps_name;

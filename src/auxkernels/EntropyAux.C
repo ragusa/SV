@@ -45,6 +45,6 @@ EntropyAux::EntropyAux(const std::string & name, InputParameters parameters) :
 
 Real EntropyAux::computeValue()
 {
-    Real entr = ( _gravity(0)*std::pow(_h[_qp],2) + ( std::pow(_q_x[_qp],2) + std::pow(_q_y[_qp],2) ) / _h[_qp] ) /2.;
+    Real entr = ( _gravity*std::pow(_h[_qp],2) + ( std::pow(_q_x[_qp],2) + std::pow(_q_y[_qp],2) ) / _h[_qp] ) /2.;
     return entr;
 }

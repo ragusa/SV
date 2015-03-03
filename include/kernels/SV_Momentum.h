@@ -3,7 +3,7 @@
 
 #include "Kernel.h"
 // We may want to use the hydrostatic expression and keep P here
-#include "EquationOfState.h" 
+#include "HydrostaticPressure.h" 
 
 // Forward Declarations
 class SV_Momentum;
@@ -28,14 +28,15 @@ protected:
 
 private: // jcr protected?
     //  variables:
+    VariableValue & _h;
     VariableValue & _q_x;
     VariableValue & _q_y;
-    VariableValue & _h;
+
 
     VariableGradient & _grad_bathymetry;
     
     // Equation of state:
-    const EquationOfState & _eos;
+    const HydrostaticPressure & _eos;
     
     // Parameters:
     unsigned int _component;

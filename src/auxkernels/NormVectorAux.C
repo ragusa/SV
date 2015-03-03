@@ -30,7 +30,7 @@ NormVectorAux::NormVectorAux(const std::string & name, InputParameters parameter
     AuxKernel(name, parameters),
     // Coupled variables
     _x_comp(coupledValue("x_component")),
-    _y_comp(isCoupled("y_component") ? coupledValue("y_component") : _zero),
+    _y_comp(isCoupled("y_component") ? coupledValue("y_component") : _zero)
 {}
 
 Real
