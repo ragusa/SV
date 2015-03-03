@@ -12,22 +12,22 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef SV_ARTIFICIALVISC_H
-#define SV_ARTIFICIALVISC_H
+#ifndef SV_ARTIFICIALVISCFLUX_H
+#define SV_ARTIFICIALVISCFLUX_H
 
 #include "Kernel.h"
 
 // Forward Declarations
-class SV_ArtificialVisc;
+class SV_ArtificialViscFlux;
 
 template<>
-InputParameters validParams<SV_ArtificialVisc>();
+InputParameters validParams<SV_ArtificialViscFlux>();
 
-class SV_ArtificialVisc : public Kernel
+class SV_ArtificialViscFlux : public Kernel
 {
 public:
 
-  SV_ArtificialVisc(const std::string & name,
+  SV_ArtificialViscFlux(const std::string & name,
                    InputParameters parameters);
 
 protected:
@@ -44,33 +44,15 @@ private:
     {
         CONTINUITY = 0,
         XMOMENTUM = 1,
-        YMOMENTUM = 2,
-        ZMOMENTUM = 3,
-    };
-    // Diffusion types
-    enum DiffusionType
-    {
-        ENTROPY = 0,
-        PARABOLIC = 1,
-        NONE = 2
+        YMOMENTUM = 2
     };
     // Diffusion name
     std::string _equ_name;
-    std::string _diff_name;
     // Diffusion type
     MooseEnum _equ_type;
-    MooseEnum _diff_type;
-    // Coupled aux variables:
-    VariableGradient & _grad_h;
-    VariableValue & _vel_x;
-    VariableValue & _vel_y;
-    VariableValue & _vel_z;
-    VariableGradient & _grad_vel_x;
-    VariableGradient & _grad_vel_y;
-    VariableGradient & _grad_vel_z;
+
     // Material property: viscosity coefficient.
-    MaterialProperty<Real> & _mu;
     MaterialProperty<Real> & _kappa;
 };
 
-#endif // SV_ARTIFICIALVISC_H
+#endif // SV_ARTIFICIALVISCFLUX_H
