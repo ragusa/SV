@@ -12,26 +12,38 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 /**
-This function computes the velocity components from the water height and the momentum components.
+This function computes the density of the fluid.
 **/
-#include "VelocityAux.h"
+#include "PressureAux.h"
 
 template<>
-InputParameters validParams<VelocityAux>()
+InputParameters validParams<PressureAux>()
 {
   InputParameters params = validParams<AuxKernel>();
-  params.addRequiredCoupledVar("h", "h");
-  params.addRequiredCoupledVar("q", "q_{x,y}");
+  
+  // Coupled variables
+  params.addRequiredCoupledVar("h", "water height");
+  params.addRequiredCoupledVar("q_x", "x component of momentum");
+  params.addCoupledVar("q_y", "y component of momentum");
+  // Equation of state
+  params.addRequiredParam<UserObjectName>("eos", "Equation of state");
+
   return params;
 }
 
-VelocityAux::VelocityAux(const std::string & name, InputParameters parameters) :
-    AuxKernel(name, parameters),
+PressureAux::PressureAux(const std::string & name, InputParameters parameters) :
+                         AuxKernel(name, parameters),
+    // Coupled variables
     _h(coupledValue("h")),
-    _q(coupledValue("q"))
+    _q_x(coupledValue("q_x")),
+    _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero),
+    // Equation of state:
+    _eos(getUserObject<HydroStaticPressure>("eos"))
 {}
 
-Real VelocityAux::computeValue()
+Real
+PressureAux::computeValue()
 {
-  return _q[_qp] / _h[_qp];
+  RealVectorValue _vector_q(_q_x[_qp], _q_y[_qp], 0.);
+  return _eos.pressure(_h[_qp], _vector_q);
 }

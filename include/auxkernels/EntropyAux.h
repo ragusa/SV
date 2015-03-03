@@ -40,7 +40,7 @@ protected:
     VariableValue & _q_y;
     
     // Parameters:
-    RealVectorValue _gravity;
+    Real  _gravity;
 };
 
 #endif // EntropyAux_H

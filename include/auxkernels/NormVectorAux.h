@@ -34,7 +34,6 @@ protected:
 
     VariableValue & _x_comp;
     VariableValue & _y_comp;
-    VariableValue & _z_comp;
 };
 
 #endif //NORMVECTORAUX_H

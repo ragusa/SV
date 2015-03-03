@@ -11,27 +11,34 @@
 /*                                                              */
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
-/**
-This function computes the velocity components from the water height and the momentum components.
-**/
-#include "VelocityAux.h"
+
+#ifndef PRESSUREAUX_H
+#define PRESSUREAUX_H
+
+#include "AuxKernel.h"
+#include "HydroStaticPressure.h"
+
+class PressureAux;
 
 template<>
-InputParameters validParams<VelocityAux>()
-{
-  InputParameters params = validParams<AuxKernel>();
-  params.addRequiredCoupledVar("h", "h");
-  params.addRequiredCoupledVar("q", "q_{x,y}");
-  return params;
-}
+InputParameters validParams<PressureAux>();
 
-VelocityAux::VelocityAux(const std::string & name, InputParameters parameters) :
-    AuxKernel(name, parameters),
-    _h(coupledValue("h")),
-    _q(coupledValue("q"))
-{}
-
-Real VelocityAux::computeValue()
+class PressureAux : public AuxKernel
 {
-  return _q[_qp] / _h[_qp];
-}
+public:
+
+  PressureAux(const std::string & name, InputParameters parameters);
+
+protected:
+  virtual Real computeValue();
+
+  // Coupled variables
+  VariableValue & _h;
+  VariableValue & _q_x;
+  VariableValue & _q_y;
+
+  // Equation of state
+  const HydroStaticPressure & _eos;
+};
+
+#endif //PRESSUREAUX_H
