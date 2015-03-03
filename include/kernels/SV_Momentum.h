@@ -3,7 +3,7 @@
 
 #include "Kernel.h"
 // We may want to use the hydrostatic expression and keep P here
-// #include "EquationOfState.h". 
+#include "EquationOfState.h" 
 
 // Forward Declarations
 class SV_Momentum;
@@ -26,25 +26,25 @@ protected:
 
   virtual Real computeQpOffDiagJacobian( unsigned int jvar );
 
-private:
-    // Aux variables:
+private: // jcr protected?
+    //  variables:
     VariableValue & _q_x;
     VariableValue & _q_y;
-    // VariableValue & _pressure;
     VariableValue & _h;
 
+    VariableGradient & _grad_bathymetry;
     
     // Equation of state:
-    // const EquationOfState & _eos;
+    const EquationOfState & _eos;
     
     // Parameters:
-    int _component;
-    RealVectorValue _gravity;
+    unsigned int _component;
+    Real _gravity;
     
     // Parameters for jacobian:
-    unsigned int _h_nb;
-    unsigned int _q_x_nb;
-    unsigned int _q_y_nb;
+    unsigned int _h_ivar;
+    unsigned int _q_x_ivar;
+    unsigned int _q_y_ivar;
 };
 
 #endif // SV_MOMENTUM_H

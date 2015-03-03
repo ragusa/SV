@@ -28,9 +28,8 @@ InputParameters validParams<EelMomentum>()
     params.addRequiredCoupledVar("q_x", "x component of momentum");
     params.addCoupledVar("q_y", "y component of momentum");
   // Coupled aux variables
-    params.addCoupledVar("B", "bathymetry");	
+    params.addCoupledVar("B", "bathymetry data");// jcr how about addRequiredCoupledVar instead
   // Constants and parameters
-  // silly  params.addRequiredParam<RealVectorValue>("gravity", (0., 0., 0.), "Gravity vector.");
     params.addRequiredParam<Real>("gravity", 9.81, "Gravity magnitude");
 //    params.addRequiredCoupledVar("pressure", "pressure"); jcr: why not used here, was used in Euler code
     params.addRequiredParam<UserObjectName>("eos", "Equation of state");
@@ -54,10 +53,9 @@ SV_Momentum::SV_Momentum(const std::string & name,
     _component(getParam<int>("component")),
     _gravity(  getParam<Real>("gravity")),
     // Parameters for jacobian:
-    _h_var(coupled("h")),
-    _q_x_var(coupled("q_x")),
-    _q_y_var(_mesh.dimension() == 2 ? coupled("q_y") : 0),
-
+    _h_ivar(coupled("h")),
+    _q_x_ivar(coupled("q_x")),
+    _q_y_ivar(_mesh.dimension() == 2 ? coupled("q_y") : 0) // jcr: what happens if 0?
 
 {
     if ( _component > 1 )
@@ -68,23 +66,28 @@ Real SV_Momentum::computeQpResidual()
 {
   // vector q
   RealVectorValue _vector_q( _q_x[_qp], _q_y[_qp], 0. );
-  // _u/h is one of the momentum components {qx or qy} divided by h
   if( _h[_qp] < 0. )
     mooseError("h < 0");
 
-  // advection term q^2/h
+  // advection term q^2/h, integrated by parts:
+  // component 0: -\int (qxqx/h dbdx + qxqy dbdy) = -\int qx/h \vec{q} \vec{grad}b
+  // component 1: -\int (qxqy/h dbdx + qyqy dbdy) = -\int qy/h \vec{q} \vec{grad}b
+  
   // caveat: _u: is the current Moose variable. Here, it is q_x or q_y, depending on the component  
+  // _u/h is one of the momentum components {qx or qy} divided by h
   RealVectorValue _advection = _u[_qp]/_h[_qp] * _vector_q ;
         
-  // Hydrostatic pressure term:
+  // Hydrostatic pressure term, integrate by parts:
+  // component 0: -\int P dbdx
+  // component 1: -\int P dbdy
   // old: Real _P = -0.5 * _gravity(_component) * std::pow(_h[_qp],2);
   Real _P = _eos.pressure(_h[_qp], _vector_q);
 
-  // Source term: gravity * h * grad(B)
+  // Source term (placed on the LHS): gravity * h * grad(B)
   // jcr_note: we could also integrate this term by parts. 
   Real _source_term = _gravity * _h[_qp] * _grad_bathymetry[_qp](_component);
      
-  // Return the kernel value (convention: lhs of the = sign):
+  // Return the kernel value (convention: LHS of the = sign):
   // the "-" in front of advection and pressure comes from the integration by parts
   return ( -_advection*_grad_test[_i][_qp] - _P*_grad_test[_i][_qp](_component) + _source_term*test[_i][_qp] ); 
 }
@@ -124,27 +127,29 @@ Real SV_Momentum::computeQpOffDiagJacobian(unsigned int _jvar)
 
   // density h:
   // 
-  if (_jvar == _h_var) 
+  if (_jvar == _h_ivar) 
   {
 	// advection off-diag derivative
-	// momentum0: d(-qx/h qvec.gradb)/dh = qx/h vvec.gradb
-	// momentum1: d(-qy/h qvec.gradb)/dh = qy/h vvec.gradb
-	Real d_advection_dh = _phi[_j][_qp] * _u[_qp]/_h[_qp] * _vector_vel * _grad_test[_i][_qp] ;
-	// pressure off-diag derivative: d(-0.5gh^2 gradb)/dh = -gh gradb
-	Real d_pressure_dh = -_phi[_j][_qp]*_eos.dp_dh(_h[_qp], _vector_q)*_grad_test[_i][_qp](_component);
-	// bathymetry off-diag deriviative: d(gh gradB)/dh = g gradB
-    Real d_bathy_dh  = _gravity * _phi[_j][_qp] * _grad_bathymetry[_qp](_component)) * *_test[_i][_qp];
-    return d_advection_dh + d_pressure_dh+d_bathy_dh;
-//	_phi[_j][_qp] * (_u[_qp]/_h[_qp] * _vector_vel * _grad_test[_i][_qp] + _Psrc_term );
+	// momentum0: -d(qx/h qvec.gradb)/dh = -(-qx/h) vvec.gradb
+	// momentum1: -d(qy/h qvec.gradb)/dh = -(-qy/h) vvec.gradb
+	Real d_advection_dh = -_phi[_j][_qp] * _u[_qp]/_h[_qp] * (_vector_vel * _grad_test[_i][_qp]);
+	// pressure off-diag derivative: -d(0.5gh^2 gradb)/dh = -gh gradb
+	Real d_pressure_dh = _phi[_j][_qp]*_eos.dp_dh(_h[_qp], _vector_q)*_grad_test[_i][_qp](_component);
+	// bathymetry off-diag derivative: d(gh gradB b)/dh = g gradB b
+    Real d_bathy_dh  = _phi[_j][_qp] * _gravity *_grad_bathymetry[_qp](_component)) *_test[_i][_qp];
+    return -d_advection_dh -d_pressure_dh +d_bathy_dh;
+    // _phi[_j][_qp] * (_u[_qp]/_h[_qp] * _vector_vel * _grad_test[_i][_qp] + _Psrc_term );
   }
     
-  // x-momentum component:
-  else if (_jvar == _q_x_var ) {
-   return -_phi[_j][_qp] * ( _grad_test[_i][_qp](0)*_u[_qp]/_h[_qp] );
+  // x-momentum component: jcr: check interpretation
+  else if (_jvar == _q_x_ivar ) 
+  {
+    return -_phi[_j][_qp] * ( _grad_test[_i][_qp](0)*_u[_qp]/_h[_qp] );
   }
   // y-momentum component:
-  else if (_jvar == _q_y_var && _mesh.dimension()>=2 ) {
-   return -_phi[_j][_qp] * ( _grad_test[_i][_qp](1)*_u[_qp]/_h[_qp] );
+  else if (_jvar == _q_y_ivar ) 
+  {
+    return -_phi[_j][_qp] * ( _grad_test[_i][_qp](1)*_u[_qp]/_h[_qp] );
   }
   //
   else
