@@ -12,52 +12,33 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef EXACTSOLAREAVARIABLE_H
-#define EXACTSOLAREAVARIABLE_H
+#ifndef BATHYMETRY1D_STEP_H
+#define BATHYMETRY1D_STEP_H
 
 #include "Function.h"
-#include "FunctionInterface.h"
-#include "EquationOfState.h"
+#include "FunctionInterface.h" // jcr what is this for?
 
-class ExactSolAreaVariable;
+class Bathymetry1D_step;
 
 template<>
-InputParameters validParams<ExactSolAreaVariable>();
+InputParameters validParams<Bathymetry1D_step>();
 
-class ExactSolAreaVariable : public Function
+class Bathymetry1D_step : public Function
 {
 public:
-  ExactSolAreaVariable(const std::string & name, InputParameters parameters);
+  Bathymetry1D_step(const std::string & name, InputParameters parameters);
 
   virtual Real value(Real t, const Point & p);
 
   virtual RealVectorValue gradient(Real t, const Point & p);
 
 protected:
-    enum VariableType
-    {
-        DENSITY  = 0,
-        VELOCITY = 1,
-        PRESSURE = 2
-    };
     
-    // Name of the variable the function will output.
-    std::string _var_name;
-    
-    MooseEnum _var_type;
-    
-    // Stagnation variables:
-    Real _Po;
-    Real _To;
-    
-    // Back pressure
-    Real _Pout;
-    
-    // Length of the computational domain
-    Real _length;
-    
-    // Equation of state:
-//    const EquationOfState & _eos;
+    // left/right value of a step in bathymetry
+    Real _left;
+    Real _right;
+    Real _membrane; // location of the membrane
+
 };
 
-#endif //EXACTSOLAREAVARIABLE_H
+#endif //BATHYMETRY1D_STEP_H
