@@ -38,6 +38,7 @@ EntropyAux::EntropyAux(const std::string & name, InputParameters parameters) :
     _h(_isImplicit ? coupledValue("h") : coupledValueOld("h")),  // jcr: et les autres variables?
     _q_x(coupledValue("q_x")),
     _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero),
+    //_q_y_old(_mesh.dimension() == 2 ? coupledValueOld("q_y") : _zero),
     // Gravity:
     _gravity(getParam<Real>("gravity"))
 {
@@ -45,6 +46,7 @@ EntropyAux::EntropyAux(const std::string & name, InputParameters parameters) :
 
 Real EntropyAux::computeValue()
 {
-    Real entr = ( _gravity*std::pow(_h[_qp],2) + ( std::pow(_q_x[_qp],2) + std::pow(_q_y[_qp],2) ) / _h[_qp] ) /2.;
+    //Real q_y = (_isImplicit ? _q_y : _q_y_old);
+	Real entr = ( _gravity*std::pow(_h[_qp],2) + ( std::pow(_q_x[_qp],2) + std::pow(_q_y[_qp],2) ) / _h[_qp] ) /2.;
     return entr;
 }

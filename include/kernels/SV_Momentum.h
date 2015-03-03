@@ -26,7 +26,7 @@ protected:
 
   virtual Real computeQpOffDiagJacobian( unsigned int jvar );
 
-private: // jcr protected?
+private: // jcr protected?, no
     //  variables:
     VariableValue & _h;
     VariableValue & _q_x;

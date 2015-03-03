@@ -31,13 +31,11 @@ InputParameters validParams<SV_Continuity>()
 SV_Continuity::SV_Continuity(const std::string & name,
                              InputParameters parameters) :
   Kernel(name, parameters),
-    // Coupled aux variables jcr: why aux?
+    // Coupled variables jcr: why aux?
     _q_x(coupledValue("q_x")),
     _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero ),
     // Parameters for jacobian
     _q_x_ivar(coupled("q_x")),
-    // jcr: another way
-    // _q_y_ivar(isCoupled("q_y") ? coupled("q_y") : 0)
     _q_y_ivar(_mesh.dimension() == 2  ? coupled("q_y") :0)
 {}
 

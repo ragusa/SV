@@ -23,8 +23,7 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name,
                                    InputParameters parameters) :
     Material(name, parameters),
     // Declare viscosity types
-    _visc_name(getParam<std::string>("viscosity_name")),
-    _visc_type("NONE, FIRST_ORDER, ENTROPY, INVALID", _visc_name), // jcr so what about that enum?
+    _visc_type("NONE, FIRST_ORDER, ENTROPY, INVALID", getParam<std::string>("viscosity_name")), // jcr so what about that enum?
     // order matters? jcr
     // Declare aux variables: velocity
     _h(coupledValue("h")),
@@ -42,7 +41,7 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name,
     // Declare material properties
     _kappa(declareProperty<Real>("kappa")),
     _kappa_max(declareProperty<Real>("kappa_max")),
-//    _residual(declareProperty<Real>("residual")), jcr: why declare property for residual?
+//    _residual(declareProperty<Real>("residual")), jcr: why declare property for residual?, for output
     // Get parameter Ce
     _Ce(getParam<double>("Ce")),
     _Cjump(getParam<double>("Cjump")),

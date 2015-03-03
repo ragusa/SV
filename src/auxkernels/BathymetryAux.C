@@ -16,7 +16,7 @@ This function aims at computing the bathymetry data at the nodes and its gradien
 to rho_bar, m_bar and E_bar defined as the product of the usual density, momentum and energy, and the cross section
 A computed by the function AreaFunction.
 **/
-#include "BathymetryAux.h"
+#include "BathymetryAux.h"  // jcr eliminate and use FunctionAux in input file
 
 template<>
 InputParameters validParams<BathymetryAux>()

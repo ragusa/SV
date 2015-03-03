@@ -49,13 +49,14 @@ SV_ArtificialViscFlux::SV_ArtificialViscFlux(const std::string & name,
 Real SV_ArtificialViscFlux::computeQpResidual()
 {
     // Determine if cell is on boundary or not and then compute a unit vector 'l=grad(norm(vel))/norm(grad(norm(vel)))':
-    Real isonbnd = 1.;
-    if (_mesh.isBoundaryNode(_current_elem->node(_i))==true) {
-        isonbnd = 0.; //jcr note: not used???
+    if (_mesh.isBoundaryNode(_current_elem->node(_i))==true) 
+	{
+        return 0.;
     }
-
-    switch (_equ_type)  // jcr all the same, single line then?
-    {
+	else 
+	{	
+      switch (_equ_type)  // jcr all the same, single line then?
+      {
       case CONTINUITY:
            return _kappa[_qp]*_grad_u[_qp]*_grad_test[_i][_qp];
            break;
@@ -67,7 +68,8 @@ Real SV_ArtificialViscFlux::computeQpResidual()
            break;
       default:
           mooseError("INVALID equation name.");
-    }
+      }
+	}
 }
 
 Real SV_ArtificialViscFlux::computeQpJacobian()

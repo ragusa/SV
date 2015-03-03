@@ -27,7 +27,6 @@ private:
         FIRST_ORDER = 1,
         ENTROPY = 2
     };
-    std::string _visc_name;
     MooseEnum _visc_type;
     
     
@@ -75,7 +74,7 @@ private:
     // UserObject: equation of state
     const HydrostaticPressure & _eos;
     
-    // Name of the postprocessor:
+    // Name of the post-processor:
     std::string _entropy_pps_name;
 
 };
