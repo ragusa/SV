@@ -12,7 +12,8 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 /**
-This function computes the entropy used in the definition of the entropy viscosity coefficient.
+This function computes the entropy used in the definition of 
+the entropy viscosity coefficient.
 **/
 #include "EntropyAux.h"
 
@@ -26,7 +27,7 @@ InputParameters validParams<EntropyAux>()
     params.addRequiredCoupledVar("q_x", "x component of the momentum");
     params.addCoupledVar("q_y", "y component of the momentum");
     // Gravity
-    params.addParam<Real>("gravity", 9.81, "value of the gravity");
+    params.addParam<Real>("gravity", 9.81, "value of gravity");
   return params;
 }
 

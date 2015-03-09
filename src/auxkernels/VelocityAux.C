@@ -12,7 +12,8 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 /**
-This function computes the velocity components from the water height and the momentum components.
+This function computes the velocity components from the water height 
+and the momentum components.
 **/
 #include "VelocityAux.h"
 
@@ -21,17 +22,26 @@ InputParameters validParams<VelocityAux>()
 {
   InputParameters params = validParams<AuxKernel>();
   params.addRequiredCoupledVar("h", "h");
-  params.addRequiredCoupledVar("q", "q_{x,y}");
+  params.addRequiredCoupledVar("q_x", "q_{x}");
+  params.addCoupledVar("q_y", "q_{y}");
   return params;
 }
 
 VelocityAux::VelocityAux(const std::string & name, InputParameters parameters) :
     AuxKernel(name, parameters),
     _h(coupledValue("h")),
-    _q(coupledValue("q"))
+    _q(coupledValue("q_x"))
+    _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero),
 {}
 
 Real VelocityAux::computeValue()
 {
-  return _q[_qp] / _h[_qp];
+  if(_mesh.dimension() == 2)
+  {
+	return std::sqrt(_q_x[_qp]*_q_x[_qp]+_q_y[_qp]*_q_y[_qp]) / _h[_qp];
+  }
+  else
+  {
+    return _q_x[_q_p] / _h[_q_p];
+  }
 }

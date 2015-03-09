@@ -29,7 +29,7 @@ public:
   EntropyFluxAux(const std::string & name, InputParameters parameters);
 
 protected:
-    virtual Real computeValue();
+    virtual RealVectorValue computeValue();
     
     // Implicit:
     const bool & _isImplicit;
@@ -38,6 +38,7 @@ protected:
     VariableValue & _h;
     VariableValue & _q_x;
     VariableValue & _q_y;
+    VariableValue & _bathymetry;
     
     // Parameters:
     Real _gravity;

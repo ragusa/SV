@@ -42,7 +42,8 @@ protected:
 
   bool _implicit; // jcr why?
   VariableValue & _h;
-  VariableValue & _q;
+  VariableValue & _q_x;
+  VariableValue & _q_y;
 };
 
 #endif //VelocityAux_H
