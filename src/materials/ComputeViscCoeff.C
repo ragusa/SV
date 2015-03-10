@@ -52,7 +52,7 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name,
     _kappa_max(declareProperty<Real>("kappa_max")),
     _residual(declareProperty<Real>("residual")), // jcr: why declare property for residual?, for output
     // Get constant parameters
-    _is_first_order(getParam<bool>("is_first_order")),
+    //_is_first_order(getParam<bool>("is_first_order")),
     _Ce(getParam<double>("Ce")),
     _Cjump(getParam<double>("Cjump")),
     _Cmax(getParam<double>("Cmax")),
@@ -81,7 +81,7 @@ ComputeViscCoeff::computeQpProperties()
   
 
   // Epsilon value normalization of unit vectors:
-  Real eps = std::sqrt(std::numeric_limits<Real>::min());
+  Real _eps = std::sqrt(std::numeric_limits<Real>::min());
     
   // Compute Mach number and velocity variable to use in the normalization parameter:
   // Real entropy_pps = std::max(getPostprocessorValueByName(_entropy_pps_name), eps);
@@ -101,7 +101,7 @@ ComputeViscCoeff::computeQpProperties()
             break;
         case ENTROPY:
             // Compute the viscosity coefficients:
-            if (_t_step == -1) {
+            if (_t_step == 1) {
                 _kappa[_qp] = _kappa_max[_qp];
             }
             else {
@@ -114,7 +114,7 @@ ComputeViscCoeff::computeQpProperties()
                 Real residual = w0*_E[_qp]+w1*_E_old[_qp]+w2*_E_older[_qp];
                 residual += _F_grad[_qp](0)+_G_grad[_qp](1);
                 // store at qp
-                _residual[_qp] = _Ce*std::fabs(residual);
+                _residual[_qp] = std::fabs(residual);
                 
                 // Compute kappa_e:
                 /*if (_isJumpOn)
@@ -122,8 +122,10 @@ ComputeViscCoeff::computeQpProperties()
                 else
                     jump = _Cjump*_norm_vel[_qp]*std::max( _grad_press[_qp].size(), c*c*_grad_rho[_qp].size() );*/
 
-                norm = 0.5 * _rho[_qp] * c * c;
-                kappa_e = _h_min*_h_min*(std::fabs(residual) + jump) / norm;
+                // Froude number (use from Marco while I figure out |s-save|)
+                Real Froude = _vector_q.size()/_h[_qp]/std::sqrt(_gravity*(_h[_qp]+_eps));
+				Real _norm = _gravity*(_h[_qp]+_bathymetry[_qp]+_eps)
+                kappa_e = _Ce*_h_min*_h_min*(std::fabs(residual) + jump) / _norm;
 
                 //jump = _Cjump*_norm_vel[_qp]*std::max( _grad_press[_qp].size(), c*c*_grad_rho[_qp].size() );
                                

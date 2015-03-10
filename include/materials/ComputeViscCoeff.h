@@ -40,26 +40,25 @@ private:
     VariableValue    & _E_older;
     //VariableValue    & _E_dot;
     VariableGradient & _grad_F;
-    VariableGradient & _grad_F_old;
+    //VariableGradient & _grad_F_old;
     VariableGradient & _grad_G;
-    VariableGradient & _grad_G_old;
+    //VariableGradient & _grad_G_old;
 
         // Coupled aux variable: bathymetry
     VariableValue & _bathymetry;
     
     // Jump of entropy:
-    VariableValue & _jump_grad_s;
+    //VariableValue & _jump_grad_s;
         
     // Material properties
     MaterialProperty<Real> & _kappa;
     MaterialProperty<Real> & _kappa_max;
-    MaterialProperty<Real> & _residual;
-    
+    MaterialProperty<Real> & _residual;    
     
     // Boolean for jump
     // bool _isJumpOn;
     // Boolean for first order
-    bool _is_first_order;    
+    //bool _is_first_order;    
     
     // Multiplicative coefficient for viscosity:
     double _Ce;

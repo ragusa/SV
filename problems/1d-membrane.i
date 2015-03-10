@@ -2,14 +2,16 @@
   type = GeneratedMesh
   dim = 1
   nx = 200
+  xmin = 0.
+  xmax = 2000.
 []
 
 [Functions]
   [./ic_func]
     axis = 0
     type = PiecewiseLinear
-    x = '0  0.5  0.5001  1'
-    y = '1  1    0.5     0.5'
+    x = '0  1000  1000.01 2000'
+    y = '10 10    0.5     0.5'
   [../]
 []
 
@@ -76,7 +78,7 @@
   [./ViscousFlxMomentum]
     type = SV_ArtificalViscFlux
     variable = q_x
-    equ_name = XMOMENTUM
+    equ_name = X_MOMENTUM
   [../]
 []
 
@@ -86,6 +88,21 @@
     order = FIRST
   [../]
 
+  [./entropy_aux]
+    family = LAGRANGE
+    order = FIRST
+  [../]
+
+  [./F_aux]
+    family = LAGRANGE
+    order = FIRST
+  [../]
+
+  [./kappa_aux]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+  
   [./kappa_max_aux]
     family = MONOMIAL
     order = CONSTANT
@@ -100,11 +117,31 @@
     q_x = q_x
   [../]
 
-#  [./kappa_max_ak]
-#    type = MaterialRealAux
-#    variable = kappa_max_aux
-#    property = kappa_max
-#  [../]
+ [./entropy_ak]
+    type = EntropyAux
+    variable = entropy_aux
+    h = h
+    q_x = q_x
+  [../]
+
+  [./F_ak]
+    type = EntropyFluxAux
+    variable = F_aux
+    h = h
+    q_x = q_x
+  [../]
+
+  [./kappa_ak]
+    type = MaterialRealAux
+    variable = kappa_aux
+    property = kappa
+  [../]
+
+  [./kappa_max_ak]
+    type = MaterialRealAux
+    variable = kappa_max_aux
+    property = kappa_max
+  [../]
 []
 
 [Materials]
@@ -122,7 +159,7 @@
     type = DirichletBC
     variable = h
     boundary = left
-    value = 1.
+    value = 10.
   [../]
 
   [./right_h]
@@ -159,13 +196,13 @@
   type = Transient
   scheme = bdf2
 
-  dt = 1.e-4
+  dt = 1.e-2
 
   nl_rel_tol = 1e-12
   nl_abs_tol = 1e-6
   nl_max_its = 10
 
-  end_time = 0.1
+  end_time = 50
 #  num_steps = 10
 
 []
