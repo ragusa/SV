@@ -18,8 +18,8 @@ template<>
 InputParameters validParams<Bathymetry1D_step>()
 {
   InputParameters params = validParams<Function>();
-  params.addParam<Real>("left", 0., "Left value");
-  params.addParam<Real>("right", 1., "Right value");
+  params.addParam<Real>("left" , 0., "Value to the left of the membrane" );
+  params.addParam<Real>("right", 1., "Value to the right of the membrane");
   params.addParam<Real>("membrane",0.5, "Location of membrane");
   return params;
 }

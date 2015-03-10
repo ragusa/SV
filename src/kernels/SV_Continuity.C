@@ -25,6 +25,7 @@ InputParameters validParams<SV_Continuity>()
   InputParameters params = validParams<Kernel>();
   params.addRequiredCoupledVar("q_x", "x component of q");
   params.addCoupledVar("q_y", "y component of q");
+  
   return params;
 }
 
@@ -50,13 +51,17 @@ Real SV_Continuity::computeQpResidual()
 
 Real SV_Continuity::computeQpJacobian()
 {
+  // here we deal with the continuity row of the Jacobian matrix
   return 0.;
 }
 
 Real SV_Continuity::computeQpOffDiagJacobian( unsigned int _jvar)
 {
+    // here we deal with the continuity row of the Jacobian matrix (off-diog terms)
+    // off-diag is momentum in x
     if (_jvar == _q_x_ivar)
         return -_phi[_j][_qp]*_grad_test[_i][_qp](0);
+    // off-diag is momentum in y
     else if (_jvar == _q_y_ivar)
         return -_phi[_j][_qp]*_grad_test[_i][_qp](1);
     else

@@ -2,7 +2,7 @@
 #define COMPUTEVISCCOEFF_H
 
 #include "Material.h"
-#include "MaterialProperty.h"
+#include "MaterialProperty.h"  // jcr_new why no longer
 #include "HydrostaticPressure.h"
 
 //Forward Declarations
@@ -23,48 +23,43 @@ private:
     // Viscosity types
     enum ViscosityType
     {
-        NONE = 0,
+        NONE        = 0,
         FIRST_ORDER = 1,
-        ENTROPY = 2
+        ENTROPY     = 2
     };
     MooseEnum _visc_type;
-    
-    
-    // Boolean for jump
-    bool _isJumpOn;
-    bool _isShock;
-    
-    // Coupled aux variables: velocity
-    VariableValue & _vel_x;
-    VariableValue & _vel_y;
-    VariableValue & _vel_z;
-    VariableGradient & _grad_vel_x;
-    VariableGradient & _grad_vel_y;
-    VariableGradient & _grad_vel_z;
+      
+    // Coupled variables:
+    VariableValue & _h;
+    VariableValue & _q_x;
+    VariableValue & _q_y;
     
     // Coupled aux variables: entropy pair
-    VariableValue    & _s;
-    VariableValue    & _s_dot;
-    VariableValue    & _s_old;
-    VariableValue    & _s_older;
-    VariableGradient & _grad_psi;
-    VariableGradient & _grad_psi_old;
+    VariableValue    & _E;
+    VariableValue    & _E_old;
+    VariableValue    & _E_older;
+    //VariableValue    & _E_dot;
+    VariableGradient & _grad_F;
+    VariableGradient & _grad_F_old;
+    VariableGradient & _grad_G;
+    VariableGradient & _grad_G_old;
 
-    
-    // Coupled aux variable: norm of velocity
-    VariableValue & _norm_vel;
-    VariableGradient & _grad_norm_vel;
+        // Coupled aux variable: bathymetry
+    VariableValue & _bathymetry;
     
     // Jump of entropy:
     VariableValue & _jump_grad_s;
         
     // Material properties
-    MaterialProperty<Real> & _mu;
-    MaterialProperty<Real> & _mu_max;
     MaterialProperty<Real> & _kappa;
     MaterialProperty<Real> & _kappa_max;
-    MaterialProperty<RealVectorValue> & _l;
+    MaterialProperty<Real> & _residual;
     
+    
+    // Boolean for jump
+    // bool _isJumpOn;
+    // Boolean for first order
+    bool _is_first_order;    
     
     // Multiplicative coefficient for viscosity:
     double _Ce;

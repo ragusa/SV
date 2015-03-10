@@ -43,12 +43,10 @@ private:
     enum EquationType
     {
         CONTINUITY = 0,
-        XMOMENTUM = 1,
-        YMOMENTUM = 2
+        X_MOMENTUM = 1,
+        Y_MOMENTUM = 2
     };
-    // Diffusion name
-    std::string _equ_name;
-    // Diffusion type
+    // Equations type
     MooseEnum _equ_type;
 
     // Material property: viscosity coefficient.

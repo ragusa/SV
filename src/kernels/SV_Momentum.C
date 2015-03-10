@@ -33,6 +33,7 @@ InputParameters validParams<SV_Momentum>()
     params.addRequiredParam<Real>("gravity", 9.81, "Gravity magnitude");
     params.addRequiredParam<UserObjectName>("eos", "Equation of state");
     params.addRequiredParam<unsigned int>("component", 0, "component of the momentum equation to compute (0,1)->(x,y)");
+    
   return params;
 }
 
@@ -69,8 +70,8 @@ Real SV_Momentum::computeQpResidual()
     mooseError("h < 0");
 
   // advection term q^2/h, integrated by parts:
-  // component 0: -\int (qxqx/h dbdx + qxqy dbdy) = -\int qx/h \vec{q} \vec{grad}b
-  // component 1: -\int (qxqy/h dbdx + qyqy dbdy) = -\int qy/h \vec{q} \vec{grad}b
+  // component 0: -\int (qxqx/h dbdx + qxqy/h dbdy) = -\int qx/h \vec{q} \vec{grad}b
+  // component 1: -\int (qxqy/h dbdx + qyqy/h dbdy) = -\int qy/h \vec{q} \vec{grad}b
   
   // caveat: _u: is the current Moose variable. Here, it is q_x or q_y, depending on the component  
   // _u/h is one of the momentum components {qx or qy} divided by h
@@ -83,7 +84,6 @@ Real SV_Momentum::computeQpResidual()
   Real _P = _eos.pressure(_h[_qp], _vector_q);
 
   // Source term (placed on the LHS): gravity * h * grad(B)
-  // jcr_note: we could also integrate this term by parts. 
   Real _source_term = _gravity * _h[_qp] * _grad_bathymetry[_qp](_component);
      
   // Return the kernel value (convention: LHS of the = sign):
@@ -93,6 +93,11 @@ Real SV_Momentum::computeQpResidual()
 
 Real SV_Momentum::computeQpJacobian()
 {
+  // derivative of component 0 with respect to component 0:
+  //  -\int (2qx/h dbdx + qy/h dbdy) 
+  // derivative of component 1 with respect to component 1:
+  //  -\int (qx/h dbdx + 2qy/h dbdy) 
+
   // Compute the momentum vector q:
   RealVectorValue _vector_q(_q_x[_qp], _q_y[_qp], 0.);
 
@@ -128,9 +133,9 @@ Real SV_Momentum::computeQpOffDiagJacobian(unsigned int _jvar)
   // 
   if (_jvar == _h_ivar) 
   {
-	// advection off-diag derivative
-	// momentum0: -d(qx/h qvec.gradb)/dh = -(-qx/h) vvec.gradb
-	// momentum1: -d(qy/h qvec.gradb)/dh = -(-qy/h) vvec.gradb
+	// advection off-diag derivative (caveat in comment: qvec/h is later written as vvec)
+	// momentum-0: -d(qx/h qvec.gradb)/dh = -(-qx/h) vvec.gradb
+	// momentum-1: -d(qy/h qvec.gradb)/dh = -(-qy/h) vvec.gradb
 	Real d_advection_dh = -_phi[_j][_qp] * _u[_qp]/_h[_qp] * (_vector_vel * _grad_test[_i][_qp]);
 	// pressure off-diag derivative: -d(0.5gh^2 gradb)/dh = -gh gradb
 	Real d_pressure_dh = _phi[_j][_qp]*_eos.dp_dh(_h[_qp], _vector_q)*_grad_test[_i][_qp](_component);
@@ -140,7 +145,7 @@ Real SV_Momentum::computeQpOffDiagJacobian(unsigned int _jvar)
     // _phi[_j][_qp] * (_u[_qp]/_h[_qp] * _vector_vel * _grad_test[_i][_qp] + _Psrc_term );
   }
     
-  // x-momentum component: jcr: check interpretation
+  // derivative wrt x-momentum component (thus, this is the q_y equation)
   else if (_jvar == _q_x_ivar ) 
   {
     return -_phi[_j][_qp] * ( _grad_test[_i][_qp](0)*_u[_qp]/_h[_qp] );

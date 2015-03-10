@@ -26,7 +26,7 @@ InputParameters validParams<PressureAux>()
   params.addRequiredCoupledVar("q_x", "x component of momentum");
   params.addCoupledVar("q_y", "y component of momentum");
   // Equation of state
-  params.addRequiredParam<UserObjectName>("eos", "Equation of state");
+  params.addRequiredParam<UserObjectName>("eos", "equation of state");
 
   return params;
 }

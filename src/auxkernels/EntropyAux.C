@@ -27,7 +27,7 @@ InputParameters validParams<EntropyAux>()
     params.addRequiredCoupledVar("q_x", "x component of the momentum");
     params.addCoupledVar("q_y", "y component of the momentum");
     // Gravity
-    params.addParam<Real>("gravity", 9.81, "value of gravity");
+    params.addParam<Real>("gravity", 9.81, "gravity magnitude");
   return params;
 }
 

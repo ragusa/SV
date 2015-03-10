@@ -20,7 +20,7 @@ template<>
 InputParameters validParams<SV_ArtificialViscFlux>()
 {
   InputParameters params = validParams<Kernel>();
-    // Equation and diffusion names:
+    // Equation name:
     params.addParam<std::string>("equation_name", "INVALID", "Name of the equation.");
     // Coupled aux variables
 //    params.addRequiredCoupledVar("h", "height of the fluid");
@@ -33,8 +33,7 @@ SV_ArtificialViscFlux::SV_ArtificialViscFlux(const std::string & name,
                                      InputParameters parameters) :
   Kernel(name, parameters),
     // Declare equation types
-    _equ_name(getParam<std::string>("equation_name")),
-    _equ_type("CONTINUITY, XMOMENTUM, YMOMENTUM, INVALID", _equ_name),
+    _equ_type("CONTINUITY, X_MOMENTUM, Y_MOMENTUM, INVALID", getParam<std::string>("equation_name")),
     // Coupled auxiliary variables
 //    _grad_h(coupledGradient("h")),
 //    _vel_x(coupledValue("velocity_x")),
@@ -48,7 +47,7 @@ SV_ArtificialViscFlux::SV_ArtificialViscFlux(const std::string & name,
 
 Real SV_ArtificialViscFlux::computeQpResidual()
 {
-    // Determine if cell is on boundary or not and then compute a unit vector 'l=grad(norm(vel))/norm(grad(norm(vel)))':
+    // Determine if cell is on boundary or not:
     if (_mesh.isBoundaryNode(_current_elem->node(_i))==true) 
 	{
         return 0.;
@@ -60,10 +59,10 @@ Real SV_ArtificialViscFlux::computeQpResidual()
       case CONTINUITY:
            return _kappa[_qp]*_grad_u[_qp]*_grad_test[_i][_qp];
            break;
-      case XMOMENTUM:
+      case X_MOMENTUM:
            return _kappa[_qp]*_grad_u[_qp]*_grad_test[_i][_qp];
            break;
-      case YMOMENTUM:
+      case Y_MOMENTUM:
            return _kappa[_qp]*_grad_u[_qp]*_grad_test[_i][_qp];
            break;
       default:
