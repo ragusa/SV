@@ -15,8 +15,9 @@ InputParameters validParams<ComputeViscCoeff>()
   params.addRequiredCoupledVar("F", "x-component of the entropy flux ");
   params.addCoupledVar("G", "y-component of the entropy flux ");
   params.addCoupledVar("B", "bathymetry data");  
+  params.addParam<Real>("gravity", 9.81, "gravity magnitude");
   // constant parameters:
-  params.addParam<bool>("is_first_order", false, "if true, use the first-order viscosity coefficient");
+  //params.addParam<bool>("is_first_order", false, "if true, use the first-order viscosity coefficient");
   params.addParam<double>("Ce"   , 1.0, "Coefficient for entropy viscosity");
   params.addParam<double>("Cjump", 1.0, "Coefficient for jumps");
   params.addParam<double>("Cmax" , 0.5, "Coefficient for first-order viscosity");
@@ -41,10 +42,11 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name,
     _E_old(coupledValueOld("entropy")),
     _E_older(coupledValueOlder("entropy")),
     // entropy flux:
-    _F_grad(coupledGradient("F")),
-    _G_grad(_mesh.dimension() == 2 ? coupledGradient("G") : _grad_zero),
+    _grad_F(coupledGradient("F")),
+    _grad_G(_mesh.dimension() == 2 ? coupledGradient("G") : _grad_zero),
     // bathymetry:
     _bathymetry(isCoupled("B") ? coupledValue("B") : _zero),
+    _gravity(getParam<Real>("gravity")),
     // Jump of entropy gradients:
     //_jump_grad_entropy(isCoupled("jump_grad_entropy") ? coupledValue("jump_grad_entropy") : _zero),
     // Declare material properties
@@ -61,7 +63,7 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name,
     // PPS name:
     _entropy_pps_name(getParam<std::string>("PPS_name"))
 {
-    if (_Ce < 0.) || (_Ce > 2.)
+    if (_Ce < 0. || _Ce > 2.)
         mooseError("The coefficient Ce has to be positive and cannot be larger than 2.");
 }
 
@@ -87,7 +89,7 @@ ComputeViscCoeff::computeQpProperties()
   // Real entropy_pps = std::max(getPostprocessorValueByName(_entropy_pps_name), eps);
         
   // Initialize some vector, values, ... for entropy viscosity method:
-  RealVectorValue _vector_vel = _vector_q / h[_qp];
+  RealVectorValue _vector_vel = _vector_q / _h[_qp];
 
   Real jump=0.;
   
@@ -112,7 +114,7 @@ ComputeViscCoeff::computeQpProperties()
 
                 // Entropy residual
                 Real residual = w0*_E[_qp]+w1*_E_old[_qp]+w2*_E_older[_qp];
-                residual += _F_grad[_qp](0)+_G_grad[_qp](1);
+                residual += _grad_F[_qp](0)+_grad_G[_qp](1);
                 // store at qp
                 _residual[_qp] = std::fabs(residual);
                 
@@ -124,8 +126,8 @@ ComputeViscCoeff::computeQpProperties()
 
                 // Froude number (use from Marco while I figure out |s-save|)
                 Real Froude = _vector_q.size()/_h[_qp]/std::sqrt(_gravity*(_h[_qp]+_eps));
-				Real _norm = _gravity*(_h[_qp]+_bathymetry[_qp]+_eps)
-                kappa_e = _Ce*_h_min*_h_min*(std::fabs(residual) + jump) / _norm;
+				Real _norm = _gravity*(_h[_qp]+_bathymetry[_qp]+_eps);
+                Real kappa_e = _Ce*_h_min*_h_min*(std::fabs(residual) + jump) / _norm;
 
                 //jump = _Cjump*_norm_vel[_qp]*std::max( _grad_press[_qp].size(), c*c*_grad_rho[_qp].size() );
                                

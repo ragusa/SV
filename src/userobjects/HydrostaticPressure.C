@@ -3,14 +3,14 @@
 template<>
 InputParameters validParams<HydrostaticPressure>()
 {
-  InputParameters params = validParams<EquationOfState>();
+  InputParameters params = validParams<HydrostaticPressure>();
   params.addRequiredParam<Real>("gravity", 9.81, "gravity magnitude");
 
   return params;
 }
 
 HydrostaticPressure::HydrostaticPressure(const std::string & name, InputParameters parameters) :
-    EquationOfState(name, parameters),
+    GeneralUserObject(name, parameters),
     _gravity(getParam<Real>("gravity"))
 {}
 

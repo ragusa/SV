@@ -35,7 +35,7 @@ protected:
     const bool & _isImplicit;
     
     // Aux variables:
-    VariableValue & _h;
+    VariableValue & _curr_momentum;
     VariableValue & _h;
     VariableValue & _q_x;
     VariableValue & _q_y;

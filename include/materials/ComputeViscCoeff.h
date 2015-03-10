@@ -46,6 +46,7 @@ private:
 
         // Coupled aux variable: bathymetry
     VariableValue & _bathymetry;
+    Real _gravity;
     
     // Jump of entropy:
     //VariableValue & _jump_grad_s;

@@ -19,14 +19,14 @@ InputParameters validParams<StepIC>()
 {
     InputParameters params = validParams<InitialCondition>();
     // Initial conditions:
-    params.addRequiredParam<Real>("h_left", "Initial water height on the left");
+    params.addRequiredParam<Real>("h_left",  "Initial water height on the left");
     params.addRequiredParam<Real>("h_right", "Initial water height on the right");
     params.addParam<RealVectorValue>("U_left",  (0., 0., 0.), "Initial velocity vector on the left");
     params.addParam<RealVectorValue>("U_right", (0., 0., 0.), "Initial velocity vector on the right");
     // Position of the center of the circle and its radius:
-    params.addRequiredParam<Real>("x_source", "Position of the point source: x");
-    params.addRequiredParam<Real>("y_source", "Position of the point source: y");
-    params.addRequiredParam<Real>("radius", "Radius of the circle");
+    params.addRequiredParam<Real>("_x_membrane", "Position of the membrane: x");
+    params.addRequiredParam<Real>("_y_membrane", "Position of the membrane: y");
+    params.addRequiredParam<Real>("radius", "Radius of the membrane");
     return params;
 }
 
@@ -39,8 +39,8 @@ StepIC::StepIC(const std::string & name,
     _U_left(getParam<RealVectorValue>("U_left")),
     _U_right(getParam<RealVectorValue>("U_right")),
     // Position of the membrane:
-    _x_source(getParam<Real>("x_source")),
-    _y_source(getParam<Real>("y_source")),
+    _x_membrane(getParam<Real>("x_membrane")),
+    _y_membrane(getParam<Real>("y_membrane")),
     _radius(getParam<Real>("radius"))
 {}
 
@@ -52,7 +52,7 @@ StepIC::value(const Point & p)
       
   // Determine the initial values based on the node coordinates
   Real h, q_x, q_y;
-  Real radius2 = (p(0)-_x_source)*(p(0)-_x_source) + (p(1)-_y_source)*(p(1)-_y_source);
+  Real radius2 = (p(0)-_x_membrane)*(p(0)-_x_membrane) + (p(1)-_y_membrane)*(p(1)-_y_membrane);
       
   if ( std::sqrt(radius2) <= _radius )
   {

@@ -40,9 +40,9 @@ private:
   RealVectorValue _U_left;
   RealVectorValue _U_right;
 
-  // Position of the point source:
-  Real _x_source;
-  Real _y_source;
+  // Position of the membrane:
+  Real _x_membrane;
+  Real _y_membrane;
   Real _radius;
 };
 

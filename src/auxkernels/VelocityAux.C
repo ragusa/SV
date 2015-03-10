@@ -30,8 +30,8 @@ InputParameters validParams<VelocityAux>()
 VelocityAux::VelocityAux(const std::string & name, InputParameters parameters) :
     AuxKernel(name, parameters),
     _h(coupledValue("h")),
-    _q(coupledValue("q_x"))
-    _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero),
+    _q_x(coupledValue("q_x")),
+    _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero)
 {}
 
 Real VelocityAux::computeValue()
@@ -42,6 +42,6 @@ Real VelocityAux::computeValue()
   }
   else
   {
-    return _q_x[_q_p] / _h[_q_p];
+    return _q_x[_qp] / _h[_qp];
   }
 }
