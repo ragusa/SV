@@ -22,6 +22,7 @@ InputParameters validParams<EntropyFluxAux>()
   InputParameters params = validParams<AuxKernel>();
     params.addParam<bool>("isImplicit", true, "implicit or explicit schemes.");
     // Coupled aux variables
+    params.addRequiredCoupledVar("current_momentum", "current momentum component");
     params.addRequiredCoupledVar("h", "height of the fluid");
     params.addRequiredCoupledVar("q_x", "x component of the momentum");
     params.addCoupledVar("q_y", "y component of the momentum");
@@ -36,6 +37,7 @@ EntropyFluxAux::EntropyFluxAux(const std::string & name, InputParameters paramet
     // Implicit
     _isImplicit(getParam<bool>("isImplicit")),
     // Coupled variable:
+    _curr_momentum(coupledValue("current_momentum")),
     _h(_isImplicit ? coupledValue("h") : coupledValueOld("h")),
     _q_x(coupledValue("q_x")),
     _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero),
@@ -51,5 +53,5 @@ Real EntropyFluxAux::computeValue()
   // Compute ||q||^2/h^2/h^2
   Real norm_of_q_squared_divdided_h2 = _vector_q.size_sq() / (std::pow(_h[_qp],2));
   // Compute \vec{q}* (g(h+B) + 0.5*||q||^2/h^2/h^2 )
-  return _vector_q*( _gravity*(_h[_qp] +_bathymetry[_qp]) + 0.5*norm_of_q_squared_divdided_h2 );
+  return _curr_momentum[_qp]*( _gravity*(_h[_qp] +_bathymetry[_qp]) + 0.5*norm_of_q_squared_divdided_h2 );
 }

@@ -29,12 +29,13 @@ public:
   EntropyFluxAux(const std::string & name, InputParameters parameters);
 
 protected:
-    virtual RealVectorValue computeValue();
+    virtual Real computeValue();
     
     // Implicit:
     const bool & _isImplicit;
     
     // Aux variables:
+    VariableValue & _h;
     VariableValue & _h;
     VariableValue & _q_x;
     VariableValue & _q_y;

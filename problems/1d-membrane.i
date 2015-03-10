@@ -127,6 +127,7 @@
   [./F_ak]
     type = EntropyFluxAux
     variable = F_aux
+    momentum = q_x
     h = h
     q_x = q_x
   [../]
