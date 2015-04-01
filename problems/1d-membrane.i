@@ -57,7 +57,7 @@
   [./ViscousFlxContinuity]
     type = SV_ArtificialViscFlux
     variable = h
-    equ_name = CONTINUITY
+    equation_name = CONTINUITY
   [../]
 
   [./TimeMomentum]
@@ -78,7 +78,7 @@
   [./ViscousFlxMomentum]
     type = SV_ArtificialViscFlux
     variable = q_x
-    equ_name = X_MOMENTUM
+    equation_name = X_MOMENTUM
   [../]
 []
 
