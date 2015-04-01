@@ -30,7 +30,7 @@ InputParameters validParams<SV_Momentum>()
   // Coupled aux variables
     params.addCoupledVar("B", "bathymetry data");// jcr how about addRequiredCoupledVar instead
   // Constants and parameters
-    params.addRequiredParam<Real>("gravity", 9.81, "Gravity magnitude");
+    params.addParam<Real>("gravity", 9.81, "Gravity magnitude");
     params.addRequiredParam<UserObjectName>("eos", "Equation of state");
     params.addRequiredParam<unsigned int>("component", 0, "component of the momentum equation to compute (0,1)->(x,y)");
     
