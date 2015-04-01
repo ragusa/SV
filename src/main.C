@@ -20,8 +20,8 @@ int main(int argc, char *argv[])
   MooseApp * app = AppFactory::createApp("SvApp", argc, argv);
 
   // jcr how long to keep this?
-  app->legacyUoInitializationDefault() = false;
-  app->legacyUoAuxComputationDefault() = false;
+//  app->legacyUoInitializationDefault() = false;
+//  app->legacyUoAuxComputationDefault() = false;
 
   // Execute the application
   app->run();
