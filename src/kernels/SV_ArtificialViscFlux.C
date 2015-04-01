@@ -33,7 +33,7 @@ SV_ArtificialViscFlux::SV_ArtificialViscFlux(const std::string & name,
                                      InputParameters parameters) :
   Kernel(name, parameters),
     // Declare equation types
-    _equ_type("CONTINUITY, X_MOMENTUM, Y_MOMENTUM, INVALID", getParam<std::string>("equation_name")),
+    _equ_type("CONTINUITY X_MOMENTUM Y_MOMENTUM INVALID", getParam<std::string>("equation_name")),
     // Coupled auxiliary variables
 //    _grad_h(coupledGradient("h")),
 //    _vel_x(coupledValue("velocity_x")),
