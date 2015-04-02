@@ -50,7 +50,7 @@ SV_Momentum::SV_Momentum(const std::string & name,
     // Equation of state:
     _eos(getUserObject<HydrostaticPressure>("eos")),
     // Parameters:
-    _component(getParam<int>("component")),
+    _component(getParam<unsigned int>("component")),
     _gravity(  getParam<Real>("gravity")),
     // Parameters for jacobian:
     _h_ivar(coupled("h")),
