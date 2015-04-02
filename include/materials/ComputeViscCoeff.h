@@ -70,7 +70,7 @@ private:
     const HydrostaticPressure & _eos;
     
     // Name of the post-processor:
-    std::string _entropy_pps_name;
+    //std::string _entropy_pps_name;
 
 };
 
