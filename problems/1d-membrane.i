@@ -151,6 +151,8 @@
     block = 0
     h = h
     q_x = q_x
+    entropy = entropy_aux
+    F = F_aux
     eos = hydro
   [../]
 []
