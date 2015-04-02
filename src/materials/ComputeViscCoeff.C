@@ -59,7 +59,7 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name,
     _Cjump(getParam<double>("Cjump")),
     _Cmax(getParam<double>("Cmax")),
     // UserObject:
-    _eos(getUserObject<HydrostaticPressure>("eos")),
+    _eos(getUserObject<HydrostaticPressure>("eos")) //,
     // PPS name:
     //_entropy_pps_name(getParam<std::string>("PPS_name"))
 {
