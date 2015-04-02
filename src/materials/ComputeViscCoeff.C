@@ -33,7 +33,7 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name,
                                    InputParameters parameters) :
     Material(name, parameters),
     // Declare viscosity types
-    _visc_type("NONE, FIRST_ORDER, ENTROPY, INVALID", getParam<std::string>("viscosity_name")),   // Declare variables
+    _visc_type("NONE FIRST_ORDER ENTROPY INVALID", getParam<std::string>("viscosity_name")),   // Declare variables
     _h(coupledValue("h")),
     _q_x(coupledValue("q_x")),
     _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero),
