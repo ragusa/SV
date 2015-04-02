@@ -24,7 +24,7 @@ InputParameters validParams<ComputeViscCoeff>()
   // Userobject:
   params.addRequiredParam<UserObjectName>("eos", "Equation of state");
   // PPS names:
-  params.addParam<std::string>("press_PPS_name", "name of the pps computing pressure");
+  //params.addParam<std::string>("press_PPS_name", "name of the pps computing pressure");
     
   return params;
 }
@@ -61,7 +61,7 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name,
     // UserObject:
     _eos(getUserObject<HydrostaticPressure>("eos")),
     // PPS name:
-    _entropy_pps_name(getParam<std::string>("PPS_name"))
+    //_entropy_pps_name(getParam<std::string>("PPS_name"))
 {
     if (_Ce < 0. || _Ce > 2.)
         mooseError("The coefficient Ce has to be positive and cannot be larger than 2.");
