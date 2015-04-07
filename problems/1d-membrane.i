@@ -205,8 +205,11 @@
   nl_abs_tol = 1e-6
   nl_max_its = 10
 
-  end_time = 50
-#  num_steps = 10
+#  end_time = 50
+  num_steps = 1000
+	[./Quadrature]
+		type = TRAP
+	[../]
 
 []
 
