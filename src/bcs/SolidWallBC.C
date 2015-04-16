@@ -1,5 +1,5 @@
 #include "SolidWallBC.h"
-#include "EquationOfState.h"
+#include "HydrostaticPressure.h"
 
 /** Wall boundary condition: the normal velocity is assumed to be zero. **/
 
