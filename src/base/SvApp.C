@@ -20,7 +20,11 @@
 #include "StepIC.h"
 
 // bcs
-// #include "???.h"
+#include "SVSetWaterHeightInletBC.h"
+#include "SVSetWaterHeightOutletBC.h"
+#include "SVSetWaterVelocityInletBC.h"
+#include "SVSetWaterVelocity.h"
+#include "SolidWallBC.h"
 
 // userobject: eos
 #include "HydrostaticPressure.h"
@@ -86,7 +90,11 @@ SvApp::registerObjects(Factory & factory)
   registerInitialCondition(StepIC);
 
   // bcs
- //  registerBoundaryCondition(???);
+  registerBoundaryCondition(SVSetWaterHeightInletBC);
+  registerBoundaryCondition(SVSetWaterHeightOutletBC);
+  registerBoundaryCondition(SVSetWaterVelocityInletBC);
+  registerBoundaryCondition(SVSetWaterVelocity);
+  registerBoundaryCondition(SolidWallBC);
 
   // userobject: eos
   registerUserObject(HydrostaticPressure);
