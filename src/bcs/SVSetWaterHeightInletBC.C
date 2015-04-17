@@ -26,14 +26,14 @@ InputParameters validParams<SVSetWaterHeightInletBC>()
 SVSetWaterHeightInletBC::SVSetWaterHeightInletBC(const std::string & name, InputParameters parameters) :
     IntegratedBC(name, parameters),
     // Equation name
-    _equ_type("continuity x_mom invalid", getParam<std::string>("equ_name")),
+    _equ_type("CONTINUITY X_MOMENTUM INVALID", getParam<std::string>("equ_name")),
     // Coupled variables
     _q_x(coupledValue("q_x")),
     // Constants and parameters
     _h_bc(getParam<Real>("h_bc")),
     _u_bc(isCoupled("u_bc") ? getParam<Real>("u_bc") : 0.),
     // Equation of state:
-    _eos(getUserObject<EquationOfState>("eos")),
+    _eos(getUserObject<HydrostaticPressure>("eos")),
     // Integer for jacobian terms
     _q_x_var(coupled("q_x"))
 {
@@ -53,26 +53,26 @@ SVSetWaterHeightInletBC::computeQpResidual()
     mooseError("'" << this->name() << "' is not/no longer an inlet bc: 'vec{u} dot vec{normal}' is greater than zero");
 
   // Current bc values of the momentum, sound speed and pressure
-  RealVectorValue q_x_bc(_q_x[_qp], 0., 0.);
-  Real c2 = _eos.c2(_h_bc, q_x_bc);
+  RealVectorValue q_bc(_q_x[_qp], 0., 0.);
+  Real c2 = _eos.c2(_h_bc, q_bc);
   Real Mach = std::fabs(vel)/std::sqrt(c2);
 
-  // If the fluid is supercritical u_bc is used to evaluate q_x at the boundary
+  // If the fluid is supercritical u_bc is used to evaluate q_bc at the boundary
   if (Mach>1)
   {
     if (!_u_bc_specified)
       mooseError("'" << this->name() << "': the fluid becomes supersonic but you did not sepcify an inlet fluid velocity value in the input file.");
-    q_x_bc(0) = _h_bc*_u_bc;
+    q_bc(0) = _h_bc*_u_bc;
   }
-  Real p = _eos.pressure(_h_bc, q_x_bc);
+  Real p = _eos.pressure(_h_bc, q_bc);
 
   // Return the value of the bc flux for each equation
   switch (_equ_type)
   {
-    case continuity:
-      return q_x_bc*_normals[_qp]*_test[_i][_qp];
+    case CONTINUITY:
+      return q_bc*_normals[_qp]*_test[_i][_qp];
       break;
-    case x_mom:
+    case X_MOMENTUM:
       return (_u[_qp]*_u[_qp]/_h_bc+p)*_normals[_qp](0)*_test[_i][_qp];
       break;
     default:
@@ -85,8 +85,8 @@ SVSetWaterHeightInletBC::computeQpJacobian()
 {
   // Precompute some values
   Real vel = _q_x[_qp]/_h_bc;
-  RealVectorValue q_x_bc(_q_x[_qp], 0., 0.);
-  Real c2 = _eos.c2(_h_bc, q_x_bc);
+  RealVectorValue q_bc(_q_x[_qp], 0., 0.);
+  Real c2 = _eos.c2(_h_bc, q_bc);
   Real Mach = std::fabs(vel)/std::sqrt(c2);
   Real dpdu;
 
@@ -95,8 +95,8 @@ SVSetWaterHeightInletBC::computeQpJacobian()
   {
     switch (_equ_type)
     {
-      case x_mom:
-        dpdu = _eos.dp_dhu(_h_bc, q_x_bc);
+      case X_MOMENTUM:
+        dpdu = _eos.dp_dqx(_h_bc, q_bc);
         return _phi[_j][_qp]*(2.*_u[_qp]/_h_bc+dpdu)*_normals[_qp](0)*_test[_i][_qp];
         break;
       default:
@@ -112,8 +112,8 @@ SVSetWaterHeightInletBC::computeQpOffDiagJacobian(unsigned jvar)
 {
   // Precompute some values
   Real vel = _q_x[_qp]/_h_bc;
-  RealVectorValue q_x_bc(_q_x[_qp], 0., 0.);
-  Real c2 = _eos.c2(_h_bc, q_x_bc);
+  RealVectorValue q_bc(_q_x[_qp], 0., 0.);
+  Real c2 = _eos.c2(_h_bc, q_bc);
   Real Mach = std::fabs(vel)/std::sqrt(c2);
 
   // Non-zero jacobian term only if subsonic fluid
@@ -121,7 +121,7 @@ SVSetWaterHeightInletBC::computeQpOffDiagJacobian(unsigned jvar)
   {
     switch (_equ_type)
     {
-      case continuity:
+      case CONTINUITY:
         return _phi[_j][_qp]*_normals[_qp](0)*_test[_i][_qp];
         break;
       default:

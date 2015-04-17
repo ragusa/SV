@@ -12,8 +12,8 @@ InputParameters validParams<SolidWallBC>()
   params.addParam<std::string>("equ_name", "invalid", "Name of the equation.");
   // Coupled variables
   params.addRequiredCoupledVar("h", "water height");
-  params.addRequiredCoupledVar("hu", "x-mom of h*vec{u}");
-  params.addCoupledVar("hv", "y-mom of h*vec{u}");   
+  params.addRequiredCoupledVar("q_x", "x-mom of h*vec{u}");
+  params.addCoupledVar("q_y", "y-mom of h*vec{u}");   
   // Equation of state
   params.addRequiredParam<UserObjectName>("eos", "The name of equation of state object to use.");
 
@@ -24,15 +24,15 @@ InputParameters validParams<SolidWallBC>()
 SolidWallBC::SolidWallBC(const std::string & name, InputParameters parameters) :
     IntegratedBC(name, parameters),
     // Equation name
-    _equ_type("continuity x_mom y_mom invalid", getParam<std::string>("equ_name")),
+    _equ_type("CONTINUITY X_MOMENTUM Y_MOMENTUM INVALID", getParam<std::string>("equ_name")),
     // Coupled variables
     _h(coupledValue("h")),
     // Equation of state:
-    _eos(getUserObject<EquationOfState>("eos")),
+    _eos(getUserObject<HydrostaticPressure>("eos")),
     // Integer for jacobian terms
     _h_var(coupled("h")),
-    _hu_var(coupled("hu")),
-    _hv_var(_mesh.dimension() == 2 ? coupled("hv") : 0)
+    _q_x_var(coupled("q_x")),
+    _q_y_var(_mesh.dimension() == 2 ? coupled("hv") : 0)
 {}
 
 Real
@@ -42,12 +42,12 @@ SolidWallBC::computeQpResidual()
   Real p = _eos.pressure(_h[_qp], hU);
   switch (_equ_type)
   {
-    case continuity:
+    case CONTINUITY:
       return 0.;
       break;
-    case x_mom:
+    case X_MOMENTUM:
       return p*_normals[_qp](0)*_test[_i][_qp];
-    case y_mom:
+    case Y_MOMENTUM:
       return p*_normals[_qp](1)*_test[_i][_qp];
       break;
     default:
@@ -58,17 +58,17 @@ SolidWallBC::computeQpResidual()
 Real
 SolidWallBC::computeQpJacobian()
 {
-  RealVectorValue hU(0., 0., 0.);
+  RealVectorValue q_bc(0., 0., 0.);
   switch (_equ_type)
   {
-    case continuity:
+    case CONTINUITY:
       return 0.;
       break;
-    case x_mom:
-      return _eos.dp_dhu(_h[_qp], hU)*_normals[_qp](0)*_test[_i][_qp];
+    case X_MOMENTUM:
+      return _eos.dp_dqx(_h[_qp], q_bc)*_normals[_qp](0)*_test[_i][_qp];
       break;
-    case y_mom:
-      return _eos.dp_dhv(_h[_qp], hU)*_normals[_qp](1)*_test[_i][_qp];
+    case Y_MOMENTUM:
+      return _eos.dp_dqy(_h[_qp], q_bc)*_normals[_qp](1)*_test[_i][_qp];
       break;
     default:
       mooseError("'" << this->name() << "' Invalid equation name.");
@@ -78,25 +78,25 @@ SolidWallBC::computeQpJacobian()
 Real
 SolidWallBC::computeQpOffDiagJacobian(unsigned jvar)
 {
-  RealVectorValue hU(0., 0., 0.);  
-  if (jvar == _hu_var)
+  RealVectorValue q_bc(0., 0., 0.);  
+  if (jvar == _q_x_var)
   {
     switch (_equ_type)
     {
-      case y_mom:
-        return _eos.dp_dhu(_h[_qp], hU)*_normals[_qp](1)*_test[_i][_qp];
+      case Y_MOMENTUM:
+        return _eos.dp_dqx(_h[_qp], q_bc)*_normals[_qp](1)*_test[_i][_qp];
         break;
       default:
         return 0.;
         break;
     }
   }
-  else if (jvar == _hv_var)
+  else if (jvar == _q_y_var)
   {
     switch (_equ_type)
     {
-      case x_mom:
-        return _eos.dp_dhv(_h[_qp], hU)*_normals[_qp](0)*_test[_i][_qp];
+      case X_MOMENTUM:
+        return _eos.dp_dqy(_h[_qp], q_bc)*_normals[_qp](0)*_test[_i][_qp];
         break;
       default:
         return 0.;

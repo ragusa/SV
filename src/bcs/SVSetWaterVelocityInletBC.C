@@ -26,14 +26,14 @@ InputParameters validParams<SVSetWaterVelocityInletBC>()
 SVSetWaterVelocityInletBC::SVSetWaterVelocityInletBC(const std::string & name, InputParameters parameters) :
     IntegratedBC(name, parameters),
     // Equation name
-    _equ_type("continuity x_mom invalid", getParam<std::string>("equ_name")),
+    _equ_type("CONTINUITY X_MOMENTUM INVALID", getParam<std::string>("equ_name")),
     // Coupled variables
     _h(coupledValue("h")),
     // Constants and parameters
     _u_bc(getParam<Real>("u_bc")),
     _h_bc(isCoupled("h_bc") ? getParam<Real>("h_bc") : 0.),
     // Equation of state:
-    _eos(getUserObject<EquationOfState>("eos")),
+    _eos(getUserObject<HydrostaticPressure>("eos")),
     // Integer for jacobian terms
     _h_var(coupled("h")),
     _q_x_var(coupled("q_x"))
@@ -53,29 +53,29 @@ SVSetWaterVelocityInletBC::computeQpResidual()
     mooseError("'" << this->name() << "' is not/no longer an inlet bc: 'vec{u} dot vec{normal}' is greater than zero");
 
   // Current bc values of the momentum, sound speed and pressure
-  RealVectorValue q_x_bc(_h[_qp]*_u_bc, 0., 0.);
-  Real c2 = _eos.c2(_h[_qp], q_x_bc);
+  RealVectorValue q_bc(_h[_qp]*_u_bc, 0., 0.);
+  Real c2 = _eos.c2(_h[_qp], q_bc);
   Real Mach = std::fabs(_u_bc)/std::sqrt(c2);
-  Real p_bc = _eos.pressure(_h[_qp], q_x_bc);
+  Real p_bc = _eos.pressure(_h[_qp], q_bc);
   Real h_bc = _h[_qp];
 
-  // If the fluid is supercritical u_bc is used to evaluate q_x at the boundary
+  // If the fluid is supercritical u_bc is used to evaluate q_bc at the boundary
   if (Mach>1)
   {
     if (!_h_bc_specified)
       mooseError("'" << this->name() << "': the fluid becomes supercritical but you did not sepcify an inlet water height value in the input file.");
-    q_x(0) = _h_bc*_u_bc;
-    p_bc = _eos.pressure(_h_bc, q_x_bc);
+    q_bc(0) = _h_bc*_u_bc;
+    p_bc = _eos.pressure(_h_bc, q_bc);
     h_bc = _h_bc;
   }
 
   // Return flux
   switch (_equ_type)
   {
-    case continuity:
+    case CONTINUITY:
       return h_bc*_u_bc*_normals[_qp](0)*_test[_i][_qp];
       break;
-    case x_mom:
+    case X_MOMENTUM:
       return (_u_bc*_u_bc*h_bc+p_bc)*_normals[_qp](0)*_test[_i][_qp];
       break;
     default:

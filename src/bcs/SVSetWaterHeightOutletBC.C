@@ -25,14 +25,14 @@ InputParameters validParams<SVSetWaterHeightOutletBC>()
 SVSetWaterHeightOutletBC::SVSetWaterHeightOutletBC(const std::string & name, InputParameters parameters) :
     IntegratedBC(name, parameters),
     // Equation name
-    _equ_type("continuity x_mom invalid", getParam<std::string>("equ_name")),
+    _equ_type("CONTINUITY X_MOMENTUM INVALID", getParam<std::string>("equ_name")),
     // Coupled variables
     _h(coupledValue("h")),
     _q_x(coupledValue("q_x")),
     // Constants and parameters
     _h_bc(getParam<Real>("h_bc")),
     // Equation of state:
-    _eos(getUserObject<EquationOfState>("eos")),
+    _eos(getUserObject<HydrostaticPressure>("eos")),
     // Integer for jacobian terms
     _h_var(coupled("h")),
     _q_x_var(coupled("q_x"))
@@ -51,26 +51,26 @@ SVSetWaterHeightOutletBC::computeQpResidual()
     mooseError("'" << this->name() << "' is not/no longer an outlet bc: 'vec{u} dot vec{normal}' is negative");
 
   // Current bc values of the momentum, sound speed and pressure
-  RealVectorValue q_x_bc(_q_x[_qp], 0., 0.);
-  Real c2 = _eos.c2(_h[_qp], q_x_bc);
+  RealVectorValue q_bc(_q_x[_qp], 0., 0.);
+  Real c2 = _eos.c2(_h[_qp], q_bc);
   Real Mach = std::fabs(vel)/std::sqrt(c2);
 
   // Compute bc pressure and water height
-  Real p_bc = _eos.pressure(_h_bc, q_x_bc);
+  Real p_bc = _eos.pressure(_h_bc, q_bc);
   Real h_bc = _h_bc;
   if (Mach>1)
   {
-    p_bc = _eos.pressure(_h[_qp], q_x_bc);
+    p_bc = _eos.pressure(_h[_qp], q_bc);
     h_bc = _h[_qp];
   }
 
   // Return the value of the bc flux for each equation
   switch (_equ_type)
   {
-    case continuity:
-      return q_x_bc*_normals[_qp]*_test[_i][_qp];
+    case CONTINUITY:
+      return q_bc*_normals[_qp]*_test[_i][_qp];
       break;
-    case x_mom:
+    case X_MOMENTUM:
       return (_u[_qp]*_u[_qp]/h_bc+p_bc)*_normals[_qp](0)*_test[_i][_qp];
       break;
     default:
@@ -82,9 +82,9 @@ Real
 SVSetWaterHeightOutletBC::computeQpJacobian()
 {
   // Current bc values of the momentum, sound speed and pressure
-  RealVectorValue q_x_bc(_q_x[_qp], 0., 0.);
+  RealVectorValue q_bc(_q_x[_qp], 0., 0.);
   Real vel = _q_x[_qp]/_h[_qp];  
-  Real c2 = _eos.c2(_h[_qp], q_x_bc);
+  Real c2 = _eos.c2(_h[_qp], q_bc);
   Real Mach = std::fabs(vel)/std::sqrt(c2);
   Real h_bc = _h_bc;
   if (Mach>1)
@@ -93,8 +93,8 @@ SVSetWaterHeightOutletBC::computeQpJacobian()
   // Return the value of the bc flux for each equation
   switch (_equ_type)
   {
-    case x_mom:
-      return _phi[_j][_qp]*(2.*_u[_qp]/h_bc+_eos.dp_dhu(h_bc, q_x_bc))*_normals[_qp](0)*_test[_i][_qp];
+  case X_MOMENTUM:
+      return _phi[_j][_qp]*(2.*_u[_qp]/h_bc+_eos.dp_dqx(h_bc, q_bc))*_normals[_qp](0)*_test[_i][_qp];
       break;
     default:
       return 0.;
@@ -105,9 +105,9 @@ Real
 SVSetWaterHeightOutletBC::computeQpOffDiagJacobian(unsigned jvar)
 {
   // Current bc values of the momentum, sound speed and pressure
-  RealVectorValue q_x_bc(_q_x[_qp], 0., 0.);
+  RealVectorValue q_bc(_q_x[_qp], 0., 0.);
   Real vel = _q_x[_qp]/_h[_qp];
-  Real c2 = _eos.c2(_h[_qp], q_x_bc);
+  Real c2 = _eos.c2(_h[_qp], q_bc);
   Real Mach = std::fabs(vel)/std::sqrt(c2);
   Real h_bc = _h_bc;
   if (Mach>1)
@@ -117,8 +117,8 @@ SVSetWaterHeightOutletBC::computeQpOffDiagJacobian(unsigned jvar)
   {
     switch (_equ_type)
     {
-      case x_mom:
-        return _phi[_j][_qp]*(-_u[_qp]*_u[_qp]/(_h[_qp]*_h[_qp])+_eos.dp_dh(h_bc, q_x_bc))*_normals[_qp](0)*_test[_i][_qp];
+      case X_MOMENTUM:
+        return _phi[_j][_qp]*(-_u[_qp]*_u[_qp]/(_h[_qp]*_h[_qp])+_eos.dp_dh(h_bc, q_bc))*_normals[_qp](0)*_test[_i][_qp];
         break;
       default:
         return 0.;
@@ -129,7 +129,7 @@ SVSetWaterHeightOutletBC::computeQpOffDiagJacobian(unsigned jvar)
   {
     switch (_equ_type)
     {
-      case continuity:
+      case CONTINUITY:
         return _phi[_j][_qp]*_normals[_qp](0)*_test[_i][_qp];
         break;
       default:

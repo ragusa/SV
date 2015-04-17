@@ -25,13 +25,13 @@ InputParameters validParams<SVSetWaterVelocity>()
 SVSetWaterVelocity::SVSetWaterVelocity(const std::string & name, InputParameters parameters) :
     IntegratedBC(name, parameters),
     // Equation name
-    _equ_type("continuity x_mom invalid", getParam<std::string>("equ_name")),
+    _equ_type("CONTINUITY X_MOMENTUM INVALID", getParam<std::string>("equ_name")),
     // Coupled variables
     _h(coupledValue("h")),
     // Constants and parameters
     _u_bc(getParam<Real>("u_bc")),
     // Equation of state:
-    _eos(getUserObject<EquationOfState>("eos")),
+    _eos(getUserObject<HydrostaticPressure>("eos")),
     // Integer for jacobian terms
     _h_var(coupled("h")),
     _q_x_var(coupled("q_x"))
@@ -43,14 +43,14 @@ SVSetWaterVelocity::SVSetWaterVelocity(const std::string & name, InputParameters
 Real
 SVSetWaterVelocity::computeQpResidual()
 {
-  RealVectorValue q_x_bc(_h[_qp]*_u_bc, 0., 0.);
-  Real p = _eos.pressure(_h[_qp], q_x_bc);
+  RealVectorValue q_bc(_h[_qp]*_u_bc, 0., 0.);
+  Real p = _eos.pressure(_h[_qp], q_bc);
   switch (_equ_type)
   {
-    case continuity:
+    case CONTINUITY:
       return _h[_qp]*_u_bc*_normals[_qp](0)*_test[_i][_qp];
       break;
-    case x_mom:
+    case X_MOMENTUM:
       return (_u_bc*_u_bc*_h[_qp]+p)*_normals[_qp](0)*_test[_i][_qp];
       break;
     default:

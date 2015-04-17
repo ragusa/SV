@@ -1,24 +1,24 @@
-#ifndef SVSETWATERHEIGHTINLETBC_H
-#define SVSETWATERHEIGHTINLETBC_H
+#ifndef SVSETWATERHEIGHTOUTLETBC_H
+#define SVSETWATERHEIGHTOUTLETBC_H
 
 #include "IntegratedBC.h"
 #include "Function.h"
 
 // Forward Declarations
-class SVSetWaterHeightInletBC;
+class SVSetWaterHeightOutletBC;
 class HydrostaticPressure;
 
 template<>
-InputParameters validParams<SVSetWaterHeightInletBC>();
+InputParameters validParams<SVSetWaterHeightOutletBC>();
 
 
 /**
 **/
-class SVSetWaterHeightInletBC : public IntegratedBC
+class SVSetWaterHeightOutletBC : public IntegratedBC
 {
 public:
-  SVSetWaterHeightInletBC(const std::string & name, InputParameters parameters);
-  virtual ~SVSetWaterHeightInletBC(){}
+  SVSetWaterHeightOutletBC(const std::string & name, InputParameters parameters);
+  virtual ~SVSetWaterHeightOutletBC(){}
 
 protected:
   virtual Real computeQpResidual();
@@ -26,7 +26,6 @@ protected:
   virtual Real computeQpOffDiagJacobian(unsigned jvar);
 
   // Equation type
-  enum EquationType
   enum EquationType
   {
     CONTINUITY = 0,
@@ -36,21 +35,19 @@ protected:
   MooseEnum _equ_type;
 
   // Coupled variables
+  VariableValue & _h;  
   VariableValue & _q_x;
 
   // Constants and parameters
   Real _h_bc;
-  Real _u_bc;
 
   // Equation of state
   const HydrostaticPressure & _eos;
 
   // Integers for jacobian terms
+  unsigned _h_var;  
   unsigned _q_x_var;
-
-  // boolean
-  bool _u_bc_specified;
 };
 
-#endif // SVSETWATERHEIGHTINLETBC_H
+#endif // SVSETWATERHEIGHTOUTLETBC_H
 
