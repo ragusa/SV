@@ -12,9 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 /**
-This function aims at computing the bathymetry data at the nodes and its gradient. This auxiliary variable is coupled
-to rho_bar, m_bar and E_bar defined as the product of the usual density, momentum and energy, and the cross section
-A computed by the function AreaFunction.
+This function aims at computing the bathymetry data.
 **/
 #include "BathymetryAux.h"  // jcr eliminate and use FunctionAux in input file
 
@@ -27,8 +25,8 @@ InputParameters validParams<BathymetryAux>()
 }
 
 BathymetryAux::BathymetryAux(const std::string & name, InputParameters parameters) :
-    AuxKernel(name, parameters),
-    _bathymetry(getFunction("bathymetry"))
+  AuxKernel(name, parameters),
+  _bathymetry(getFunction("bathymetry"))
 {}
 
 /**

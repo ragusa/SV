@@ -18,17 +18,17 @@ template<>
 InputParameters validParams<Bathymetry1D_step>()
 {
   InputParameters params = validParams<Function>();
-  params.addParam<Real>("left" , 0., "Value to the left of the membrane" );
-  params.addParam<Real>("right", 1., "Value to the right of the membrane");
+  params.addParam<Real>("left"    , 0., "Value to the left of the membrane" );
+  params.addParam<Real>("right"   , 1., "Value to the right of the membrane");
   params.addParam<Real>("membrane",0.5, "Location of membrane");
   return params;
 }
 
 Bathymetry1D_step::Bathymetry1D_step(const std::string & name, InputParameters parameters) :
-    Function(name, parameters),
-    _left(getParam<Real>("left")),
-    _right(getParam<Real>("right")),
-    _membrane(getParam<Real>("membrane"))
+  Function(name, parameters),
+  _left(getParam<Real>("left")),
+  _right(getParam<Real>("right")),
+  _membrane(getParam<Real>("membrane"))
 {}
 
 Real

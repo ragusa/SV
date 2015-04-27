@@ -33,7 +33,7 @@ SV_ArtificialViscFlux::SV_ArtificialViscFlux(const std::string & name,
   // Declare equation types
   _equ_type("CONTINUITY X_MOMENTUM Y_MOMENTUM INVALID", getParam<std::string>("equation_name")),
   // Material property: viscosity coefficient.
-  _kappa(getMaterialProperty<Real>("kappa"))
+  _kappa(getMaterialPropertyOld<Real>("kappa"))
 {
 }
 
