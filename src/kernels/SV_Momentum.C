@@ -24,15 +24,15 @@ InputParameters validParams<SV_Momentum>()
 {
   InputParameters params = validParams<Kernel>();
   // Coupled variables
-    params.addRequiredCoupledVar("h"  , "h: water height");
-    params.addRequiredCoupledVar("q_x", "x component of momentum");
-    params.addCoupledVar("q_y", "y component of momentum");
+  params.addRequiredCoupledVar("h"  , "h: water height");
+  params.addRequiredCoupledVar("q_x", "x component of momentum");
+  params.addCoupledVar(        "q_y", "y component of momentum");
   // Coupled aux variables
-    params.addCoupledVar("B", "bathymetry data");// jcr how about addRequiredCoupledVar instead
+  params.addCoupledVar("B", "bathymetry data");// jcr how about addRequiredCoupledVar instead
   // Constants and parameters
-    params.addRequiredParam<Real>("gravity", "Gravity magnitude");
-    params.addRequiredParam<UserObjectName>("eos", "Equation of state");
-    params.addRequiredParam<unsigned int>("component", "component of the momentum equation to compute (0,1)->(x,y)");
+  params.addRequiredParam<Real>("gravity", "Gravity magnitude");
+  params.addRequiredParam<UserObjectName>("eos", "Equation of state");
+  params.addRequiredParam<unsigned int>("component", "component of the momentum equation to compute (0,1)->(x,y)");
     
   return params;
 }
@@ -40,22 +40,22 @@ InputParameters validParams<SV_Momentum>()
 SV_Momentum::SV_Momentum(const std::string & name,
                        InputParameters parameters) :
   Kernel(name, parameters),
-    // Coupled variables
-    _h(coupledValue("h")),
-    _q_x(coupledValue("q_x")),
-    _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero),
-    // Coupled auxiliary variables
-    _grad_bathymetry(isCoupled("B") ? coupledGradient("B") : _grad_zero),
-	//_pressure(coupledValue("pressure")),
-    // Equation of state:
-    _eos(getUserObject<HydrostaticPressure>("eos")),
-    // Parameters:
-    _component(getParam<unsigned int>("component")),
-    _gravity(  getParam<Real>("gravity")),
-    // Parameters for jacobian:
-    _h_ivar(coupled("h")),
-    _q_x_ivar(coupled("q_x")),
-    _q_y_ivar(_mesh.dimension() == 2 ? coupled("q_y") : 0)
+  // Coupled variables
+  _h(coupledValue("h")),
+  _q_x(coupledValue("q_x")),
+  _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero),
+  // Coupled auxiliary variables
+  _grad_bathymetry(isCoupled("B") ? coupledGradient("B") : _grad_zero),
+  //_pressure(coupledValue("pressure")),
+  // Equation of state:
+  _eos(getUserObject<HydrostaticPressure>("eos")),
+  // Parameters:
+  _component(getParam<unsigned int>("component")),
+  _gravity(getParam<Real>("gravity")),
+  // Parameters for jacobian:
+  _h_ivar(coupled("h")),
+  _q_x_ivar(coupled("q_x")),
+  _q_y_ivar(_mesh.dimension() == 2 ? coupled("q_y") : 0)
 
 {
     if ( _component > 1 )

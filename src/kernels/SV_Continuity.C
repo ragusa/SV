@@ -32,7 +32,7 @@ InputParameters validParams<SV_Continuity>()
 SV_Continuity::SV_Continuity(const std::string & name,
                              InputParameters parameters) :
   Kernel(name, parameters),
-    // Coupled variables jcr: why aux?
+    // Coupled variables
     _q_x(coupledValue("q_x")),
     _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero ),
     // Parameters for jacobian
@@ -57,11 +57,11 @@ Real SV_Continuity::computeQpJacobian()
 
 Real SV_Continuity::computeQpOffDiagJacobian( unsigned int _jvar)
 {
-    // here we deal with the continuity row of the Jacobian matrix (off-diog terms)
-    // off-diag is momentum in x
+    // here we deal with the continuity row of the Jacobian matrix (off-diag terms)
+    // off-diag term is momentum in x
     if (_jvar == _q_x_ivar)
         return -_phi[_j][_qp]*_grad_test[_i][_qp](0);
-    // off-diag is momentum in y
+    // off-diag term is momentum in y
     else if (_jvar == _q_y_ivar)
         return -_phi[_j][_qp]*_grad_test[_i][_qp](1);
     else

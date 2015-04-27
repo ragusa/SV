@@ -16,7 +16,7 @@ class SV_Momentum : public Kernel
 public:
 
   SV_Momentum(const std::string & name,
-             InputParameters parameters);
+              InputParameters parameters);
 
 protected:
 
@@ -27,25 +27,24 @@ protected:
   virtual Real computeQpOffDiagJacobian( unsigned int jvar );
 
 private: // jcr protected?, no
-    //  variables:
-    VariableValue & _h;
-    VariableValue & _q_x;
-    VariableValue & _q_y;
+  //  variables:
+  VariableValue & _h;
+  VariableValue & _q_x;
+  VariableValue & _q_y;
 
+  VariableGradient & _grad_bathymetry;
 
-    VariableGradient & _grad_bathymetry;
-    
-    // Equation of state:
-    const HydrostaticPressure & _eos;
-    
-    // Parameters:
-    unsigned int _component;
-    Real _gravity;
-    
-    // Parameters for jacobian:
-    unsigned int _h_ivar;
-    unsigned int _q_x_ivar;
-    unsigned int _q_y_ivar;
+  // Equation of state:
+  const HydrostaticPressure & _eos;
+
+  // Parameters:
+  unsigned int _component;
+  Real _gravity;
+
+  // Parameters for jacobian:
+  unsigned int _h_ivar;
+  unsigned int _q_x_ivar;
+  unsigned int _q_y_ivar;
 };
 
 #endif // SV_MOMENTUM_H

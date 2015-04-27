@@ -28,7 +28,7 @@ class SV_ArtificialViscFlux : public Kernel
 public:
 
   SV_ArtificialViscFlux(const std::string & name,
-                   InputParameters parameters);
+                        InputParameters parameters);
 
 protected:
 
@@ -39,18 +39,18 @@ protected:
   virtual Real computeQpOffDiagJacobian(unsigned int _jvar);
     
 private:
-    // Equations types
-    enum EquationType
-    {
-        CONTINUITY = 0,
-        X_MOMENTUM = 1,
-        Y_MOMENTUM = 2
-    };
-    // Equations type
-    MooseEnum _equ_type;
+  // Equations types
+  enum EquationType
+  {
+    CONTINUITY = 0,
+    X_MOMENTUM = 1,
+    Y_MOMENTUM = 2
+  };
+  // Equations type
+  MooseEnum _equ_type;
 
-    // Material property: viscosity coefficient.
-    MaterialProperty<Real> & _kappa;
+  // Material property: viscosity coefficient.
+  MaterialProperty<Real> & _kappa;
 };
 
 #endif // SV_ARTIFICIALVISCFLUX_H

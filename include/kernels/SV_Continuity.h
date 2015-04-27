@@ -25,7 +25,7 @@ private:
     VariableValue & _q_x;
     VariableValue & _q_y;
     
-    // Parameters for jacobian:
+    // Parameters for jacobian (off-diagonal blocks):
     unsigned int _q_x_ivar;
     unsigned int _q_y_ivar;
 };
