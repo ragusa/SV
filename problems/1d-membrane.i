@@ -207,9 +207,9 @@
 
 #  end_time = 50
   num_steps = 1000
-	[./Quadrature]
-		type = TRAP
-	[../]
+  [./Quadrature]
+    type = TRAP
+  [../]
 
 []
 
