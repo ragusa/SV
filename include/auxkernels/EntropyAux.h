@@ -32,7 +32,7 @@ protected:
     virtual Real computeValue();
     
     // Implicit:
-    const bool & _isImplicit;
+    //const bool & _isImplicit;
     
     // Aux variables:
     VariableValue & _h;
