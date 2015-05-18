@@ -7,7 +7,7 @@
 []
 
 [Functions]
-  [./ic_func]
+  [./ic_func_height]
     axis = 0
     type = PiecewiseLinear
     x = '0  1000  1000.01 2000'
@@ -28,7 +28,7 @@
     order = FIRST
     [./InitialCondition]
       type = FunctionIC
-      function = ic_func
+      function = ic_func_height
     [../]
   [../]
 
