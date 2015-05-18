@@ -20,7 +20,7 @@ template<>
 InputParameters validParams<BathymetryAux>()
 {
   InputParameters params = validParams<AuxKernel>();
-  params.addRequiredParam<FunctionName>("area", "function to compute the cross section");
+  params.addRequiredParam<FunctionName>("Bathymetry", "function to compute the bathymetry");
   return params;
 }
 
