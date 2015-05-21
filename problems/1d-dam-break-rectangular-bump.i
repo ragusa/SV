@@ -13,15 +13,22 @@
 [Functions]
   [./ic_func_height]
     axis = 0
-    type = PiecewiseLinear
-    x = '0. 562.5  562.50001 750  750.00001  937.5 937.50001 1500.'
-    y = '20 20     12        12   7          7     15        15'
+    type = MyFunctionIC_f1_minus_f2
+    function1 = step_height
+    function2 = bathymetry
   [../]
 
   [./bathymetry]
     type = Bathymetry1D_rect
     domain_length = 1500
     step_height   = 8
+  [../]
+
+    [./step_height]
+    type = StepFunction
+    x0                 = 750.
+    value_before_step  = 20.
+    value_after_step   = 15.
   [../]
 []
 
@@ -79,7 +86,7 @@
     variable = q_x
     h = h
     q_x = q_x
-    B = b_aux
+    B = bathy_aux
     component = 0
     eos = hydro
   [../]
