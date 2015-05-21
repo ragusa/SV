@@ -65,12 +65,10 @@ Real SV_ArtificialViscFlux_Expl::computeQpResidual()
 
 Real SV_ArtificialViscFlux_Expl::computeQpJacobian()
 {
-  // We assumed that the all of the above regularization can be approximated by the parabolic regularization:
-  return _kappa[_qp]*_grad_phi[_j][_qp]*_grad_test[_i][_qp];
+  return 0.;
 }
 
 Real SV_ArtificialViscFlux_Expl::computeQpOffDiagJacobian( unsigned int _jvar)
 {
-  // With above assumption, there is no contribution from the dissipative terms to the off diagonal terms of the jacobian matrix.
   return 0.*_jvar;
 }
