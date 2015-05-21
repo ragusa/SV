@@ -18,8 +18,8 @@ template<>
 InputParameters validParams<RectangleFunction1D>()
 {
   InputParameters params = validParams<Function>();
-  params.addParam<Real>("xmin", 0.4., "Beginning of the rectangle" );
-  params.addParam<Real>("xmax", 0.6., "End of the rectangle" );
+  params.addParam<Real>("xmin", 0.4, "Beginning of the rectangle" );
+  params.addParam<Real>("xmax", 0.6, "End of the rectangle" );
   params.addParam<Real>("value_before", 0., "Value of the function before the rectangle" );
   params.addParam<Real>("value_rect"  , 1., "Value of the function in the rectangle" );
   params.addParam<Real>("value_after" , 2., "Value of the function after the rectangle" );

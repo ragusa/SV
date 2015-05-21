@@ -16,7 +16,7 @@
 #define PARTIAL_COSINE_FUNCTION_1D_H
 
 #include "Function.h"
-#include "FunctionInterface.h" // jcr what is this for?
+// #include "FunctionInterface.h" // jcr what is this for?
 
 class PartialCosineFunction1D;
 

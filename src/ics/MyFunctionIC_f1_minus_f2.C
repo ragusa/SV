@@ -28,7 +28,7 @@ InputParameters validParams<MyFunctionIC_f1_minus_f2>()
 MyFunctionIC_f1_minus_f2::MyFunctionIC_f1_minus_f2(const std::string & name, InputParameters parameters) :
     FunctionIC(name, parameters),
     _func1(getFunction("function1")),
-    _func1(getFunction("function2"))
+    _func2(getFunction("function2"))
 {
 }
 

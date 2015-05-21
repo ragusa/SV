@@ -18,8 +18,8 @@ template<>
 InputParameters validParams<PartialCosineFunction1D>()
 {
   InputParameters params = validParams<Function>();
-  params.addParam<Real>("xmin", 0.4., "Beginning of the partial cosine" );
-  params.addParam<Real>("xmax", 0.6., "End of the partial cosine" );
+  params.addParam<Real>("xmin", 0.4, "Beginning of the partial cosine" );
+  params.addParam<Real>("xmax", 0.6, "End of the partial cosine" );
   return params;
 }
 

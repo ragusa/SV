@@ -16,7 +16,7 @@
 #define BATHYMETRY1D_STEP_H
 
 #include "Function.h"
-#include "FunctionInterface.h" // jcr what is this for?
+// #include "FunctionInterface.h" // jcr what is this for?
 
 class Bathymetry1D_step;
 

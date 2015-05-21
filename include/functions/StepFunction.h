@@ -16,7 +16,7 @@
 #define STEPFUNCTION_H
 
 #include "Function.h"
-#include "FunctionInterface.h" // jcr what is this for?
+// #include "FunctionInterface.h" // jcr what is this for?
 
 class StepFunction;
 
@@ -34,12 +34,14 @@ public:
 
 protected:
     
-    // values for a step function
-    Real _value_before_step;
-    Real _value_after_step;
-    Real _x0; // location of the step
-    Real _y0; // location of the step
-    Real _z0; // location of the step
+  MooseMesh & _mesh;
+
+  // values for a step function
+  Real _value_before_step;
+  Real _value_after_step;
+  Real _x0; // location of the step
+  Real _y0; // location of the step
+  Real _z0; // location of the step
 
 };
 
