@@ -1,13 +1,13 @@
 [GlobalParams]
-  gravity = 9.81
+  gravity = 1.
 []
 
 [Mesh]
   type = GeneratedMesh
   dim = 1
-  nx = 150
+  nx = 100
   xmin = 0.
-  xmax = 1500.
+  xmax = 1.
 []
 
 [Functions]
@@ -19,16 +19,16 @@
   [../]
 
   [./bathymetry]
-    type = Bathymetry1D_rect
-    domain_length = 1500
-    step_height   = 8
+    type = Bathymetry1D_partial_cosine
+    xmin  = 0.4
+    xmax  = 0.6
   [../]
 
     [./total_height]
-    type = StepFunction
-    x0                 = 750.
-    value_before_step  = 20.
-    value_after_step   = 15.
+    type = ConstantFunction
+    xmin  = 0.1
+    xmax  = 0.2
+    value = 1.
   [../]
 []
 
@@ -53,7 +53,7 @@
     order = FIRST  
     [./InitialCondition]
       type = ConstantIC
-      value = 0.
+      value = 0.3
     [../]
   [../]
 []

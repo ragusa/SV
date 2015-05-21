@@ -1,40 +1,24 @@
-[GlobalParams]
-  gravity = 9.81
-[]
-
 [Mesh]
   type = GeneratedMesh
   dim = 1
-  nx = 150
-  xmin = 0.
-  xmax = 1500.
+  nx = 200
+  xmin = -5.
+  xmax =  5.
 []
 
 [Functions]
   [./ic_func_height]
-    axis = 0
-    type = MyFunctionIC_f1_minus_f2
-    function1 = total_height
-    function2 = bathymetry
-  [../]
-
-  [./bathymetry]
-    type = Bathymetry1D_rect
-    domain_length = 1500
-    step_height   = 8
-  [../]
-
-    [./total_height]
     type = StepFunction
-    x0                 = 750.
-    value_before_step  = 20.
-    value_after_step   = 15.
+    x0                 = 0.
+    value_before_step  = 3.
+    value_after_step   = 1.
   [../]
 []
 
 [UserObjects]
   [./hydro]
     type = HydrostaticPressure
+    gravity = 9.81
   [../]
 []
 
@@ -86,7 +70,7 @@
     variable = q_x
     h = h
     q_x = q_x
-    B = bathy_aux
+    gravity = 9.81
     component = 0
     eos = hydro
   [../]
@@ -99,7 +83,7 @@
 []
 
 [AuxVariables]
-  [./bathy_aux]
+  [./vel_aux]
     family = LAGRANGE
     order = FIRST
   [../]
@@ -126,10 +110,11 @@
 []
 
 [AuxKernels]
-  [./bathy_ak]
-    type = FunctionAux
-    variable = bathy_aux
-    function = bathymetry
+  [./vel_ak]
+    type = VelocityAux
+    variable = vel_aux
+    h = h
+    q_x = q_x
   [../]
 
  [./entropy_ak]
@@ -177,14 +162,14 @@
     type = DirichletBC
     variable = h
     boundary = left
-    value = 20.
+    value = 10.
   [../]
 
   [./right_h]
     type = DirichletBC
     variable = h
     boundary = right
-    value = 15.
+    value = 0.5
   [../]
 
   [./left_q_x]
