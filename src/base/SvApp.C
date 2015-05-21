@@ -35,8 +35,12 @@
 // materials
 #include "ComputeViscCoeff.h"
 
-// bathymetry function
+// functions
 #include "Bathymetry1D_step.h"
+#include "Bathymetry1D_rect.h"
+#include "PartialCosineFunction1D.h"
+#include "RectangleFunction1D.h"
+#include "StepFunction.h"
 
 
 template<>
@@ -110,6 +114,10 @@ SvApp::registerObjects(Factory & factory)
 
   // functions
   registerFunction(Bathymetry1D_step);
+  registerFunction(Bathymetry1D_rect);
+  registerFunction(PartialCosineFunction1D);
+  registerFunction(RectangleFunction1D);
+  registerFunction(StepFunction);
 }
 
 void
