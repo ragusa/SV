@@ -41,7 +41,7 @@ SVSetWaterHeightInletBC::SVSetWaterHeightInletBC(const std::string & name, Input
   if (_mesh.dimension() >= 2)
     mooseError("'" << this->name() << "' can only be used with 1-D mesh since it is designed for the Saint-Venant equations.");
   // Determine whether or not u_bc is specified in the input file
-  _u_bc_specified = isCoupled("u_bc") ? true : false;
+  _is_u_bc_specified = isCoupled("u_bc") ? true : false;
 }
 
 Real
@@ -60,8 +60,8 @@ SVSetWaterHeightInletBC::computeQpResidual()
   // If the fluid is supercritical u_bc is used to evaluate q_bc at the boundary
   if (Mach>1)
   {
-    if (!_u_bc_specified)
-      mooseError("'" << this->name() << "': the fluid becomes supersonic but you did not sepcify an inlet fluid velocity value in the input file.");
+    if (!_is_u_bc_specified)
+      mooseError("'" << this->name() << "': the fluid becomes supersonic but you did not specify an inlet fluid velocity value in the input file.");
     q_bc(0) = _h_bc*_u_bc;
   }
   Real p = _eos.pressure(_h_bc, q_bc);
@@ -70,10 +70,11 @@ SVSetWaterHeightInletBC::computeQpResidual()
   switch (_equ_type)
   {
     case CONTINUITY:
+	// \int test div(q) = -\int grad(test) q + \int_bd q dot n test
       return q_bc*_normals[_qp]*_test[_i][_qp];
       break;
     case X_MOMENTUM:
-      return (_u[_qp]*_u[_qp]/_h_bc+p)*_normals[_qp](0)*_test[_i][_qp];
+      return ( _u[_qp]*_u[_qp]/_h_bc + p )*_normals[_qp](0)*_test[_i][_qp];
       break;
     default:
       mooseError("'" << this->name() << "' Invalid equation name.");
@@ -83,33 +84,39 @@ SVSetWaterHeightInletBC::computeQpResidual()
 Real
 SVSetWaterHeightInletBC::computeQpJacobian()
 {
+  // recall that h_bc is imposed in this class
+  
   // Precompute some values
   Real vel = _q_x[_qp]/_h_bc;
   RealVectorValue q_bc(_q_x[_qp], 0., 0.);
   Real c2 = _eos.c2(_h_bc, q_bc);
   Real Mach = std::fabs(vel)/std::sqrt(c2);
-  Real dpdu;
+  Real dpdqx;
 
-  // Return jacobian terms
+  // Return diagonal jacobian terms
   if (Mach<1)
   {
     switch (_equ_type)
     {
       case X_MOMENTUM:
-        dpdu = _eos.dp_dqx(_h_bc, q_bc);
-        return _phi[_j][_qp]*(2.*_u[_qp]/_h_bc+dpdu)*_normals[_qp](0)*_test[_i][_qp];
+        dpdqx = _eos.dp_dqx(_h_bc, q_bc);
+		// recall that _u is the moose var, here _u is q_x
+        return _phi[_j][_qp]*(2.*_u[_qp]/_h_bc+dpdqx)*_normals[_qp](0)*_test[_i][_qp];
         break;
       default:
         return 0.;
     }
   }
   else
+	  // if Mach>1, both h_bc and q_bc=h_bc*u_bc are imposed
     return 0.;
 }
 
 Real
 SVSetWaterHeightInletBC::computeQpOffDiagJacobian(unsigned jvar)
 {
+  // recall that h_bc is imposed in this class
+
   // Precompute some values
   Real vel = _q_x[_qp]/_h_bc;
   RealVectorValue q_bc(_q_x[_qp], 0., 0.);
@@ -122,9 +129,11 @@ SVSetWaterHeightInletBC::computeQpOffDiagJacobian(unsigned jvar)
     switch (_equ_type)
     {
       case CONTINUITY:
+	    // residual: \int_bc q n test --> off-diag jac below
         return _phi[_j][_qp]*_normals[_qp](0)*_test[_i][_qp];
         break;
       default:
+	  // since h_bc is imposed in this class, there is no off-diag jac for the momentum eq in 1d
         return 0.;
         break;
     }

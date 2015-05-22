@@ -42,7 +42,7 @@ SVSetWaterVelocityInletBC::SVSetWaterVelocityInletBC(const std::string & name, I
   if (_mesh.dimension() > 1)
     mooseError("'" << this->name() << "' can only be used with 1-D mesh since it is designed for the Saint-Venant equations.");
   // Determine whether or not u_bc is specified in the input file
-  _h_bc_specified = isCoupled("h_bc") ? true : false;
+  _is_h_bc_specified = isCoupled("h_bc") ? true : false;
 }
 
 Real
@@ -62,21 +62,24 @@ SVSetWaterVelocityInletBC::computeQpResidual()
   // If the fluid is supercritical u_bc is used to evaluate q_bc at the boundary
   if (Mach>1)
   {
-    if (!_h_bc_specified)
-      mooseError("'" << this->name() << "': the fluid becomes supercritical but you did not sepcify an inlet water height value in the input file.");
+    if (!_is_h_bc_specified)
+      mooseError("'" << this->name() << "': the fluid becomes supercritical but you did not specify an inlet water height value in the input file.");
     q_bc(0) = _h_bc*_u_bc;
     p_bc = _eos.pressure(_h_bc, q_bc);
     h_bc = _h_bc;
   }
+  else
+	mooseError("'" << this->name() << "': the fluid is SUBcritical. You should impose h, not velocity. This is the wrong BC type for this problem");
 
   // Return flux
   switch (_equ_type)
   {
     case CONTINUITY:
+	// \int test div(q) = -\int grad(test) q + \int_bd q dot n test
       return h_bc*_u_bc*_normals[_qp](0)*_test[_i][_qp];
       break;
     case X_MOMENTUM:
-      return (_u_bc*_u_bc*h_bc+p_bc)*_normals[_qp](0)*_test[_i][_qp];
+      return ( _u_bc*_u_bc*h_bc + p_bc )*_normals[_qp](0)*_test[_i][_qp];
       break;
     default:
       mooseError("'" << this->name() << "' Invalid equation name.");
@@ -86,12 +89,16 @@ SVSetWaterVelocityInletBC::computeQpResidual()
 Real
 SVSetWaterVelocityInletBC::computeQpJacobian()
 {
+  // for Mach>1, both h_bc and u_bc are specified, no jac terms
+  // for Mach<1, this is the wrong BC type
   return 0.;
 }
 
 Real
 SVSetWaterVelocityInletBC::computeQpOffDiagJacobian(unsigned jvar)
 {
+  // for Mach>1, both h_bc and u_bc are specified, no jac terms
+  // for Mach<1, this is the wrong BC type
   return 0.;
 }
 

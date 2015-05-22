@@ -37,7 +37,7 @@ SVSetWaterVelocity::SVSetWaterVelocity(const std::string & name, InputParameters
     _q_x_var(coupled("q_x"))
 {
   if (_mesh.dimension() > 1)
-    mooseError("'" << this->name() << "' can only be used with 1-D mesh since it is deisnged for the Saint-Venant equations.");
+    mooseError("'" << this->name() << "' can only be used with 1-D mesh since it is deigned for the Saint-Venant equations.");
 }
 
 Real
@@ -61,12 +61,12 @@ SVSetWaterVelocity::computeQpResidual()
 Real
 SVSetWaterVelocity::computeQpJacobian()
 {
-  return 0.;
+  return 0.; // jcr really ?
 }
 
 Real
 SVSetWaterVelocity::computeQpOffDiagJacobian(unsigned jvar)
 {
-  return 0.;
+  return 0.; // jcr really ?
 }
 
