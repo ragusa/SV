@@ -30,7 +30,14 @@ K3(:,3)=[];
 poly = -lambda*det(K1)-nx*det(K2)+ny*det(K3)
 
 simplify(poly)
-simplify(poly,'IgnoreAnalyticConstraints',true,'Criterion', 'preferReal','Steps',100)
+% version_date=sprintf(version -date);
+% if(datenum(a,'mmm dd, yyyy') > 73515)
+%     simplify(poly,'IgnoreAnalyticConstraints',true,'Criterion', 'preferReal','Steps',100)
+% end
+B=struct2cell(ver);
+if ~strcmp(B{3},'(R2012b)')
+    simplify(poly,'IgnoreAnalyticConstraints',true,'Criterion', 'preferReal','Steps',100)
+end
 
 %%%%%%%%%%%
 syms h
@@ -48,8 +55,22 @@ B=[0  0  1;...
 
 % check
 % K-nx*A-ny*B
+Atilde = simplify(iM*A*M)
+Btilde = simplify(iM*B*M)
 
+Ktilde = Atilde*nx + Btilde*ny
+eig(Ktilde)
 
+syms h L
+assume(h,'real')
+assume(L,'real')
+assume(nx,'real')
+assume(ny,'real')
+L = [0 1 -1; 1 h/c*nx h/c*ny; -1 h/c*nx h/c*ny]
+simplify(L')
+
+simplify(L*Ktilde)
+simplify(L'*Ktilde)
 error('qqq')
 %%%%%%%%%%%
 clear u v nx ny c lambda
