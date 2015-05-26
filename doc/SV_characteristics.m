@@ -39,6 +39,7 @@ if ~strcmp(B{3},'(R2012b)')
     simplify(poly,'IgnoreAnalyticConstraints',true,'Criterion', 'preferReal','Steps',100)
 end
 
+fprintf('\n\n');
 %%%%%%%%%%%
 syms h
 
@@ -54,12 +55,38 @@ B=[0  0  1;...
     c*c-v*v, 0, 2*v]
 
 % check
-% K-nx*A-ny*B
+% K-(nx*A+ny*B)
+
+% transformed matrices
+fprintf('\nsimplify(Atilde):: \n');
 Atilde = simplify(iM*A*M)
+fprintf('\nsimplify(Btilde):: \n');
 Btilde = simplify(iM*B*M)
 
-Ktilde = Atilde*nx + Btilde*ny
-eig(Ktilde)
+Ktilde = Atilde*nx + Btilde*ny;
+fprintf('\nsimplify(Ktilde):: \n');
+simplify(Ktilde)
+
+% get eigenvalues for Ktilde:
+assume(nx,'real')
+assume(ny,'real')
+assume(nx^2 + ny^2 == 1);
+assume((nx^2 + ny^2)^(1/2) == 1);
+fprintf('\nsimplify(eig(Ktilde)):: \n');
+simplify(eig(Ktilde))
+[right,VP,left]=eig(Ktilde)
+fprintf('\nsimplify(right):: \n');
+simplify(right)
+fprintf('\nsimplify(VP):: \n');
+simplify(VP)
+% simplify(left)
+% quick check: one should have Ktilde*right = right*VP
+fprintf('\nquick check: one should have Ktilde*right = right*VP \n');
+simplify(Ktilde*right - right*VP, 'IgnoreAnalyticConstraints',true,'Criterion', 'preferReal','Steps',100)
+
+%%%%%%%%%%%
+error('qqq')
+%%%%%%%%%%%
 
 syms h L
 assume(h,'real')
@@ -71,6 +98,8 @@ simplify(L')
 
 simplify(L*Ktilde)
 simplify(L'*Ktilde)
+
+%%%%%%%%%%%
 error('qqq')
 %%%%%%%%%%%
 clear u v nx ny c lambda
