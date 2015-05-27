@@ -34,8 +34,8 @@ simplify(poly)
 % if(datenum(a,'mmm dd, yyyy') > 73515)
 %     simplify(poly,'IgnoreAnalyticConstraints',true,'Criterion', 'preferReal','Steps',100)
 % end
-B=struct2cell(ver);
-if ~strcmp(B{3},'(R2012b)')
+check_version=struct2cell(ver);
+if ~strcmp(check_version{3},'(R2012b)')
     simplify(poly,'IgnoreAnalyticConstraints',true,'Criterion', 'preferReal','Steps',100)
 end
 
@@ -81,11 +81,15 @@ fprintf('\nsimplify(VP):: \n');
 simplify(VP)
 % simplify(left)
 % quick check: one should have Ktilde*right = right*VP
-fprintf('\nquick check: one should have Ktilde*right = right*VP \n');
-simplify(Ktilde*right - right*VP, 'IgnoreAnalyticConstraints',true,'Criterion', 'preferReal','Steps',100)
+fprintf('\nquick check: one should have Ktilde*right - right*VP = 0\n');
+if ~strcmp(check_version{3},'(R2012b)')
+    simplify(Ktilde*right - right*VP, 'IgnoreAnalyticConstraints',true,'Criterion', 'preferReal','Steps',100)
+else
+    simplify(Ktilde*right - right*VP)
+end
 
 %%%%%%%%%%%
-error('qqq')
+% error('qqq')
 %%%%%%%%%%%
 
 syms h L
@@ -93,11 +97,22 @@ assume(h,'real')
 assume(L,'real')
 assume(nx,'real')
 assume(ny,'real')
-L = [0 1 -1; 1 h/c*nx h/c*ny; -1 h/c*nx h/c*ny]
-simplify(L')
+% old and wrong: L = [0 1 -1; 1 h/c*nx h/c*ny; -1 h/c*nx h/c*ny]
+L = [0 ny -nx; c h*nx h*ny; -c h*nx h*ny]'
+fprintf('\nsimplify(L):: \n');
+simplify(L)
 
-simplify(L*Ktilde)
-simplify(L'*Ktilde)
+[left,VP]=eig(Ktilde');
+fprintf('\nsimplify(left):: \n');
+simplify(left)
+
+fprintf('\nquick check: one should have Ktilde^T*left - left*VP = 0\n');
+assume(nx,'real')
+assume(ny,'real')
+assume(nx^2 + ny^2 == 1);
+assume((nx^2 + ny^2)^(1/2) == 1);
+simplify(L'*Ktilde-VP*L')
+simplify(Ktilde'*L-L*VP)
 
 %%%%%%%%%%%
 error('qqq')
