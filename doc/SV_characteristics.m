@@ -88,8 +88,10 @@ else
     simplify(Ktilde*right - right*VP)
 end
 
+[Ri,VP]=eig(K)
+[Le,VP]=eig(K')
 %%%%%%%%%%%
-% error('qqq')
+error('qqq')
 %%%%%%%%%%%
 
 syms h L
