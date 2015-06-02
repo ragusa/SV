@@ -25,7 +25,7 @@ K = nx*A +ny*B
 [R,VP]=eig(K);
 VP=simplify(VP)
 R=simplify(R);
-R(:,1)=R(:,1)*nx;
+R(:,1)=R(:,1)*nx/c/2; %%% jcr
 R(:,2)=R(:,2)*(v+c*ny)/c/2;
 R(:,3)=R(:,3)*(v-c*ny)/c/2;
 R=simplify(R)
@@ -36,6 +36,7 @@ assume(ny,'real')
 aux=simplify(aux);
 assume((nx*nx+ny*ny)^(1/2)==1)
 aux=simplify(aux)
+R*2*c
 
 % find eigenvalues and left eigenvectors
 assume(nx,'real')
