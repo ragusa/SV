@@ -48,7 +48,7 @@ assume(ny,'real')
 assume(nx,'real')
 assume(nx*nx+ny*ny==1)
 Lt=simplify(Lt);
-Lt(:,1)=Lt(:,1)*nx;
+Lt(:,1)=Lt(:,1)*nx*2*c;
 Lt(:,2)=Lt(:,2)*ny;
 Lt(:,3)=Lt(:,3)*(-ny);
 L=Lt';
