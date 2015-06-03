@@ -37,7 +37,7 @@ SVSetWaterVelocity::SVSetWaterVelocity(const std::string & name, InputParameters
     _q_x_var(coupled("q_x"))
 {
   if (_mesh.dimension() > 1)
-    mooseError("'" << this->name() << "' can only be used with 1-D mesh since it is deigned for the Saint-Venant equations.");
+    mooseError("'" << this->name() << "' can only be used with 1-D mesh since it is designed for the Saint-Venant equations.");
 }
 
 Real

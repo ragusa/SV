@@ -46,7 +46,7 @@ protected:
   unsigned _q_x_var;
 
   // boolean
-  bool _h_bc_specified;
+  bool _is_h_bc_specified;
 };
 
 #endif // SVSETWATERVELOCITYINLETBC_H

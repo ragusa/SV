@@ -69,13 +69,13 @@ SVSetWaterVelocityInletBC::computeQpResidual()
     h_bc = _h_bc;
   }
   else
-	mooseError("'" << this->name() << "': the fluid is SUBcritical. You should impose h, not velocity. This is the wrong BC type for this problem");
+  mooseError("'" << this->name() << "': the fluid is SUBcritical. You should impose h, not velocity. This is the wrong BC type for this problem");
 
   // Return flux
   switch (_equ_type)
   {
     case CONTINUITY:
-	// \int test div(q) = -\int grad(test) q + \int_bd q dot n test
+  // \int test div(q) = -\int grad(test) q + \int_bd q dot n test
       return h_bc*_u_bc*_normals[_qp](0)*_test[_i][_qp];
       break;
     case X_MOMENTUM:
