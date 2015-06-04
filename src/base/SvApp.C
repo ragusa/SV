@@ -26,7 +26,7 @@
 #include "SVSetWaterHeightInletBC.h"
 #include "SVSetWaterHeightOutletBC.h"
 #include "SVSetWaterVelocityInletBC.h"
-#include "SVSetWaterVelocity.h"
+## #include "SVSetWaterVelocity.h"
 #include "SolidWallBC.h"
 
 // userobject: eos
