@@ -70,7 +70,7 @@ SVSetWaterHeightInletBC::computeQpResidual()
   switch (_equ_type)
   {
     case CONTINUITY:
-	// \int test div(q) = -\int grad(test) q + \int_bd q dot n test
+  // \int test div(q) = -\int grad(test) q + \int_bd q dot n test
       return q_bc*_normals[_qp]*_test[_i][_qp];
       break;
     case X_MOMENTUM:
@@ -100,7 +100,7 @@ SVSetWaterHeightInletBC::computeQpJacobian()
     {
       case X_MOMENTUM:
         dpdqx = _eos.dp_dqx(_h_bc, q_bc);
-		// recall that _u is the moose var, here _u is q_x
+        // recall that _u is the moose var, here _u is q_x
         return _phi[_j][_qp]*(2.*_u[_qp]/_h_bc+dpdqx)*_normals[_qp](0)*_test[_i][_qp];
         break;
       default:
@@ -108,7 +108,7 @@ SVSetWaterHeightInletBC::computeQpJacobian()
     }
   }
   else
-	  // if Mach>1, both h_bc and q_bc=h_bc*u_bc are imposed
+    // if Mach>1, both h_bc and q_bc=h_bc*u_bc are imposed
     return 0.;
 }
 
@@ -129,11 +129,11 @@ SVSetWaterHeightInletBC::computeQpOffDiagJacobian(unsigned jvar)
     switch (_equ_type)
     {
       case CONTINUITY:
-	    // residual: \int_bc q n test --> off-diag jac below
+      // residual: \int_bc q n test --> off-diag jac below
         return _phi[_j][_qp]*_normals[_qp](0)*_test[_i][_qp];
         break;
       default:
-	  // since h_bc is imposed in this class, there is no off-diag jac for the momentum eq in 1d
+    // since h_bc is imposed in this class, there is no off-diag jac for the momentum eq in 1d
         return 0.;
         break;
     }

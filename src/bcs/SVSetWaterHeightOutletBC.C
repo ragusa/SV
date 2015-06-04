@@ -96,7 +96,7 @@ SVSetWaterHeightOutletBC::computeQpJacobian()
   switch (_equ_type)
   {
   case X_MOMENTUM:
-   	  // recall that _u is the moose var, here _u is q_x
+      // recall that _u is the moose var, here _u is q_x
       return _phi[_j][_qp]*(2.*_u[_qp]/h_bc+_eos.dp_dqx(h_bc, q_bc))*_normals[_qp](0)*_test[_i][_qp];
       break;
     default:
@@ -121,8 +121,8 @@ SVSetWaterHeightOutletBC::computeQpOffDiagJacobian(unsigned jvar)
     switch (_equ_type)
     {
       case X_MOMENTUM:
-	    // set Mach>1, h is the code var and is not set by the BC
-		// we need to take the derivative of x-mom wrt to h. below, _u )moose var) is q_x
+      // set Mach>1, h is the code var and is not set by the BC
+    // we need to take the derivative of x-mom wrt to h. below, _u )moose var) is q_x
         return _phi[_j][_qp]*(-_u[_qp]*_u[_qp]/(_h[_qp]*_h[_qp])+_eos.dp_dh(h_bc, q_bc))*_normals[_qp](0)*_test[_i][_qp];
         break;
       default:
