@@ -65,7 +65,7 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name,
   //_entropy_pps_name(getParam<std::string>("PPS_name"))
 {
   if (_Ce <= 0. || _Ce > 2.)
-    mooseError("Error in "<<_name<<" The coefficient Ce has to be positive and should not be larger than 2.");
+    mooseError("ERROR in "<<this->name()<<": the coefficient Ce has to be positive and should not be larger than 2.");
 }
 
 void
@@ -137,7 +137,7 @@ ComputeViscCoeff::computeQpProperties()
     }
     break;
   default:
-    mooseError("Error in "<<name()<<" The viscosity type entered in the input file is not implemented.");
+    mooseError("Error in "<<this->name()<<" The viscosity type entered in the input file is not implemented.");
     break;
   }
 }

@@ -13,6 +13,7 @@
 
 // auxkernels
 #include "BathymetryAux.h"
+#include "FroudeNumberAux.h"
 #include "PressureAux.h"
 #include "EntropyAux.h"
 #include "EntropyFluxAux.h"
@@ -26,7 +27,7 @@
 #include "SVSetWaterHeightInletBC.h"
 #include "SVSetWaterHeightOutletBC.h"
 #include "SVSetWaterVelocityInletBC.h"
-## #include "SVSetWaterVelocity.h"
+// #include "SVSetWaterVelocity.h"
 #include "SolidWallBC.h"
 
 // userobject: eos
@@ -90,6 +91,7 @@ SvApp::registerObjects(Factory & factory)
 
   // auxkernels
   registerAux(BathymetryAux);
+  registerAux(FroudeNumberAux);
   registerAux(PressureAux);
   registerAux(EntropyAux);
   registerAux(EntropyFluxAux);
@@ -103,7 +105,7 @@ SvApp::registerObjects(Factory & factory)
   registerBoundaryCondition(SVSetWaterHeightInletBC);
   registerBoundaryCondition(SVSetWaterHeightOutletBC);
   registerBoundaryCondition(SVSetWaterVelocityInletBC);
-  registerBoundaryCondition(SVSetWaterVelocity);
+//  registerBoundaryCondition(SVSetWaterVelocity);
   registerBoundaryCondition(SolidWallBC);
 
   // userobject: eos

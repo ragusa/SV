@@ -61,7 +61,7 @@ StepFunction::value(Real /*t*/, const Point & p)
       return _value_after_step;
     break;
   default:
-    mooseError("ERROR in "<<name()<<": wrong mesh dimension.");
+    mooseError("ERROR in "<<this->name()<<": wrong mesh dimension.");
     
   } 
 }

@@ -23,8 +23,8 @@ InputParameters validParams<PressureAux>()
   
   // Coupled variables
   params.addRequiredCoupledVar("h", "water height");
-  params.addRequiredCoupledVar("q_x", "x component of momentum");
-  params.addCoupledVar("q_y", "y component of momentum");
+  params.addRequiredCoupledVar("q_x", "x-component of momentum");
+  params.addCoupledVar("q_y", "y-component of momentum");
   // Equation of state
   params.addRequiredParam<UserObjectName>("eos", "equation of state");
 

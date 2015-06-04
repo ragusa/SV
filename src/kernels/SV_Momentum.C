@@ -43,6 +43,8 @@ SV_Momentum::SV_Momentum(const std::string & name,
   // Coupled variables
   _h(coupledValue("h")),
   _q_x(coupledValue("q_x")),
+	// the test with is_implicit is not needed. just use implicit=T/F in the kernel block itself!
+	// _q_y( _mesh.dimension() == 2 ? ( _is_implicit ? coupledValue("q_y") : coupledValueOld("q_y") ) : _zero),
   _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero),
   // Coupled auxiliary variables
   _grad_bathymetry(isCoupled("B") ? coupledGradient("B") : _grad_zero),
@@ -59,15 +61,18 @@ SV_Momentum::SV_Momentum(const std::string & name,
 
 {
     if ( _component > 1 )
-        mooseError("ERROR: the integer variable 'component' can only take values: 0 or 1 for the shallow water system!");
+        mooseError("ERROR in "<<this->name()<<": the integer variable 'component' can only take values: 0 or 1 for the shallow water system!");
 }
 
 Real SV_Momentum::computeQpResidual()
 {
+  if ( !_is_implicit )
+  	return 0.;  // nothing to do for explicit time integration
+  	
   // vector q
   RealVectorValue _vector_q( _q_x[_qp], _q_y[_qp], 0. );
   if( _h[_qp] < 0. )
-    mooseError("h < 0");
+    mooseError("ERROR in "<<this->name()<<":h < 0");
 
   // advection term q^2/h, integrated by parts:
   // component 0: -\int (qxqx/h dbdx + qxqy/h dbdy) = -\int qx/h \vec{q} \vec{grad}b
@@ -93,6 +98,9 @@ Real SV_Momentum::computeQpResidual()
 
 Real SV_Momentum::computeQpJacobian()
 {
+  if ( !_is_implicit )
+  	return 0.;  // nothing to do for explicit time integration
+
   // derivative of component 0 with respect to component 0:
   //  -\int (2qx/h dbdx + qy/h dbdy) 
   // derivative of component 1 with respect to component 1:
@@ -114,7 +122,7 @@ Real SV_Momentum::computeQpJacobian()
   else if (_component == 1)
     d_pressure_du *= _eos.dp_dqy(_h[_qp], _vector_q);
   else 
-    mooseError("ERROR: the integer variable 'component' can only take values: 0 or 1 for the shallow water system!");
+    mooseError("ERROR in "<<this->name()<<": the integer variable 'component' can only take values 0 or 1 for the shallow water system!");
 
   // Return the value of the jacobian:
   // the "-" signs come from IBP
@@ -123,6 +131,9 @@ Real SV_Momentum::computeQpJacobian()
 
 Real SV_Momentum::computeQpOffDiagJacobian(unsigned int _jvar)
 {
+  if ( !_is_implicit )
+  	return 0.;  // nothing to do for explicit time integration
+
   // Compute the momentum vector q:
   RealVectorValue _vector_q(_q_x[_qp], _q_y[_qp], 0.);
 

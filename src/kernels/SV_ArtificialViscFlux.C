@@ -58,7 +58,7 @@ Real SV_ArtificialViscFlux::computeQpResidual()
        return _kappa[_qp]*_grad_u[_qp]*_grad_test[_i][_qp];
        break;
     default:
-      mooseError("INVALID equation name.");
+      mooseError("ERROR in "<<this->name()<<":INVALID equation name.");
     }
   }
 }

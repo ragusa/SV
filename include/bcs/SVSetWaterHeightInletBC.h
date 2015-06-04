@@ -48,7 +48,7 @@ protected:
   unsigned _q_x_var;
 
   // boolean
-  bool _u_bc_specified;
+  bool _is_u_bc_specified;
 };
 
 #endif // SVSETWATERHEIGHTINLETBC_H

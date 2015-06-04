@@ -12,37 +12,37 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef ENTROPYFLUXAUX_H
-#define ENTROPYFLUXAUX_H
+#ifndef FROUDENUMBERAUX_H
+#define FROUDENUMBERAUX_H
 
 #include "AuxKernel.h"
+#include "HydrostaticPressure.h" 
 
-class EntropyFluxAux;
+class FroudeNumberAux;
 
 template<>
-InputParameters validParams<EntropyFluxAux>();
+InputParameters validParams<FroudeNumberAux>();
 
-class EntropyFluxAux : public AuxKernel
+class FroudeNumberAux : public AuxKernel
 {
 public:
 
-  EntropyFluxAux(const std::string & name, InputParameters parameters);
+  FroudeNumberAux(const std::string & name, InputParameters parameters);
 
 protected:
-    virtual Real computeValue();
-    
-    // Implicit:
-    //const bool & _isImplicit;
-    
-    // Aux variables:
-    VariableValue & _momentum_cmp;
-    VariableValue & _h;
-    VariableValue & _q_x;
-    VariableValue & _q_y;
-    VariableValue & _bathymetry;
-    
-    // Parameters:
-    Real _gravity;
+  virtual Real computeValue();
+
+  // Coupled variables
+  VariableValue & _h;
+  VariableValue & _q_x;
+  VariableValue & _q_y;
+
+  // Equation of state:
+  const HydrostaticPressure & _eos;
+
+  // Parameters:
+  Real _gravity;
+
 };
 
-#endif // ENTROPYFLUXAUX_H
+#endif // FROUDENUMBERAUX_H

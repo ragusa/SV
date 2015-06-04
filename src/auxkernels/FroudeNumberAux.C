@@ -12,43 +12,45 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 /**
-This function computes the entropy used in the definition of 
-the entropy viscosity coefficient.
+This function computes the density of the fluid.
 **/
-#include "EntropyAux.h"
+#include "FroudeNumberAux.h"
 
 template<>
-InputParameters validParams<EntropyAux>()
+InputParameters validParams<FroudeNumberAux>()
 {
   InputParameters params = validParams<AuxKernel>();
-  // params.addParam<bool>("isImplicit", true, "implicit or explicit schemes.");
+  
   // Coupled variables
-  params.addRequiredCoupledVar("h", "height of the fluid");
-  params.addRequiredCoupledVar("q_x", "x-component of the momentum");
-  params.addCoupledVar("q_y", "y-component of the momentum");
+  params.addRequiredCoupledVar("h", "water height");
+  params.addRequiredCoupledVar("q_x", "x-component of h*vec{u}");
+  params.addCoupledVar("q_y", "y-component of h*vec{u}");
+  // Eos 
+  params.addRequiredParam<UserObjectName>("eos", "Equation of state");
   // Gravity
-  params.addRequiredParam<Real>("gravity", "gravity magnitude");
-
+  params.addRequiredParam<Real>("gravity", "Gravity magnitude");
+  
   return params;
 }
 
-EntropyAux::EntropyAux(const std::string & name, InputParameters parameters) :
-                       AuxKernel(name, parameters),
+FroudeNumberAux::FroudeNumberAux(const std::string & name, InputParameters parameters) :
+  AuxKernel(name, parameters),
+  // Coupled variables
   _h(coupledValue("h")),
   _q_x(coupledValue("q_x")),
   _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero),
-  // Gravity:
+  // Equation of state:
+  _eos(getUserObject<HydrostaticPressure>("eos")),
+  // gravity
   _gravity(getParam<Real>("gravity"))
-{
-}
+{}
 
-Real EntropyAux::computeValue()
+Real
+FroudeNumberAux::computeValue()
 {
+  // Compute the momentum vector
   RealVectorValue _vector_q( _q_x[_qp], _q_y[_qp], 0. );
-  RealVectorValue _vector_vel = _vector_q / _h[_qp];
 
-  // size_sq returns the square of the vector, hence u^2+v^2
-  Real entr = 0.5*_h[_qp]* ( _gravity*_h[_qp] + _vector_vel.size_sq() );
-  return entr;
+  // Return the value of the Froude number: Fr = u/c
+  return  _vector_q.size()/( _h[_qp] * std::sqrt(_eos.c2(_h[_qp], _vector_q)) );
 }
-
