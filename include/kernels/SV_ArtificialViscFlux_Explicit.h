@@ -50,7 +50,7 @@ private:
   MooseEnum _equ_type;
 
   // Material property: viscosity coefficient.
-  MaterialProperty<Real> & _kappa;
+  const MaterialProperty<Real> & _kappa;
 };
 
 #endif // SV_ARTIFICIALVISCFLUX_EXPLICIT_H
