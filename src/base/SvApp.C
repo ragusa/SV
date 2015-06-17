@@ -5,11 +5,11 @@
 
 // kernels
 #include "SV_Continuity.h"
-#include "SV_Continuity_Explicit.h"
+// #include "SV_Continuity_Explicit.h"
 #include "SV_Momentum.h"
-#include "SV_Momentum_Explicit.h"
+// #include "SV_Momentum_Explicit.h"
 #include "SV_ArtificialViscFlux.h"
-#include "SV_ArtificialViscFlux_Explicit.h"
+// #include "SV_ArtificialViscFlux_Explicit.h"
 
 // auxkernels
 #include "BathymetryAux.h"
@@ -83,11 +83,11 @@ SvApp::registerObjects(Factory & factory)
 {
   // kernels
   registerKernel(SV_Continuity);
-  registerKernel(SV_Continuity_Expl);
+//  registerKernel(SV_Continuity_Expl);
   registerKernel(SV_Momentum);
-  registerKernel(SV_Momentum_Expl);
+//  registerKernel(SV_Momentum_Expl);
   registerKernel(SV_ArtificialViscFlux);
-  registerKernel(SV_ArtificialViscFlux_Expl);
+//  registerKernel(SV_ArtificialViscFlux_Expl);
 
   // auxkernels
   registerAux(BathymetryAux);
