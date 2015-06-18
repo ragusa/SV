@@ -1,3 +1,18 @@
+########################
+### global parameters
+########################
+# for simplicity, gravity is put as a global parameter!
+# Caveat: do not forget to change the status of implicit for your time discretization
+#   note: we wish to have the boundary conditions solved implicitly, 
+#         regardless of the time integration
+[GlobalParams]
+  gravity = 9.81
+  implicit=true
+[]
+
+########################
+### mesh 
+########################
 [Mesh]
   type = GeneratedMesh
   dim = 1
@@ -6,6 +21,9 @@
   xmax =  5.
 []
 
+########################
+### mesh 
+########################
 [Functions]
   [./ic_func_height]
     type = StepFunction
@@ -15,13 +33,22 @@
   [../]
 []
 
+########################
+### user objects
+########################
+# equation of state
 [UserObjects]
   [./hydro]
     type = HydrostaticPressure
-    gravity = 9.81
   [../]
 []
 
+########################
+### variables
+########################
+# h: water height
+# q_d: d-component of momentum
+# the initial conditions is typically what needs to be changed for different testcases
 [Variables]
   [./h]
     family = LAGRANGE
@@ -42,46 +69,54 @@
   [../]
 []
 
+########################
+### FEM kernels 
+########################
 [Kernels]
-  [./TimeContinuity]
+  [./Continuity_Time]
     type = TimeDerivative
     variable = h
   [../]
 
-  [./InviscidFlxContinuity]
+  [./Continuity_InviscidFlx]
     type = SV_Continuity
     variable = h
     q_x = q_x
   [../]
 
-  [./ViscousFlxContinuity]
+  [./Continuity_ViscousFlx]
     type = SV_ArtificialViscFlux
     variable = h
     equation_name = CONTINUITY
   [../]
 
-  [./TimeMomentum]
+  [./Momentum_Time]
     type = TimeDerivative
     variable = q_x
   [../]
 
-  [./InviscidFlxMomentum]
+  [./Momentum_InviscidFlx]
     type = SV_Momentum
     variable = q_x
     h = h
     q_x = q_x
-    gravity = 9.81
     component = 0
     eos = hydro
   [../]
   
-  [./ViscousFlxMomentum]
+  [./Momentum_ViscousFlx]
     type = SV_ArtificialViscFlux
     variable = q_x
-    equation_name = X_MOMENTUM
+    equation_name = X_MOMENTUM  # why equation_name and component? better to only have 1
   [../]
 []
 
+########################
+### auxiliary variables, as needed
+########################
+### velocity: for output
+### entropy and entropy flux for the EVM
+### kappa: viscosity coefficient
 [AuxVariables]
   [./vel_aux]
     family = LAGRANGE
@@ -109,6 +144,9 @@
   [../]
 []
 
+########################
+### auxiliary kernels, as needed
+########################
 [AuxKernels]
   [./vel_ak]
     type = VelocityAux
@@ -127,7 +165,7 @@
   [./F_ak]
     type = EntropyFluxAux
     variable = F_aux
-    current_momentum = q_x
+    momentum_component = q_x
     h = h
     q_x = q_x
   [../]
@@ -145,6 +183,9 @@
   [../]
 []
 
+########################
+### materials
+########################
 [Materials]
   [./ViscosityCoeff]
     type = ComputeViscCoeff
@@ -157,6 +198,9 @@
   [../]
 []
 
+########################
+### boundary conditions
+########################
 [BCs]
   [./left_h]
     type = DirichletBC
@@ -187,6 +231,9 @@
   [../]
 []
 
+########################
+### preconditioner
+########################
 [Preconditioning]
   [./FDP]
     type = FDP
@@ -195,11 +242,14 @@
   [../]
 []
 
+########################
+### run options
+########################
 [Executioner]
   type = Transient
   scheme = bdf2
 
-  dt = 1.e-2
+  dt = 1.e-0
 
   nl_rel_tol = 1e-12
   nl_abs_tol = 1e-6
@@ -213,13 +263,20 @@
 
 []
 
+########################
+### output
+########################
 [Outputs]
+  file_base = dam_flat_bottom
   output_initial = true
   exodus = true
   print_linear_residuals = false
   print_perf_log = true
 []
 
+########################
+### debugging
+########################
 #[Debug]
 #  show_var_residual = 'h q_x'
 #  show_var_residual_norms = true

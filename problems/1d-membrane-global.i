@@ -7,7 +7,7 @@
 #         regardless of the time integration
 [GlobalParams]
   gravity = 9.81
-  implicit=false
+  implicit=true
 []
 
 ########################
@@ -249,7 +249,7 @@
   type = Transient
   scheme = bdf2
 
-  dt = 1.e-2
+  dt = 1.e-0
 
   nl_rel_tol = 1e-12
   nl_abs_tol = 1e-6
@@ -267,7 +267,7 @@
 ### output
 ########################
 [Outputs]
-  file_base = newoutput
+  file_base = memb_test
   output_initial = true
   exodus = true
   print_linear_residuals = false
