@@ -1,3 +1,6 @@
+### This is example #3 from "Adaptive artificial viscosity for the Saint-Venant equations",
+###     by Chen, Kurganov, Lei, Liu. 
+
 ########################
 ### global parameters
 ########################
@@ -6,7 +9,7 @@
 #   note: we wish to have the boundary conditions solved implicitly, 
 #         regardless of the time integration
 [GlobalParams]
-  gravity = 9.81
+  gravity = 1.0
   implicit=true
 []
 
@@ -16,7 +19,7 @@
 [Mesh]
   type = GeneratedMesh
   dim = 1
-  nx = 200
+  nx = 400
   xmin = -5.
   xmax =  5.
 []
@@ -206,14 +209,14 @@
     type = DirichletBC
     variable = h
     boundary = left
-    value = 10.
+    value = 3.
   [../]
 
   [./right_h]
     type = DirichletBC
     variable = h
     boundary = right
-    value = 0.5
+    value = 1.0
   [../]
 
   [./left_q_x]
@@ -249,14 +252,14 @@
   type = Transient
   scheme = bdf2
 
-  dt = 1.e-0
+  dt = 1.e-2
 
   nl_rel_tol = 1e-12
   nl_abs_tol = 1e-6
   nl_max_its = 10
 
-#  end_time = 50
-  num_steps = 1000
+  end_time = 2
+#  num_steps = 1000
   [./Quadrature]
     type = TRAP
   [../]
