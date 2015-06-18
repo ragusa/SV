@@ -16,6 +16,10 @@
 #define STEPFUNCTION_H
 
 #include "Function.h"
+#include "Coupleable.h"
+#include "FEProblem.h"
+#include "MooseMesh.h"
+
 // #include "FunctionInterface.h" // jcr what is this for?
 
 class StepFunction;
@@ -34,7 +38,8 @@ public:
 
 protected:
     
-  MooseMesh & _mesh;
+//  MooseMesh & _mesh=_sc_fe_problem.mesh();
+//  MooseMesh & _mesh;
 
   // values for a step function
   Real _value_before_step;
