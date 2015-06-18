@@ -14,9 +14,9 @@
 
 #include "StepFunction.h"
 // #include "MooseMesh.h"
-#include "MooseMesh.h"
-#include "FEProblem.h"
-#include "Coupleable.h"
+//#include "MooseMesh.h"
+//#include "FEProblem.h"
+//#include "Coupleable.h"
 
 template<>
 InputParameters validParams<StepFunction>()
@@ -34,6 +34,7 @@ StepFunction::StepFunction(const std::string & name, InputParameters parameters)
   Function(name, parameters),
 //  _mesh(_sc_fe_problem.mesh()),
 //  _mesh(*parameters.get<MooseMesh *>("mesh")),
+  _dim(_sc_fe_problem.mesh().dimension()),
   _value_before_step(getParam<Real>("value_before_step")),
   _value_after_step(getParam<Real>("value_after_step")),
   _x0(getParam<Real>("x_step")),
@@ -45,8 +46,9 @@ Real
 StepFunction::value(Real /*t*/, const Point & p)
 {
 //  _mesh=_sc_fe_problem.mesh();
-  MooseMesh & _mesh=_sc_fe_problem.mesh();
-  switch( _mesh.dimension() ) 
+//  MooseMesh & _mesh=_sc_fe_problem.mesh();
+//  switch( _mesh.dimension() ) 
+  switch( _dim ) 
   {
   case 1:
     if ( p(0)<_x0 )
