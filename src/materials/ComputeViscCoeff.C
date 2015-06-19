@@ -5,7 +5,7 @@ InputParameters validParams<ComputeViscCoeff>()
 {
   InputParameters params = validParams<Material>();
 
-  params.addParam<std::string>("viscosity_name", "FIRST_ORDER", "Name of the viscosity definition to use: set to first order by default.");
+  params.addRequiredParam<std::string>("viscosity_name", "Name of the viscosity definition to use.");
   // Coupled variables
   params.addRequiredCoupledVar("h"  , "h: water height");
   params.addRequiredCoupledVar("q_x", "x-component of momentum");
@@ -15,7 +15,7 @@ InputParameters validParams<ComputeViscCoeff>()
   params.addRequiredCoupledVar("F", "x-component of the entropy flux ");
   params.addCoupledVar("G", "y-component of the entropy flux ");
   params.addCoupledVar("B", "bathymetry data");  
-  params.addParam<Real>("gravity", 9.81, "gravity magnitude");
+  params.addRequiredParam<Real>("gravity", "gravity magnitude");
   // constant parameters:
   //params.addParam<bool>("is_first_order", false, "if true, use the first-order viscosity coefficient");
   params.addParam<double>("Ce"   , 1.0, "Coefficient for entropy viscosity");
@@ -55,7 +55,6 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name,
   _kappa_max(declareProperty<Real>("kappa_max")),
   _residual(declareProperty<Real>("residual")), // jcr: why declare property for residual?, for output
   // Get constant parameters
-  //_is_first_order(getParam<bool>("is_first_order")),
   _Ce(getParam<double>("Ce")),
   _Cjump(getParam<double>("Cjump")),
   _Cmax(getParam<double>("Cmax")),
@@ -64,8 +63,8 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name,
   // PPS name:
   //_entropy_pps_name(getParam<std::string>("PPS_name"))
 {
-  if (_Ce <= 0. || _Ce > 2.)
-    mooseError("ERROR in "<<this->name()<<": the coefficient Ce has to be positive and should not be larger than 2.");
+//  if (_Ce <= 0. || _Ce > 2.)
+//    mooseError("ERROR in "<<this->name()<<": the coefficient Ce has to be positive and should not be larger than 2.");
 }
 
 void
@@ -109,12 +108,12 @@ ComputeViscCoeff::computeQpProperties()
     }
     else {
       // Weights for BDF2
-      Real w0 = _t_step > 2 ? (2.*_dt+_dt_old)/(_dt*(_dt+_dt_old)) : 1. / _dt;
-      Real w1 = _t_step > 2 ? -(_dt+_dt_old)/(_dt*_dt_old) : -1. / _dt;
-      Real w2 = _t_step > 2 ? _dt/(_dt_old*(_dt+_dt_old)) : 0.;
+      Real w0 = _t_step > 2 ? (2.*_dt+_dt_old)/(_dt*(_dt+_dt_old)) :  1. / _dt;
+      Real w1 = _t_step > 2 ? -(_dt+_dt_old)/(_dt*_dt_old)         : -1. / _dt;
+      Real w2 = _t_step > 2 ? _dt/(_dt_old*(_dt+_dt_old))          :  0.      ;
 
       // Entropy residual
-      Real residual = w0*_E[_qp]+w1*_E_old[_qp]+w2*_E_older[_qp];
+      Real residual = w0*_E[_qp] + w1*_E_old[_qp] + w2*_E_older[_qp];
       residual += _grad_F[_qp](0)+_grad_G[_qp](1);
       // store at qp
       _residual[_qp] = std::fabs(residual);
@@ -127,7 +126,7 @@ ComputeViscCoeff::computeQpProperties()
 
       // Froude number (use from Marco while I figure out |s-save|)
       Real Froude = _vector_q.size()/_h[_qp]/std::sqrt(_gravity*(_h[_qp]+_eps));
-      Real _norm = _gravity*(_h[_qp]+_bathymetry[_qp]+_eps);
+      Real _norm = _gravity*(_h[_qp]-_bathymetry[_qp]+_eps);
       Real kappa_e = _Ce*_h_min*_h_min*(std::fabs(residual) + jump) / _norm;
 
       //jump = _Cjump*_norm_vel[_qp]*std::max( _grad_press[_qp].size(), c*c*_grad_rho[_qp].size() );

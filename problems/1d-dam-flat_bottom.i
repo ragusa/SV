@@ -198,6 +198,8 @@
     entropy = entropy_aux
     F = F_aux
     eos = hydro
+    Ce = 1.0e-2
+    viscosity_name = ENTROPY
   [../]
 []
 
@@ -270,7 +272,7 @@
 ### output
 ########################
 [Outputs]
-  file_base = dam_flat_bottom
+  file_base = dam_flat_bottom_ce_small
   output_initial = true
   exodus = true
   print_linear_residuals = false

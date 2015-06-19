@@ -44,7 +44,7 @@ private:
     VariableGradient & _grad_G;
     //VariableGradient & _grad_G_old;
 
-        // Coupled aux variable: bathymetry
+    // Coupled aux variable: bathymetry
     VariableValue & _bathymetry;
     Real _gravity;
     
