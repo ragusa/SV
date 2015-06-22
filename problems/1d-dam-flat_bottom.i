@@ -259,7 +259,7 @@
   nl_max_its = 10
 
   end_time = 2
-#  num_steps = 1000
+#  num_steps = 2
   [./Quadrature]
     type = TRAP
   [../]
@@ -270,7 +270,7 @@
 ### output
 ########################
 [Outputs]
-  file_base = dam_flat_bottom
+  file_base = test1
   output_initial = true
   exodus = true
   print_linear_residuals = false
