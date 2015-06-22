@@ -126,8 +126,9 @@ ComputeViscCoeff::computeQpProperties()
 
       // Froude number (use from Marco while I figure out |s-save|)
       Real Froude = _vector_q.size()/_h[_qp]/std::sqrt(_gravity*(_h[_qp]+_eps));
-      Real _norm = _gravity*(_h[_qp]-_bathymetry[_qp]+_eps);
+      Real _norm = _gravity*(std::fabs(_h[_qp])+_bathymetry[_qp]+_eps);
       Real kappa_e = _Ce*_h_min*_h_min*(std::fabs(residual) + jump) / _norm;
+      mooseAssert(kappa_e<0.,"Entropy viscosity <0 in "<<this->name());
 
       //jump = _Cjump*_norm_vel[_qp]*std::max( _grad_press[_qp].size(), c*c*_grad_rho[_qp].size() );
                    

@@ -198,8 +198,8 @@
     entropy = entropy_aux
     F = F_aux
     eos = hydro
-    Ce = 1.0e-2
     viscosity_name = ENTROPY
+    Ce = 2
   [../]
 []
 
@@ -244,6 +244,9 @@
     type = FDP
     full = true
     solve_type = 'PJFNK'
+    petsc_options_iname = '-mat_fd_coloring_err  -mat_fd_type  -mat_mffd_type'
+    petsc_options_value = '1.e-10       ds             ds'
+    line_search = 'default'
   [../]
 []
 
@@ -254,7 +257,7 @@
   type = Transient
   scheme = bdf2
 
-  dt = 1.e-2
+  dt = 5.e-3
 
   nl_rel_tol = 1e-12
   nl_abs_tol = 1e-6
@@ -272,11 +275,7 @@
 ### output
 ########################
 [Outputs]
-<<<<<<< HEAD
   file_base = test1
-=======
-  file_base = dam_flat_bottom_ce_small
->>>>>>> ac05c3d4defe8ea94ccc1ef00850c88a0ff98add
   output_initial = true
   exodus = true
   print_linear_residuals = false
