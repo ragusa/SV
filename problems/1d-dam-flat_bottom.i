@@ -44,6 +44,11 @@
   [./hydro]
     type = HydrostaticPressure
   [../]
+  [./jump]
+    type = JumpInterface
+    entropy_flux_x = F_aux
+    var_name_jump = jump_aux
+  [../]
 []
 
 ########################
@@ -140,8 +145,18 @@
     family = MONOMIAL
     order = CONSTANT
   [../]
-  
+
   [./kappa_max_aux]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+
+  [./residual_aux]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+
+  [./jump_aux]
     family = MONOMIAL
     order = CONSTANT
   [../]
@@ -183,6 +198,12 @@
     type = MaterialRealAux
     variable = kappa_max_aux
     property = kappa_max
+  [../]
+
+  [./residual_ak]
+    type = MaterialRealAux
+    variable = residual_aux
+    property = residual
   [../]
 []
 
