@@ -9,20 +9,22 @@ InputParameters validParams<ComputeViscCoeff>()
   // Coupled variables
   params.addRequiredCoupledVar("h"  , "h: water height");
   params.addRequiredCoupledVar("q_x", "x-component of momentum");
-  params.addCoupledVar("q_y", "y-component of momentum");
-  // Coupled aux variables
+  params.addCoupledVar(        "q_y", "y-component of momentum");
+  // Coupled aux variables: entropy pair
   params.addRequiredCoupledVar("entropy", "entropy function");
   params.addRequiredCoupledVar("F", "x-component of the entropy flux ");
-  params.addCoupledVar("G", "y-component of the entropy flux ");
-  params.addCoupledVar("B", "bathymetry data");  
-  params.addRequiredParam<Real>("gravity", "gravity magnitude");
+  params.addCoupledVar(        "G", "y-component of the entropy flux ");
+  // Coupled aux variables: bathymetry
+  params.addCoupledVar(        "B", "bathymetry data");  
+  // Coupled aux variables: jump
+  params.addCoupledVar("jump_entropy_flux", "Jump of the of the entropy flux");
   // constant parameters:
-  //params.addParam<bool>("is_first_order", false, "if true, use the first-order viscosity coefficient");
   params.addParam<double>("Ce"   , 1.0, "Coefficient for entropy viscosity");
   params.addParam<double>("Cjump", 1.0, "Coefficient for jumps");
   params.addParam<double>("Cmax" , 0.5, "Coefficient for first-order viscosity");
   // Userobject:
   params.addRequiredParam<UserObjectName>("eos", "Equation of state");
+  params.addRequiredParam<Real>("gravity", "gravity magnitude");
   // PPS names:
   //params.addParam<std::string>("press_PPS_name", "name of the pps computing pressure");
     
@@ -47,19 +49,20 @@ ComputeViscCoeff::ComputeViscCoeff(const std::string & name,
   _grad_G(_mesh.dimension() == 2 ? coupledGradient("G") : _grad_zero),
   // bathymetry:
   _bathymetry(isCoupled("B") ? coupledValue("B") : _zero),
-  _gravity(getParam<Real>("gravity")),
-  // Jump of entropy gradients:
-  //_jump_grad_entropy(isCoupled("jump_grad_entropy") ? coupledValue("jump_grad_entropy") : _zero),
-  // Declare material properties
-  _kappa(declareProperty<Real>("kappa")),
-  _kappa_max(declareProperty<Real>("kappa_max")),
-  _residual(declareProperty<Real>("residual")), // jcr: why declare property for residual?, for output
+  // Jump 
+  _jump(isCoupled("jump_entropy_flux") ? coupledValue("jump_entropy_flux") : _zero),
   // Get constant parameters
-  _Ce(getParam<double>("Ce")),
+  _Ce(   getParam<double>("Ce")),
   _Cjump(getParam<double>("Cjump")),
-  _Cmax(getParam<double>("Cmax")),
+  _Cmax( getParam<double>("Cmax")),
   // UserObject:
-  _eos(getUserObject<HydrostaticPressure>("eos")) //,
+  _eos(getUserObject<HydrostaticPressure>("eos")),
+  // gravity
+  _gravity(getParam<Real>("gravity")),
+  // Declare material properties
+  _kappa(    declareProperty<Real>("kappa")),
+  _kappa_max(declareProperty<Real>("kappa_max")),
+  _residual( declareProperty<Real>("residual")) // jcr: why declare property for residual?, for output
   // PPS name:
   //_entropy_pps_name(getParam<std::string>("PPS_name"))
 {
@@ -71,17 +74,20 @@ void
 ComputeViscCoeff::computeQpProperties()
 {
   // Determine h (length used in definition of first and second order viscosities):
-  Real _h_min = _current_elem->hmin();// /_qrule->get_order(); jcr why called min, not cell?
-    
+  // Real _h_min = _current_elem->hmin();// /_qrule->get_order(); jcr why called min, not cell?
+  // Determine h (characteristic length of the current cel):
+  Real h_cell = std::pow(_current_elem->volume(), 1./_mesh.dimension());
+      
   // vector q
   RealVectorValue _vector_q( _q_x[_qp], _q_y[_qp], 0. );
 
-  // Compute first order viscosity:
+  // Compute sound speed:
   Real c = std::sqrt(_eos.c2(_h[_qp], _vector_q));
-  _kappa_max[_qp] = _Cmax*_h_min*(_vector_q.size()/_h[_qp] + c);
+  
+  // Compute first order viscosity:
+  _kappa_max[_qp] = _Cmax*h_cell*(_vector_q.size()/_h[_qp] + c);
     
   
-
   // Epsilon value normalization of unit vectors:
   Real _eps = std::sqrt(std::numeric_limits<Real>::min());
     
@@ -103,35 +109,41 @@ ComputeViscCoeff::computeQpProperties()
     break;
   case ENTROPY:
     // Compute the viscosity coefficients:
+    // _t_step=1 is the first time step, see Transient.C
     if (_t_step == 1) {
       _kappa[_qp] = _kappa_max[_qp];
     }
     else {
       // Weights for BDF2
-      Real w0 = _t_step > 2 ? (2.*_dt+_dt_old)/(_dt*(_dt+_dt_old)) :  1. / _dt;
-      Real w1 = _t_step > 2 ? -(_dt+_dt_old)/(_dt*_dt_old)         : -1. / _dt;
-      Real w2 = _t_step > 2 ? _dt/(_dt_old*(_dt+_dt_old))          :  0.      ;
+      
+     /*
+     Real sum = _dt + _dt_old;
+     w0 =  1./_dt + 1./ sum;
+     w1 = -sum / (_dt*_dt_old);
+     w2 = _dt / (_dt_old * sum);
+     */
+    
+      Real w0 = _t_step > 1 ? (2.*_dt+_dt_old)/(_dt*(_dt+_dt_old)) :  1. / _dt;
+      Real w1 = _t_step > 1 ? -(_dt+_dt_old)/(_dt*_dt_old)         : -1. / _dt;
+      Real w2 = _t_step > 1 ? _dt/(_dt_old*(_dt+_dt_old))          :  0.      ;
 
-      // Entropy residual
+      // Entropy residual (in absolute value)
       Real residual = w0*_E[_qp] + w1*_E_old[_qp] + w2*_E_older[_qp];
       residual += _grad_F[_qp](0)+_grad_G[_qp](1);
+      residual = std::fabs(residual);
       // store at qp
-      _residual[_qp] = std::fabs(residual);
+      _residual[_qp] = residual;
     
-      // Compute kappa_e:
-      /*if (_isJumpOn)
-          jump = _Cjump*_norm_vel[_qp]*std::max( _jump_grad_entropy[_qp], c*c*_jump_grad_dens[_qp] );
-      else
-          jump = _Cjump*_norm_vel[_qp]*std::max( _grad_press[_qp].size(), c*c*_grad_rho[_qp].size() );*/
-
       // Froude number (use from Marco while I figure out |s-save|)
-      Real Froude = _vector_q.size()/_h[_qp]/std::sqrt(_gravity*(_h[_qp]+_eps));
+      Real Froude = _vector_vel.size() / c;
+
+      // normalization is c^2
       Real _norm = _gravity*(std::fabs(_h[_qp])+_bathymetry[_qp]+_eps);
-      Real kappa_e = _Ce*_h_min*_h_min*(std::fabs(residual) + jump) / _norm;
+
+      // Entropy viscosity
+      Real kappa_e = h_cell*h_cell*( _Ce*residual + _Cjump*_jump[_qp] ) / _norm;
       mooseAssert(kappa_e<0.,"Entropy viscosity <0 in "<<this->name());
 
-      //jump = _Cjump*_norm_vel[_qp]*std::max( _grad_press[_qp].size(), c*c*_grad_rho[_qp].size() );
-                   
       // Compute kappa:
       _kappa[_qp] = std::min( _kappa_max[_qp], kappa_e);
     }

@@ -34,11 +34,13 @@ private:
     VariableValue & _q_x;
     VariableValue & _q_y;
     
-    // Coupled aux variables: entropy pair
+    // Coupled aux variables: entropy
     VariableValue    & _E;
     VariableValue    & _E_old;
     VariableValue    & _E_older;
     //VariableValue    & _E_dot;
+    
+    // Coupled aux variables: entropy flux
     VariableGradient & _grad_F;
     //VariableGradient & _grad_F_old;
     VariableGradient & _grad_G;
@@ -46,20 +48,9 @@ private:
 
     // Coupled aux variable: bathymetry
     VariableValue & _bathymetry;
-    Real _gravity;
-    
-    // Jump of entropy:
-    //VariableValue & _jump_grad_s;
-        
-    // Material properties
-    MaterialProperty<Real> & _kappa;
-    MaterialProperty<Real> & _kappa_max;
-    MaterialProperty<Real> & _residual;    
-    
-    // Boolean for jump
-    // bool _isJumpOn;
-    // Boolean for first order
-    //bool _is_first_order;    
+
+    // Coupled aux variables: jumps
+    VariableValue & _jump;
     
     // Multiplicative coefficient for viscosity:
     double _Ce;
@@ -68,6 +59,12 @@ private:
     
     // UserObject: equation of state
     const HydrostaticPressure & _eos;
+    Real _gravity;
+    
+    // Material properties
+    MaterialProperty<Real> & _kappa;
+    MaterialProperty<Real> & _kappa_max;
+    MaterialProperty<Real> & _residual;    
     
     // Name of the post-processor:
     //std::string _entropy_pps_name;

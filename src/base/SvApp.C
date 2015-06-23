@@ -32,6 +32,7 @@
 
 // userobject: eos
 #include "HydrostaticPressure.h"
+#include "JumpInterface.h"
 
 // materials
 #include "ComputeViscCoeff.h"
@@ -110,6 +111,7 @@ SvApp::registerObjects(Factory & factory)
 
   // userobject: eos
   registerUserObject(HydrostaticPressure);
+  registerUserObject(JumpInterface);
 
   // materials
   registerMaterial(ComputeViscCoeff);
