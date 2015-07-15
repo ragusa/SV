@@ -1,0 +1,1052 @@
+%% Based on a TeXnicCenter-Template, which was
+%% created by Christoph Börensen
+%% and slightly modified by Tino Weinkauf.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt]{scrartcl} %This is a special class provided by the KOMA script, which does a lot of adjustments to adapt the standard LaTeX classes to european habits, change to [a4paper,12pt,twoside] for doublesided layout
+
+
+%########################### Preferences #################################
+
+
+% ******** vmargin settings *********
+\usepackage{vmargin} %This give you full control over the used page area, it maybe not the idea od Latex to do so, but I wanted to reduce to amount of white space on the page
+%\setpapersize{A4}
+%\setmargins{3.5cm}%			%linker Rand, left edge
+					 %{1.5cm}%     %oberer Rand, top edge
+           %{14.7cm}%		%Textbreite, text width
+           %{23.42cm}%   %Texthoehe, text hight
+           %{14pt}%			%Kopfzeilenhöhe, header hight
+           %{1cm}%   	  %Kopfzeilenabstand, header distance
+           %{0pt}%				%Fußzeilenhoehe footer hight
+           %{2cm}%    	  %Fusszeilenabstand, footer distance         
+
+% ********* Font definiton ************
+%\usepackage{t1enc} % as usual
+%\usepackage[latin1]{inputenc} % as usual
+%\usepackage{times}		
+%\usepackage{mathptmx}  	%mathematical fonts for use with times, I encountered some problems using this package togather with pdftex, which I was not able to resolve
+
+% ********* Graphics definition *******
+%\usepackage[pdftex]{graphicx} % required to import graphic files
+\usepackage{color} %allows to mark some entries in the tables with color
+%\usepackage{eso-pic} % these two are required to add the little picture on top of every page
+%\usepackage{everyshi} % these two are required to add the little picture on top of every page
+%\renewcommand{\floatpagefraction}{0.7} %default:0.5 allows two big pictures on one page
+
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amstext}
+\usepackage{amsbsy}
+\usepackage{mathbbol} 
+%\usepackage{pmatrix} 
+
+%********** Enybeling Hyperlinks *******
+%\usepackage[pdfborder=000,pdftex=true]{hyperref}% this enables jumping from a reference and table of content in the pdf file to its target
+
+% ********* Table layout **************
+\usepackage{booktabs}	  	%design of table, has an excellent documentation
+%\usepackage{lscape}			%use this if you want to rotate the table together with the lines around the table
+
+%  new definitions
+\renewcommand{\div}{\bs{\nabla}\! \cdot \!}
+\newcommand{\grad}{\bs{\nabla}}
+% extra space
+\newcommand{\qq}{\quad\quad}
+% common reference commands
+\newcommand{\eqt}[1]{Eq.~(\ref{#1})}                     % equation
+\newcommand{\fig}[1]{Fig.~\ref{#1}}                      % figure
+\newcommand{\tbl}[1]{Table~\ref{#1}}                     % table
+\newcommand{\sct}[1]{Section~\ref{#1}}                   % section
+\newcommand{\app}[1]{Appendix~\ref{#1}}                   % appendix
+
+\newcommand{\bs}[1]{\mathbf{#1}}
+\newcommand{\dd}{\mathrm{d}}
+
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\vn}{\vec{n}}
+\newcommand{\vel}{\vec{\mathrm{v}}}
+
+% ********* Caption Layout ************
+\usepackage{ccaption} % allows special formating of the captions
+\captionnamefont{\bf\footnotesize\sffamily} % defines the font of the caption name (e.g. Figure: or Table:)
+\captiontitlefont{\footnotesize\sffamily} % defines the font of the caption text (same as above, but not bold)
+\setlength{\abovecaptionskip}{0mm} %lowers the distace of captions to the figure
+
+
+% ********* Header and Footer **********
+% This is something to play with forever. I use here the advanced settings of the KOMA script
+
+\usepackage{scrpage2} %header and footer using the options for the KOMA script
+\renewcommand{\headfont}{\footnotesize\sffamily} % font for the header
+\renewcommand{\pnumfont}{\footnotesize\sffamily} % font for the pagenumbers
+
+%the following lines define the pagestyle for the main document
+\defpagestyle{cb}{%
+(\textwidth,0pt)% sets the border line above the header
+{\pagemark\hfill\headmark\hfill}% doublesided, left page
+{\hfill\headmark\hfill\pagemark}% doublesided, right page
+{\hfill\headmark\hfill\pagemark}%  onesided
+(\textwidth,1pt)}% sets the border line below the header
+%
+{(\textwidth,1pt)% sets the border line above the footer
+{{\it Jean Ragusa}\hfill TAMU}% doublesided, left page
+{Jean Ragusa\hfill{\it TAMU}}% doublesided, right page
+{Jean Ragusa\hfill{\it TAMU}} % one sided printing
+(\textwidth,0pt)% sets the border line below the footer
+}
+
+%this defines the page style for the first pages: all empty
+\renewpagestyle{plain}%
+	{(\textwidth,0pt)%
+		{\hfill}{\hfill}{\hfill}%
+	(\textwidth,0pt)}%
+	{(\textwidth,0pt)%	
+		{\hfill}{\hfill}{\hfill}%
+	(\textwidth,0pt)}
+
+%********** Footnotes **********
+\renewcommand{\footnoterule}{\rule{5cm}{0.2mm} \vspace{0.3cm}} %increases the distance of footnotes from the text
+\deffootnote[1em]{1em}{1em}{\textsuperscript{\normalfont\thefootnotemark}} %some moe formattion on footnotes
+
+\renewcommand{\labelitemii}{$\diamond$}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% boxes
+\usepackage{color}
+\definecolor{myblue}{rgb}{.8, .8, 1}
+\usepackage{empheq}
+
+\newlength\mytemplen
+\newsavebox\mytempbox
+
+\makeatletter
+\newcommand\mybluebox{%
+    \@ifnextchar[%]
+       {\@mybluebox}%
+       {\@mybluebox[0pt]}}
+
+\def\@mybluebox[#1]{%
+    \@ifnextchar[%]
+       {\@@mybluebox[#1]}%
+       {\@@mybluebox[#1][0pt]}}
+
+\def\@@mybluebox[#1][#2]#3{
+    \sbox\mytempbox{#3}%
+    \mytemplen\ht\mytempbox
+    \advance\mytemplen #1\relax
+    \ht\mytempbox\mytemplen
+    \mytemplen\dp\mytempbox
+    \advance\mytemplen #2\relax
+    \dp\mytempbox\mytemplen
+    \colorbox{myblue}{\hspace{1em}\usebox{\mytempbox}\hspace{1em}}}
+
+\makeatother
+
+%################ End Preferences, Begin Document #####################
+
+\pagestyle{plain} % on headers or footers on the first page
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{center}
+
+\begin{figure}[th]
+    \centering
+		%\includegraphics[width=10cm]{logo.jpg}
+	\label{fig:logo}
+\end{figure}
+
+\vspace{2cm}
+\vspace{2cm}
+
+% There might be better solutions for the title page, giving all distances and sizes manually was simply the easiest solution
+
+{\Huge\bf\sf Entropy Method Notes}
+
+\vspace{.5cm}
+
+{\Huge\bf\sf TAMU}
+
+\vspace{.5cm}
+
+%{\Huge\bf\sf to use with TeXnicCenter}
+
+\vspace{2cm}
+
+{\Large\bf\sf Jean C. Ragusa}
+\vspace{2cm}
+
+{\Large\bf\sf \today} %adds the current date
+
+\vspace{\fill}
+
+\tt{jean.ragusa@tamu.edu}
+
+\end{center}
+\newpage
+
+%%The following loads the picture on top of every page, the numbers in \put() define the position on the page:
+%\AddToShipoutPicture{\setlength\unitlength{0.1mm}\put(604,2522){\includegraphics[width=1.5cm]{logo.jpg}}}
+
+\pagestyle{cb} % now we want to have headers and footers
+
+\tableofcontents
+
+\newpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Shallow Water Equations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Governing equations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The Shallow Water (SW) equations are given in terms of the water height $h$ and
+water charge $\bs{q}=h\bs{u}$, where $\bs{u}$ is the velocity of the column of water. The SW
+are basically height-integrated continuity and momentum equations:
+
+\begin{subequations}
+\label{eq:sw}
+%
+\begin{equation}
+\partial_t h + \div \bs{q} = 0
+\end{equation}
+%
+\begin{equation}
+\partial_t \bs{q} + \div (\bs{u} \otimes \bs{q}) + \frac 1 2 \grad (gh^2) = -gh \grad B
+\end{equation}
+%
+\end{subequations}
+where $B(\bs{r})$ is the bottom relief. 
+
+In 1-D, we can write them as 
+\begin{subequations}
+\label{eq:sw}
+%
+\begin{equation}
+\partial_t h + \partial_x q = 0
+\end{equation}
+%
+\begin{equation}
+\partial_t q + \partial_x \Big( \frac{q^2}{h} + \frac{gh^2}{2} \Big)=  -gh \partial_x B
+\end{equation}
+%
+\end{subequations}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Properties of the inviscid SWE in 1-D}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In quasi-linear form, we have
+\begin{equation}
+\begin{pmatrix}
+h\\
+q
+\end{pmatrix}_t 
++
+M(h,q)\begin{pmatrix}
+h\\
+q
+\end{pmatrix}_x 
+=
+-gh \frac{dB}{dx}
+%
+\end{equation}
+($B$ is assumed independent of time!)
+where $M(h,q)$ is given by
+\begin{equation}
+M(h,q)=
+\begin{pmatrix}
+0                     & 1\\
+-\frac{q^2}{h^2} + gh & \frac{2q}{h} 
+\end{pmatrix}
+\end{equation}
+
+We can find the eigenvalues of $M$ easily
+\begin{equation}
+\begin{vmatrix}
+-\lambda              & 1\\
+-\frac{q^2}{h^2} + gh & \frac{2q}{h}-\lambda 
+\end{vmatrix}
+=
+\begin{vmatrix}
+-\lambda   & 1\\
+-u^2 + gh  & 2u-\lambda 
+\end{vmatrix}
+=0
+\end{equation}
+yielding
+\begin{equation}
+\lambda^\pm = u \pm \sqrt{gh}
+\end{equation}
+%
+with associated eigenvectors 
+%
+\begin{equation}
+r^\pm = 
+\begin{pmatrix}
+1 \\ u +\pm \sqrt{\frac{g}{h}}
+\end{pmatrix}
+\end{equation}
+Note that when $h=0$, the system looses its strictly hyperbolic nature.
+
+\bigskip
+The mathematical entropy is defined as (sum of kinetic and potential energies)
+\begin{equation}
+	\eta(h,q) = \frac 1 2 hu^2 + \frac 1 2 gh^2 = \frac{q^2}{2h} + \frac{gh^2}{2}
+\end{equation}
+and the associated entropy flux is
+\begin{equation}
+  \mathcal{G}(h,q) = u \Big( \eta + \frac{gh^2}{2} \Big) = \frac{q^3}{2h^2} + ghq \,.
+\end{equation}
+\underline{Note:} A variant for the definition of $\eta$ adds the quantity $ghB$ to the definition. 
+This seems more correct for the entropy minimum principle. Then the entropy flux $\mathcal{G}$ is augmented by
+$ghBu=gqB$.
+
+We have the entropy inequality
+\begin{equation}
+\partial_t \eta + \partial_x \mathcal{G} \le 0
+\end{equation}
+%--------------------------------------------
+\begin{proof}[{\tt  Entropy minimum principle for inviscid SWE}]
+Multiply the continuity equation by $\eta_h=\partial_h \eta$ and the momentum equation by 
+$\eta_q=\partial_q \eta$. Add them together. The entropy equality is obtained (after some algebra).
+
+\bigskip
+\noindent
+\textcolor{red}{Actually, let's try this differently:}\\
+We assume that the entropy is a function of height and velocity
+\begin{equation}
+	\eta(h,u) = \frac 1 2 hu^2 + \frac 1 2 gh^2 
+\end{equation}
+and we have
+\[
+\partial_h \eta = \frac 1 2 u^2 + gh  \quad \text{and} \quad
+\partial_u \eta = h u 
+\]
+%
+\begin{enumerate}
+%
+\item Re-write the continuity equation with $h$ and $u$ only:
+\[
+\boxed{
+\partial_t h + u\partial_x h + h\partial_x u =0
+}
+\]
+%
+\item Re-write the momentum equation with $h$ and $u$ only:
+\[
+\underline{ \underline{u\partial_t h}} +h \partial_t u + \underline{\underline{u^2 \partial_x h}} + 2 hu \partial_x u+  gh \partial_x (h +B) =0
+\]
+The underlined terms are equal to: $-hu \partial_x u$. Thus,
+\[
+\boxed{
+\partial_t u + u \partial_x u+  g \partial_x (h +B) =0
+}
+\]
+%
+\item Multiply the continuity equation by $\eta_h=\partial_h \eta$ and the momentum equation by 
+$\eta_u=\partial_u \eta$ and add them together:
+\begin{multline}
+\eta_h \left( \partial_t h + u\partial_x h + h\partial_x u \right)
++
+\eta_u \left( \partial_t u + u \partial_x u+  g \partial_x (h +B) \right) =\\
+\partial_t \eta + u\partial_x \eta + \eta_h h\partial_x u + \eta_u   g \partial_x (h +B) = 0
+\end{multline}
+%
+\item Actually, we want
+\[
+\partial_t \eta + \partial_x \mathcal{F} = \partial_t \eta + \partial_h \mathcal{F} \partial_x h + \partial_u \mathcal{F} \partial_x u  
+\]
+so we group terms from step \#3 in $\partial_x h$ and $\partial_x u$:
+\[
+\begin{array}{l|c}
+\partial_x h: & \eta_h u  + \eta_u g\\ \hline
+\partial_x u: & \eta_h h  + \eta_u u
+\end{array}
+\]
+Thus
+\[
+\partial_h \mathcal{F} =  \eta_h u  + \eta_u g = 2ghu + \frac{u^3}{2}
+\]
+and
+\[
+\partial_u \mathcal{F} =  \eta_h h  + \eta_u u = gh^2 + \frac{3}{2}h u^2
+\]
+Integrating $\partial_h \mathcal{F}$ wrt $h$ gives
+\[
+\mathcal{F}(h,u) = gh^2u + \frac{hu^3}{2} + \alpha(u)
+\]
+Taking the derivative wrt $u$ and plugging in $\partial_u \mathcal{F}$ gives $\alpha'(u)=0$, or $\alpha(u)=C$.
+\end{enumerate}
+%
+Thus,
+\begin{equation}
+\mathcal{F}(h,u) = gh^2u + \frac{hu^3}{2}
+\end{equation}
+
+
+\bigskip
+For non smooth solutions, we follow Leveque ... to be finished ...
+\end{proof}
+%--------------------------------------------
+
+\bigskip
+
+The system should admit smooth steady-state solutions:
+\begin{equation}
+q=hu=\text{constant} \quad \text{and} \quad 
+\frac{u^2}{2} + g(h+B)=\text{constant}
+\end{equation}
+as well as non-smooth steady-state solutions. The ``lake at rest'' is an important steady-state solution
+\begin{equation}
+u=0 \quad \text{and} \quad  g(h+B)=\text{constant}
+\end{equation}
+
+%--------------------------------------------
+\begin{proof}[{\tt SW steady-state solution}]
+Obviously, from the continuity equation, we have at steady state $\partial_x q =0$, that is, $q=hu=$constant.
+
+Reporting in the momentum equation at steady state, we have
+\[ 
+-gh \partial_x B 
+=
+\partial_x \Big( \frac{q^2}{h} + \frac{gh^2}{2} \Big)
+=
+\partial_x \Big( hu^2 + \frac{gh^2}{2} \Big)
+=
+hu \partial_x u +gh\partial_x h
+\]
+That is, 
+\begin{multline}
+gh \partial_x (h+B) + hu \partial_x u =0 
+\Longleftrightarrow g \partial_x (h+B) + u \partial_x u =0 \\
+\Longleftrightarrow  \partial_x \Big(g(h+B) +\frac{u^2}{2} \Big) =0
+\Longleftrightarrow  g(h+B) +\frac{u^2}{2} = \text{constant}
+\end{multline}
+The lake at rest solution is also easily found by setting $u=0$ in the above.
+\end{proof}
+%--------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Characteristics in 1-D}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We assume $B=0$ for demonstration. Starting from 
+\[
+\partial_t u + u \partial_x u+  g \partial_x h =0
+\]
+we add $\pm c\partial_x u \mp c \partial_x u=0$:
+\[
+\partial_t u + (u \pm c) \partial_x u \mp c \partial_x u +  g \partial_x h = 0
+\]
+\underline{Notation:}
+\[
+\left. \frac{Du}{Dt} \right|_{u \pm c} = \partial_t u + (u \pm c) \partial_x u
+\]
+
+From the continuity equation, we retrieve $\partial_x u$ as:
+\[
+- h\partial_x u = \partial_t h + u\partial_x h 
+\]
+and get:
+\[
+\left. \frac{Du}{Dt} \right|_{u \pm c}  \pm c \frac{\partial_t h + u\partial_x h }{h} +  g \partial_x h = 0
+\]
+
+Recalling that $c^2 = gh $, we have
+\[
+c \frac{\partial_r h}{h} = gc \frac{\partial_r h}{gh} = \frac{\partial_r gh}{c} = \frac{\partial_r c^2}{c} = 2 \partial_r c
+\]
+and therefore
+\[
+\pm c \frac{\partial_t h + u\partial_x h }{h} =  \pm 2 \left(\partial_t c + u \partial_x c \right)
+\]
+Now, we look at the last term:
+\[
+g \partial_x h =  \partial_x gh = \partial_x c^2 = 2c \partial_x c
+\]
+Thus, we have
+\[
+\left. \frac{Du}{Dt} \right|_{u \pm c}  \pm 2 \left(\partial_t c + (u \pm c) \partial_x c \right) = 0 
+\]
+or
+\[
+\left. \frac{Du}{Dt} \right|_{u \pm c}  \pm 2 \left. \frac{Dc}{Dt} \right|_{u \pm c}  = 0 
+\]
+and the characteristics are:
+\begin{equation}
+du + 2 dc =0 
+\end{equation}
+and
+\begin{equation}
+du - 2 dc =0 
+\end{equation}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Characteristics in 2-D}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In 2D, we have
+
+\be
+\partial_t U + \partial_x F(U) + \partial_y G(U) = S
+\ee
+%
+where
+%
+\[
+U =
+\begin{bmatrix}
+h \\ hu  \\  hv
+\end{bmatrix}
+=
+\begin{bmatrix}
+h \\ q_x  \\  q_y
+\end{bmatrix}
+\]
+%
+%
+\[
+F =
+\begin{bmatrix}
+hu \\ hu^2 + gh^2/2  \\  h u v
+\end{bmatrix}
+=
+\begin{bmatrix}
+q_x \\ q_x^2/h + gh^2/2  \\  q_x q_y / h
+\end{bmatrix}
+\]
+%
+\[
+G =
+\begin{bmatrix}
+hv \\  h u v\\ hv^2 + gh^2/2  
+\end{bmatrix}
+=
+\begin{bmatrix}
+q_y \\  q_x q_y / h\\ q_y^2/h + gh^2/2  
+\end{bmatrix}
+\]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Conservative variable form}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+In linearized form, the system becomes
+\be
+\label{eq:SV_linearized_form}
+\partial_t U + A(U) \partial_x U + B(U) \partial_y U = S
+\ee
+%
+where 
+%
+\[
+A = \frac{ \partial F } { \partial U} =
+\begin{bmatrix}
+0               &  1         &   0 \\
+-q_x^2/h^2 + gh &  2 q_x/h   &   0 \\
+-q_x q_y /h^2   &  q_y/h     &  q_x/h
+\end{bmatrix}
+=
+\begin{bmatrix}
+0         &  1     &   0 \\
+-u^2 + c^2&  2 u   &   0 \\
+-u v      &  v     &   u
+\end{bmatrix}
+\]
+%
+\[
+B = \frac{ \partial G } { \partial U} =
+\begin{bmatrix}
+0               &  0       &   1 \\
+-q_x q_y /h^2   &  q_y/h   &  q_x/h \\
+-q_y^2/h^2 + gh &  0       &  2 q_y/h
+\end{bmatrix}
+=   
+\begin{bmatrix}
+0         &  0   &   1 \\
+-u v      &  v   &   u \\
+-v^2 + c^2&  0   &   2v
+\end{bmatrix}
+\]
+
+We then form the following matrix ($A$ and $B$ are diagonalisable but do not have the same eigenvectors, so we diagonalize a linear combination of $A$ and $B$):
+\be
+K = A n_x + B n_y
+\ee
+with $\vn=[n_x, n_y]^T$. 
+
+
+\bigskip
+The eigenvalues of $K$ are
+\begin{align}
+\lambda_1 &= \vel \cdot \vn \\
+\lambda_2 &= \vel \cdot \vn +c \\
+\lambda_3 &= \vel \cdot \vn -c
+\end{align}
+with $\vel = [u,v]^T$.
+
+The right eigenvectors are
+%
+\[
+R =
+\begin{bmatrix}
+  0   &   1        &    1 \\
+-n_y  &  u+c n_x   &  u-c n_x \\
+ n_x  &  v+c n_y   &  v-c n_y
+\end{bmatrix}
+\]
+%
+such that
+\be
+K R = R \Lambda 
+\ee
+where
+%
+\[
+\Lambda =
+\begin{bmatrix}
+\lambda_1 &    0      &    0     \\
+    0     & \lambda_2 &    0     \\
+    0     &    0      &  \lambda_3
+\end{bmatrix}
+\]
+%
+The left eigenvectors are
+%
+\[
+L^T =
+\begin{bmatrix}
+  u n_y - v n_x   &   c - \vel \cdot \vn   &  -c - \vel \cdot \vn   \\
+-n_y              &   n_x                  &   n_x                  \\
+ n_x              &   n_y                  &   n_y                  \\
+\end{bmatrix}
+\]
+%
+such that
+\be
+\label{eq:left_eigenproblem}
+L K = \Lambda  L \quad \text{or} \quad K^T L^T = L^T \Lambda 
+\ee
+
+\bigskip
+If everything were right so far, I should be able to have
+\be
+L R = I
+\ee
+but I have
+\[
+L R =
+\begin{bmatrix}
+   1     &    0     &    0     \\
+   0     &   2c     &    0     \\
+   0     &    0     &   2c
+\end{bmatrix}
+\]
+
+However, since $L$ and $R$ are made of eignevectors, we can always multiply their columns by a constant. If I choose
+\[
+R       \longleftarrow R / 2c            \quad \text{and} \quad
+L_{1,:} \longleftarrow L_{1,:} \times 2c \quad \text{and} \quad
+L_{3,:} \longleftarrow L_{3,:} \times (-1)
+\]
+then I have $LR=I$. Note that the left eigenvectors (see \eqt{eq:left_eigenproblem}) are columns of $L^T$ this is why the rows of $L$ are multiplied by a constant. 
+
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Primitive variable form}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We start again from the linearized form, \eqt{eq:SV_linearized_form} but introduce the primitive variables
+\[
+V =
+\begin{bmatrix}
+h \\ u \\ v
+\end{bmatrix}
+\]
+The idea is to use chain rule: $\frac{\partial U}{\partial x} = \frac{ \partial U}{\partial V} \frac{ \partial V}{\partial x}$
+
+The Jacobian of this transformation is
+\[
+M =  \frac{ \partial U}{\partial V}  =
+\begin{bmatrix}
+   1      &    0     &    0     \\
+    u     &    h     &    0     \\
+    v     &    0     &    h
+\end{bmatrix}
+\]
+
+Then, the linearized form becomes:
+\be
+M\partial_t V +  A M \partial_x V +  B M \partial_y V = S
+\ee
+Multiply throughout by $M^{-1}$, we get
+\be
+\label{eq:SV_linearized_form2}
+\partial_t V + \tilde A  \partial_x V + \tilde B  \partial_y V = S
+\ee
+with
+\[
+\tilde A = M^{-1} A M 
+=
+\begin{bmatrix}
+  u  &   h   &  0 \\
+  g  &   u   &  0 \\
+  0  &   0   &  u
+\end{bmatrix}
+%
+\quad \text{and} \quad 
+\tilde B = M^{-1} B M
+=
+\begin{bmatrix}
+  v  &   0   &  h \\
+  0  &   v   &  0 \\
+  g  &   0   &  v
+\end{bmatrix}
+\]
+
+As before, we introduce a linear combination of the matrices
+\[
+\tilde K = \tilde A n_x + \tilde B n_y
+=
+\begin{bmatrix}
+\vel \cdot \vn &   h n_x            &  h n_y           \\
+  g n_x        &   \vel \cdot \vn   &  0               \\
+  g n_y        &   0                 & \vel \cdot \vn
+\end{bmatrix}
+\]
+One can easily verify that $K$ and $\tilde K$ have the same eigenvalues. 
+
+The right eigenvectors of $\tilde K$ are
+\[
+\tilde R =
+\begin{bmatrix}
+  0   &   h          &    h \\
+-n_y  &  c n_x   &  -c n_x \\
+ n_x  &  c n_y   &  -c n_y
+\end{bmatrix}
+\text{ or, equivalently, }
+\begin{bmatrix}
+  0   &   c          &    c \\
+-n_y  &  g n_x   &  -g n_x \\
+ n_x  &  g n_y   &  -g n_y
+\end{bmatrix}
+\]
+
+The left eigenvectors $\tilde K$ are
+%
+\[
+\tilde L^T =
+\begin{bmatrix}
+   0         &   c             &  -c  \\
+-n_y       &  h n_x       &   h n_x                  \\
+ n_x       &  h n_y       &   h n_y                  \\
+\end{bmatrix}
+\]
+
+If everything were right so far, I should be able to have
+\be
+\tilde L \tilde R = I
+\ee
+but I have
+\[
+\tilde L \tilde R =
+\begin{bmatrix}
+    1     &    0      &    0     \\
+    0     &   2ch     &    0     \\
+    0     &    0      &   2c^2
+\end{bmatrix}
+\]
+
+However, since $L$ and $R$ are made of eigenvectors, we can always multiply their columns by a constant. If I choose
+\[
+R_{:,2} \longleftarrow R_{:,2} / (2ch) \quad \text{and} \quad
+R_{:,3} \longleftarrow R_{:,3} / (2c^2) 
+\]
+that is,
+\[
+\tilde R =
+\begin{bmatrix}
+  0   & 1/(2c)    &    1/(2g) \\
+-n_y  & n_x/(2h)  &  n_x/(2c) \\
+ n_x  & n_y/(2h)  &  n_y/(2c)
+\end{bmatrix}
+\]
+then I have $\tilde L \tilde R=I$. 
+
+\bigskip
+Actually, there is another option that makes $\tilde R$ and $\tilde L$ look quite simple. Their expressions are:
+\[
+\tilde R =
+\begin{bmatrix}
+  0   & c/2     &   -c/2 \\
+ n_y  & gn_x/2  &  gn_x/2 \\
+-n_x  & gn_y/2  &  gn_y/2
+\end{bmatrix}
+\quad \text{and} \quad
+\tilde L =
+\begin{bmatrix}
+  0   & n_y    &   -n_x \\
+ 1/c  & n_x/g  &  n_y/g \\
+-1/c  & n_x/g  &  n_y/g
+\end{bmatrix}
+\]
+We have $\tilde L \tilde R=I$.
+
+\bigskip
+
+The characteristic variable are introduced as follows
+\[
+ W = \tilde L V = \tilde R^{-1} V 
+= 
+\begin{bmatrix}
+  0   & n_y    &   -n_x \\
+ 1/c  & n_x/g  &  n_y/g \\
+-1/c  & n_x/g  &  n_y/g
+\end{bmatrix}
+\begin{bmatrix}
+ h \\  u  \\  v
+\end{bmatrix}
+=
+\begin{bmatrix}
+  n_y  u   -n_x  v\\
+ \frac{h}{c^2} \left(\vel \cdot \vn + c\right) \\
+ \frac{h}{c^2} \left(\vel \cdot \vn - c\right) 
+\end{bmatrix}
+\]
+
+The characteristic equation is
+\be
+\label{eq:SV_char1}
+\partial_t W + \tilde L \tilde A \tilde R  \partial_x W + \tilde L \tilde B \tilde R \partial_y W = \tilde L S
+\ee
+or
+\be
+\partial_t W + \tilde R^{-1} \tilde A \tilde R  \partial_x W + \tilde R^{-1} \tilde B \tilde R \partial_y W = \tilde R^{-1} S
+\ee
+
+Next, we compute $\tilde L \tilde A \tilde R$ and decompose it in a diagonal part and a non-diagonal part:
+\begin{multline}
+\tilde L \tilde A \tilde R 
+= 
+\begin{bmatrix}
+   u      & gn_y/2    &   -gn_y/2 \\
+ h n_y/c  & u+c n_x   &   0 \\
+-h n_y/c  & 0         &  u - c n_x
+\end{bmatrix}
+\\
+=
+\begin{bmatrix}
+   u      & 0         &   0 \\
+   0      & u+c n_x   &   0 \\
+   0      & 0         &  u - c n_x
+\end{bmatrix}
++
+\begin{bmatrix}
+   0      & gn_y/2    &   -gn_y/2 \\
+ h n_y/c  &   0       &    0 \\
+-h n_y/c  & 0         &    0
+\end{bmatrix}
+= D^x + C^x
+\end{multline}
+
+Similarly for $\tilde L \tilde B \tilde R$:
+\begin{multline}
+\tilde L \tilde B \tilde R 
+= 
+\begin{bmatrix}
+   v      & -gn_x/2   &   gn_x/2 \\
+-h n_x/c  & v+c n_y   &   0 \\
+ h n_x/c  & 0         &  v - c n_y
+\end{bmatrix}
+\\
+=
+\begin{bmatrix}
+   v      & 0         &   0 \\
+   0      & v+c n_y   &   0 \\
+   0      & 0         &  v - c n_y
+\end{bmatrix}
++
+\begin{bmatrix}
+   0      & -gn_x/2   &   gn_x/2 \\
+-h n_x/c  &   0       &    0 \\
+ h n_x/c  & 0         &    0
+\end{bmatrix}
+= D^y + C^y
+\end{multline}
+
+
+We define $Q$
+\[
+Q = C^x \partial_x W + C^y \partial_x W
+=
+\begin{bmatrix}
+g \left( n_y \partial_x h -n_x \partial_y h \right) \\
+\frac{c}{g} \left( n_y^2 \partial_x u -n)x n_y ( \partial_y u\partial_x v) +n_x^2 \partial_y v \right)  \\
+\frac{c}{g} \left( n_y^2 \partial_x u -n)x n_y ( \partial_y u\partial_x v) +n_x^2 \partial_y v \right)  
+\end{bmatrix}
+\]
+The last 2 rows of $Q$ are identical.
+
+If we introduce $\vec{N} = [n_y, -n_x]^T$, $Q=0$ (compatibility condition) is equivalent to:
+\[
+Q=0 \quad \Longleftrightarrow \quad
+\begin{cases}
+\vec{N} \cdot \grad h = 0 \\
+\vec{N} \cdot (\vec{N} \cdot \div)\vel = 0
+\end{cases}
+\]
+
+Finally, we have
+\be
+\label{eq:SV_char2}
+\partial_t W + D^x  \partial_x W + D^y \partial_y W = \tilde L S
+\ee
+or
+\begin{subequations}
+\be
+n_y \frac{D_1 u}{Dt} - n_x \frac{D_1 v}{Dt} 
+\ee
+\be
+\frac{n_x}{g} \frac{D_2 u}{Dt} + \frac{n_y}{g} \frac{D_2 v}{Dt} + \frac{1}{c} \frac{D_2 h}{Dt} = ...
+\ee
+\be
+\frac{n_x}{g} \frac{D_3 u}{Dt} + \frac{n_y}{g} \frac{D_3 v}{Dt} - \frac{1}{c} \frac{D_3 h}{Dt} = ...
+\ee
+\end{subequations}
+where the material derivatives are as follows
+\[
+\frac{D_2 }{Dt} = \frac{\partial }{\partial t} + u \frac{\partial }{\partial x} + v \frac{\partial }{\partial y}
+\]
+%
+\[
+\frac{D_2 }{Dt} = \frac{\partial }{\partial t} + (u+n_xc) \frac{\partial }{\partial x} + (v+n_yc) \frac{\partial }{\partial y}
+\]
+and
+\[
+\frac{D_3 }{Dt} = \frac{\partial }{\partial t} + (u-n_xc) \frac{\partial }{\partial x} + (v-n_yc) \frac{\partial }{\partial y}
+\]
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsubsection{Comparison of the two approaches}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Viscous regularization of the SWE}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{subequations}
+\label{eq:sw}
+%
+\begin{equation}
+\partial_t h + \partial_x q = \partial_x f
+\end{equation}
+%
+\begin{equation}
+\partial_t q + \partial_x \Big( \frac{q^2}{h} + \frac{gh^2}{2} \Big)=  -gh \partial B + \partial_x k
+\end{equation}
+%
+\end{subequations}
+where $f$ and $k$ are viscous fluxes. To obtain the entropy residual, recall that the governing 
+equations were dotted by $[\eta_h\,,\eta_q]^T$.
+This means that the extra term on the rhs of the entropy inequality is of the form
+\[
+rhs =\eta_h \partial_x f + \eta_q \partial_x k
+=\Big( -\frac{q^2}{2h^2}+gh \Big) \partial_x f + \frac{q}{h}\partial_x k
+=\big( -u^2+gh \big) \partial_x f + u\partial_x k
+\]
+Assuming 
+\[ 
+f = -\mu \partial_x h \quad \text{and} \quad k = -\mu \partial_x(hu)
+\]
+Then (omitting $\mu$ for brevity)
+\begin{multline}
+-rhs = \big( -u^2/2+gh \big) \partial_{xx} h + u\big( u\partial_{xx}h + 2 \partial_x h \partial_x u + h \partial_{xx}u  \big) \\
+=\big( u^2/2+gh \big) \partial_{xx} h + \partial_x h \partial_x u^2 + hu \partial_{xx}u  
+\end{multline}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Implementation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+First-order viscosity
+\[
+\mu_{\max{}} = C_{\max{}} h \big(|u|+\sqrt{gh}\big)
+\]
+Entropy residual
+\[
+R= \partial_t \eta + \partial_x \mathcal{G}
+\]
+Entropy viscosity
+\[
+\mu_\text{ent}  = h^2 \frac{|R|}{\|\eta -\bar \eta \|_\infty}
+\]
+
+Viscosity
+\[ \mu =\min \Big( \mu_{\max{}} , \mu_\text{ent}  \Big)
+\]
+
+Dissipative terms
+\[ 
+f = -\mu \partial_x h \quad \text{and} \quad k = -\mu \partial_x(hu)
+\]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Residual, jacobian}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Everything to the left-hand side:
+\begin{subequations}
+\label{eq:sw_weak_form}
+%
+\begin{equation}
+\frac{d}{dt} \int \varphi_i  h - \int  \bs{q} \cdot \grad  \varphi_i = 0
+\end{equation}
+%
+\begin{equation}
+\frac{d}{dt} \int \varphi_i  \bs{q} - \int  (\frac{\bs{q}}{h} \otimes \bs{q} + \frac{gh^2}{2} )  \grad \varphi_i  = -  \int \varphi_i gh \grad B
+\end{equation}
+%
+\end{subequations}
+
+Steady state residual:
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+\bibliographystyle{unsrt}   % this means that the order of references
+			    % is determined by the order in which the
+			    % \cite and \nocite commands appear
+\bibliography{entropy-notes}  % list here all the bibliographies that
+			     % you need. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+

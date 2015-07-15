@@ -4,12 +4,12 @@ syms u v c
 syms nx ny
 
 assume(c,'real')
-assume(nx,'real')
-assume(ny,'real')
-assume(u,'real')
-assume(v,'real')
-assume(c>0)
-assume(nx*nx+ny*ny==1)
+assumeAlso(nx,'real')
+assumeAlso(ny,'real')
+assumeAlso(u,'real')
+assumeAlso(v,'real')
+assumeAlso(c>0)
+assumeAlso(nx*nx+ny*ny==1)
 
 % A = dF/dU
 A = [ 0 1 0 ;...
@@ -31,35 +31,35 @@ R(:,3)=R(:,3)*(v-c*ny)/c/2;
 R=simplify(R)
 % check-1
 aux=K*R-R*VP;
-assume(nx,'real')
-assume(ny,'real')
+% assume(nx,'real')
+% assume(ny,'real')
 aux=simplify(aux);
-assume((nx*nx+ny*ny)^(1/2)==1)
+assumeAlso((nx*nx+ny*ny)^(1/2)==1)
 aux=simplify(aux)
-R*2*c
+%% R=R*2*c
 
 % find eigenvalues and left eigenvectors
-assume(nx,'real')
-assume(ny,'real')
+% assume(nx,'real')
+% assume(ny,'real')
 [Lt,VP]=eig(K');
 assume(nx*nx+ny*ny==1)
 VP=simplify(VP);
-assume(ny,'real')
-assume(nx,'real')
-assume(nx*nx+ny*ny==1)
+% assume(ny,'real')
+% assume(nx,'real')
+% assume(nx*nx+ny*ny==1)
 Lt=simplify(Lt);
 Lt(:,1)=Lt(:,1)*nx*2*c;
 Lt(:,2)=Lt(:,2)*ny;
 Lt(:,3)=Lt(:,3)*(-ny);
 L=Lt';
-assume(nx,'real')
-assume(ny,'real')
+% assume(nx,'real')
+% assume(ny,'real')
 L=simplify(L)
 % L(:,1)=L(:,1)/c
 % check-1
 aux=L*K-VP*L;
-assume(nx,'real')
-assume(ny,'real')
+% assume(nx,'real')
+% assume(ny,'real')
 aux=simplify(aux);
 assume((nx*nx+ny*ny)^(1/2)==1)
 aux=simplify(aux)
@@ -69,35 +69,40 @@ a=L*K*R;
 assume(ny,'real')
 assume(nx,'real')
 a=simplify(a);
-assume((nx^2 + ny^2) == 1);
+assumeAlso((nx^2 + ny^2) == 1);
 a=simplify(a)
 
 
 
 LR=L*R
-assume(ny,'real')
-assume(nx,'real')
+% assume(ny,'real')
+% assume(nx,'real')
 LR=simplify(LR);
-assume(nx,'real')
-assume(ny,'real')
-assume(nx*nx+ny*ny==1)
+% assume(nx,'real')
+% assume(ny,'real')
+assumeAlso(nx*nx+ny*ny==1)
 LR=simplify(LR);
-assume(nx,'real')
-assume(ny,'real')
+% assume(nx,'real')
+% assume(ny,'real')
 LR=simplify(LR)
 
-LR=R*L
-assume(ny,'real')
-assume(nx,'real')
-LR=simplify(LR);
-assume(nx,'real')
-assume(ny,'real')
-assume(nx*nx+ny*ny==1)
-LR=simplify(LR);
-assume(nx,'real')
-assume(ny,'real')
-LR=simplify(LR)
+% LR=R*L
+% assume(ny,'real')
+% assume(nx,'real')
+% LR=simplify(LR);
+% assume(nx,'real')
+% assume(ny,'real')
+% assume(nx*nx+ny*ny==1)
+% LR=simplify(LR);
+% assume(nx,'real')
+% assume(ny,'real')
+% LR=simplify(LR)
 
+simplify(L*A*R)
+simplify(L*B*R)
+
+
+return
 
 syms h
 assume(h,'real');
