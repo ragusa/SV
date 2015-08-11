@@ -46,6 +46,11 @@ Real SV_Continuity::computeQpResidual()
     RealVectorValue _q_vector(_q_x[_qp], _q_y[_qp], 0.);
     
     // Returns: - \vec{q} \cdot grad_test[i] (- sign comes from int.by.parts):
+/*    if(_q_point[_qp](0) >-1. & _q_point[_qp](0) <0.)
+    Moose::out << "qp="<<_q_point[_qp](0) << " Continuity:" << "\t h  ="  <<_u[_qp] 
+                                                            << "\t qx =" << _q_x[_qp] 
+                                                            << "\t RES="<<
+                                -_q_vector * _grad_test[_i][_qp] << std::endl; */
     return -_q_vector * _grad_test[_i][_qp];
 }
 

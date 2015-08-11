@@ -84,10 +84,9 @@ ComputeViscCoeff::computeQpProperties()
   // Compute sound speed:
   Real c = std::sqrt(_eos.c2(_h[_qp], _vector_q));
   
-  // Compute first order viscosity:
+  // Compute first-order viscosity: Cmax ( |u| + c ) = Cmax ( |q|/h + c )
   _kappa_max[_qp] = _Cmax*h_cell*(_vector_q.size()/_h[_qp] + c);
     
-  
   // Epsilon value normalization of unit vectors:
   Real _eps = std::sqrt(std::numeric_limits<Real>::min());
     
@@ -96,8 +95,6 @@ ComputeViscCoeff::computeQpProperties()
         
   // Initialize some vector, values, ... for entropy viscosity method:
   RealVectorValue _vector_vel = _vector_q / _h[_qp];
-
-  Real jump=0.;
   
   // Switch statement over viscosity type:
   switch (_visc_type) {
@@ -114,15 +111,13 @@ ComputeViscCoeff::computeQpProperties()
       _kappa[_qp] = _kappa_max[_qp];
     }
     else {
-      // Weights for BDF2
-      
-     /*
-     Real sum = _dt + _dt_old;
-     w0 =  1./_dt + 1./ sum;
-     w1 = -sum / (_dt*_dt_old);
-     w2 = _dt / (_dt_old * sum);
-     */
-    
+      // Weights for BDF2      
+      /*
+      Real sum = _dt + _dt_old;
+      w0 =  1./_dt + 1./ sum;
+      w1 = -sum / (_dt*_dt_old);
+      w2 = _dt / (_dt_old * sum);
+      */
       Real w0 = _t_step > 1 ? (2.*_dt+_dt_old)/(_dt*(_dt+_dt_old)) :  1. / _dt;
       Real w1 = _t_step > 1 ? -(_dt+_dt_old)/(_dt*_dt_old)         : -1. / _dt;
       Real w2 = _t_step > 1 ? _dt/(_dt_old*(_dt+_dt_old))          :  0.      ;
@@ -138,10 +133,10 @@ ComputeViscCoeff::computeQpProperties()
       Real Froude = _vector_vel.size() / c;
 
       // normalization is c^2
-      Real _norm = _gravity*(std::fabs(_h[_qp])+_bathymetry[_qp]+_eps);
+      Real _norm = _gravity * ( std::fabs(_h[_qp]) + _bathymetry[_qp]+_eps );
 
       // Entropy viscosity
-      Real kappa_e = h_cell*h_cell*( _Ce*residual + _Cjump*_jump[_qp] ) / _norm;
+      Real kappa_e = h_cell*h_cell*( _Ce*_residual[_qp] + _Cjump*_jump[_qp] ) / _norm;
       mooseAssert(kappa_e<0.,"Entropy viscosity <0 in "<<this->name());
 
       // Compute kappa:

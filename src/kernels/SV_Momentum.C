@@ -66,8 +66,8 @@ SV_Momentum::SV_Momentum(const std::string & name,
 
 Real SV_Momentum::computeQpResidual()
 {
-  if ( !_is_implicit )
-  	return 0.;  // nothing to do for explicit time integration
+//  if ( !_is_implicit )
+//  	return 0.;  // nothing to do for explicit time integration
   	
   // vector q
   RealVectorValue _vector_q( _q_x[_qp], _q_y[_qp], 0. );
@@ -96,13 +96,23 @@ Real SV_Momentum::computeQpResidual()
      
   // Return the kernel value (convention: LHS of the = sign):
   // the "-" in front of advection and pressure comes from the integration by parts
+  
+/*  if(_q_point[_qp](0) >-1. & _q_point[_qp](0) <0.)
+    Moose::out << "qp="<<_q_point[_qp](0) << " Momentum:" << "\t h="  <<_h[_qp] 
+                                                          << "\t qx=" << _q_x[_qp] 
+                                                          << "\t P="  << _P 
+                                                          << "\t src="<< _source_term 
+                                                          << "\t adv="<< _advection(0) 
+                                                          << "\t RES="<<
+    ( -_advection*_grad_test[_i][_qp] - _P*_grad_test[_i][_qp](_component) + _source_term*_test[_i][_qp] ) << std::endl;
+*/
   return ( -_advection*_grad_test[_i][_qp] - _P*_grad_test[_i][_qp](_component) + _source_term*_test[_i][_qp] ); 
 }
 
 Real SV_Momentum::computeQpJacobian()
 {
-  if ( !_is_implicit )
-  	return 0.;  // nothing to do for explicit time integration
+//  if ( !_is_implicit )
+//  	return 0.;  // nothing to do for explicit time integration
 
   // derivative of component 0 with respect to component 0:
   //  -\int (2qx/h dbdx + qy/h dbdy) 
@@ -134,8 +144,8 @@ Real SV_Momentum::computeQpJacobian()
 
 Real SV_Momentum::computeQpOffDiagJacobian(unsigned int _jvar)
 {
-  if ( !_is_implicit )
-  	return 0.;  // nothing to do for explicit time integration
+//  if ( !_is_implicit )
+//  	return 0.;  // nothing to do for explicit time integration
 
   // Compute the momentum vector q:
   RealVectorValue _vector_q(_q_x[_qp], _q_y[_qp], 0.);

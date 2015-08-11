@@ -4,7 +4,7 @@ template<>
 InputParameters validParams<HydrostaticPressure>()
 {
   InputParameters params = validParams<UserObject>();
-  params.addParam<Real>("gravity", 9.81, "gravity magnitude"); // required?
+//  params.addParam<Real>("gravity", 9.81, "gravity magnitude"); // required?
 
   return params;
 }
