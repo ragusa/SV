@@ -158,3 +158,5 @@ peacock_*.e
 *.cpr-*
 
 *.asv
+
+*synctex.gz
