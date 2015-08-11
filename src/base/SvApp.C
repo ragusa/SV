@@ -44,6 +44,8 @@
 #include "RectangleFunction1D.h"
 #include "StepFunction.h"
 
+// postprocessors
+#include "TimeStepCFL.h"
 
 template<>
 InputParameters validParams<SvApp>()
@@ -122,6 +124,10 @@ SvApp::registerObjects(Factory & factory)
   registerFunction(PartialCosineFunction1D);
   registerFunction(RectangleFunction1D);
   registerFunction(StepFunction);
+  
+  // postprocessors
+  registerPostprocessor(TimeStepCFL);
+  
 }
 
 void
