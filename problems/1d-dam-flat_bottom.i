@@ -19,7 +19,7 @@
 [Mesh]
   type = GeneratedMesh
   dim = 1
-  nx = 400
+  nx =  10000
   xmin = -5.
   xmax =  5.
 []
@@ -33,6 +33,12 @@
     x0                 = 0.
     value_before_step  = 3.
     value_after_step   = 1.
+  [../]
+  [./ic_func]
+    axis = 0
+    type = PiecewiseLinear
+    x = '-5.  0.   0.00001 5.'
+    y = ' 3.  3.   1.      1.'
   [../]
 []
 
@@ -63,7 +69,8 @@
     order = FIRST
     [./InitialCondition]
       type = FunctionIC
-      function = ic_func_height
+      function = ic_func
+#      function = ic_func_height
     [../]
   [../]
 
@@ -218,9 +225,12 @@
     q_x = q_x
     entropy = entropy_aux
     F = F_aux
+    jump_entropy_flux = jump_aux
     eos = hydro
     viscosity_name = ENTROPY
-    Ce = 2
+#    viscosity_name = FIRST_ORDER
+    Ce = 1.
+    Cjump = 25
   [../]
 []
 
@@ -239,7 +249,7 @@
     type = DirichletBC
     variable = h
     boundary = right
-    value = 1.0
+    value = 1.
   [../]
 
   [./left_q_x]
@@ -258,16 +268,39 @@
 []
 
 ########################
+### postprocessor
+########################
+[Postprocessors]
+  [./dt]
+    type = TimeStepCFL
+    h = h
+    q_x = q_x
+    eos = hydro
+    cfl = 0.5
+    outputs = none
+  [../]
+[]
+
+########################
 ### preconditioner
 ########################
 [Preconditioning]
-  [./FDP]
+  active = 'fdp'
+  [./fdp]
     type = FDP
     full = true
     solve_type = 'PJFNK'
     petsc_options_iname = '-mat_fd_coloring_err  -mat_fd_type  -mat_mffd_type'
-    petsc_options_value = '1.e-10       ds             ds'
+    petsc_options_value = '1.e-10                   ds             wp'
     line_search = 'default'
+  [../]
+  [./smp]
+    type = SMP
+    full = true
+    solve_type = NEWTON               # Use "regular" Newton's method (Jacobian MUST be correct)
+    petsc_options_iname = '-pc_type'  # LU is essentially a "direct solve"
+    petsc_options_value = 'lu'
+    line_search = 'none'              # Don't allow line search to cut back the steps
   [../]
 []
 
@@ -278,16 +311,29 @@
   type = Transient
   scheme = bdf2
 
-  dt = 5.e-3
+  dt = 1.e-2
 
   nl_rel_tol = 1e-12
   nl_abs_tol = 1e-6
+#  nl_rel_tol = 1e-6
+#  nl_abs_tol = 1e-4
   nl_max_its = 10
-
+  
   end_time = 2
-#  num_steps = 2
-  [./Quadrature]
-    type = TRAP
+# num_steps = 100
+  
+#   [./TimeStepper]
+#  type = PostprocessorDT
+#  postprocessor = dt
+#  dt = 1.e-2
+#    type = FunctionDT
+#    time_t = '0 50'
+#    time_dt= '1e-1 1e-1'
+#  [../]
+
+ [./Quadrature]
+    type = GAUSS
+    order = SECOND
   [../]
 
 []
@@ -306,7 +352,7 @@
 ########################
 ### debugging
 ########################
-#[Debug]
-#  show_var_residual = 'h q_x'
-#  show_var_residual_norms = true
-#[]
+[Debug]
+  show_var_residual = 'h q_x'
+  show_var_residual_norms = true
+[]
