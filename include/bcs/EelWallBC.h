@@ -13,7 +13,7 @@ class EelWallBC : public IntegratedBC
 {
 
 public:
-  EelWallBC(const std::string & name, InputParameters parameters);
+  EelWallBC(const InputParameters & parameters);
 
   virtual ~EelWallBC(){}
 

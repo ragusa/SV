@@ -26,8 +26,8 @@ InputParameters validParams<RectangleFunction1D>()
   return params;
 }
 
-RectangleFunction1D::RectangleFunction1D(const std::string & name, InputParameters parameters) :
-  Function(name, parameters),
+RectangleFunction1D::RectangleFunction1D(const InputParameters & parameters) :
+  Function(parameters),
     _xmin(getParam<Real>("xmin")),
     _xmax(getParam<Real>("xmax")),
     _before_rect(getParam<Real>("value_before")),

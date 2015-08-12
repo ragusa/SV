@@ -30,8 +30,7 @@ class FourSquaresIC2D : public InitialCondition
 {
 public:
 
-  FourSquaresIC2D(const std::string & name,
-            InputParameters parameters);
+  FourSquaresIC2D(const InputParameters & parameters);
 
   virtual Real value(const Point & p);
 

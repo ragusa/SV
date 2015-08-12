@@ -22,10 +22,10 @@ class HydrostaticPressure : public GeneralUserObject
 {
 public:
   // Constructor
-  HydrostaticPressure(const std::string & name, InputParameters parameters);
+  HydrostaticPressure(const InputParameters & parameters);
 
   // Destructor
-  virtual ~HydrostaticPressure();
+  virtual ~HydrostaticPressure() {};
 
   /**
    * Called when this object needs to compute something.

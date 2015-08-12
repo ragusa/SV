@@ -14,7 +14,7 @@ InputParameters validParams<MomentumFreeSlipBC>();
 class MomentumFreeSlipBC : public NodalNormalBC
 {
 public:
-  MomentumFreeSlipBC(const std::string & name, InputParameters parameters);
+  MomentumFreeSlipBC(const InputParameters & parameters);
   virtual ~MomentumFreeSlipBC();
 
   virtual void computeResidual(NumericVector<Number> & residual);

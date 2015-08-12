@@ -28,7 +28,7 @@ InputParameters validParams<JumpGradientInterface>();
 class JumpGradientInterface : public InternalSideUserObject
 {
 public:
-  JumpGradientInterface(const std::string & name, InputParameters parameters);
+  JumpGradientInterface(const InputParameters & parameters);
   virtual ~JumpGradientInterface();
 
   virtual void initialize();

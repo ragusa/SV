@@ -12,7 +12,7 @@ class EelInfiniteBC : public IntegratedBC
 {
 
 public:
-  EelInfiniteBC(const std::string & name, InputParameters parameters);
+  EelInfiniteBC(const InputParameters & parameters);
 
   virtual ~EelInfiniteBC(){}
 

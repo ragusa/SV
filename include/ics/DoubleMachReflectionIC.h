@@ -36,8 +36,7 @@ public:
   /**
    * Constructor: Same as the rest of the MOOSE Objects
    */
-  DoubleMachReflectionIC(const std::string & name,
-            InputParameters parameters);
+  DoubleMachReflectionIC(const InputParameters & parameters);
 
   /**
    * The value of the variable at a point.

@@ -26,8 +26,8 @@ InputParameters validParams<NormVectorAux>()
   return params;
 }
 
-NormVectorAux::NormVectorAux(const std::string & name, InputParameters parameters) :
-    AuxKernel(name, parameters),
+NormVectorAux::NormVectorAux(const InputParameters & parameters) :
+    AuxKernel(parameters),
     // Coupled variables
     _x_comp(coupledValue("x_component")),
     _y_comp(isCoupled("y_component") ? coupledValue("y_component") : _zero)

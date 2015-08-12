@@ -13,7 +13,7 @@ InputParameters validParams<SolidWallBC>();
 class SolidWallBC : public IntegratedBC
 {
 public:
-  SolidWallBC(const std::string & name, InputParameters parameters);
+  SolidWallBC(const InputParameters & parameters);
   virtual ~SolidWallBC(){}
 
 protected:

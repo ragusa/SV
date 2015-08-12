@@ -28,8 +28,7 @@ class StepIC : public InitialCondition
 {
 public:
 
-  StepIC(const std::string & name,
-            InputParameters parameters);
+  StepIC(const InputParameters & parameters);
 
   virtual Real value(const Point & p);
 

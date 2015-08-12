@@ -15,8 +15,8 @@ InputParameters validParams<JumpInterface>()
   return params;
 }
 
-JumpInterface::JumpInterface(const std::string & name, InputParameters parameters) :
-    InternalSideUserObject(name, parameters),
+JumpInterface::JumpInterface(const InputParameters & parameters) :
+    InternalSideUserObject(parameters),
     // Auxiliary system
     _aux(_fe_problem.getAuxiliarySystem()),
     // Components of the entropy flux

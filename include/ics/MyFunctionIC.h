@@ -31,7 +31,7 @@ InputParameters validParams<FunctionIC>();
 class MyFunctionIC : public FunctionIC
 {
 public:
-  MyFunctionIC(const std::string & name, InputParameters parameters);
+  MyFunctionIC(const InputParameters & parameters);
 
 protected:
   /**

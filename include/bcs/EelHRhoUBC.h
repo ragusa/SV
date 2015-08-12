@@ -20,7 +20,7 @@ class EelHRhoUBC : public IntegratedBC
 {
 
 public:
-  EelHRhoUBC(const std::string & name, InputParameters parameters);
+  EelHRhoUBC(const InputParameters & parameters);
 
   virtual ~EelHRhoUBC(){}
 

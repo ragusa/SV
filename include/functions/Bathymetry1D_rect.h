@@ -26,7 +26,7 @@ InputParameters validParams<Bathymetry1D_rect>();
 class Bathymetry1D_rect : public Function
 {
 public:
-  Bathymetry1D_rect(const std::string & name, InputParameters parameters);
+  Bathymetry1D_rect(const InputParameters & parameters);
 
   virtual Real value(Real t, const Point & p);
 

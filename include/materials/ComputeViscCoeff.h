@@ -14,7 +14,7 @@ InputParameters validParams<ComputeViscCoeff>();
 class ComputeViscCoeff : public Material
 {
 public:
-  ComputeViscCoeff(const std::string & name, InputParameters parameters);
+  ComputeViscCoeff(const InputParameters & parameters);
 
 protected:
   virtual void computeQpProperties();

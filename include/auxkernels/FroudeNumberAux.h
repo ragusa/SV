@@ -27,7 +27,7 @@ class FroudeNumberAux : public AuxKernel
 {
 public:
 
-  FroudeNumberAux(const std::string & name, InputParameters parameters);
+  FroudeNumberAux(const InputParameters & parameters);
 
 protected:
   virtual Real computeValue();

@@ -23,8 +23,8 @@ InputParameters validParams<SVSetWaterHeightInletBC>()
 }
 
 
-SVSetWaterHeightInletBC::SVSetWaterHeightInletBC(const std::string & name, InputParameters parameters) :
-    IntegratedBC(name, parameters),
+SVSetWaterHeightInletBC::SVSetWaterHeightInletBC(const InputParameters & parameters) :
+    IntegratedBC(parameters),
     // Equation name
     _equ_type("CONTINUITY X_MOMENTUM INVALID", getParam<std::string>("equ_name")),
     // Coupled variables

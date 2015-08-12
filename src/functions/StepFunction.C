@@ -30,8 +30,8 @@ InputParameters validParams<StepFunction>()
   return params;
 }
 
-StepFunction::StepFunction(const std::string & name, InputParameters parameters) :
-  Function(name, parameters),
+StepFunction::StepFunction(const InputParameters & parameters) :
+  Function(parameters),
 //  _mesh(_sc_fe_problem.mesh()),
 //  _mesh(*parameters.get<MooseMesh *>("mesh")),
   _dim(_sc_fe_problem.mesh().dimension()),

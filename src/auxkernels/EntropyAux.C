@@ -32,8 +32,8 @@ InputParameters validParams<EntropyAux>()
   return params;
 }
 
-EntropyAux::EntropyAux(const std::string & name, InputParameters parameters) :
-                       AuxKernel(name, parameters),
+EntropyAux::EntropyAux(const InputParameters & parameters) :
+                       AuxKernel(parameters),
   _h(coupledValue("h")),
   _q_x(coupledValue("q_x")),
   _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero),

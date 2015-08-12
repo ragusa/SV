@@ -20,7 +20,7 @@ class EelFluxBC : public IntegratedBC
 {
 
 public:
-  EelFluxBC(const std::string & name, InputParameters parameters);
+  EelFluxBC(const InputParameters & parameters);
 
   virtual ~EelFluxBC(){}
 

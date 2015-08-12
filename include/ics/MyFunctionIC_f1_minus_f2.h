@@ -31,7 +31,7 @@ InputParameters validParams<FunctionIC>();
 class MyFunctionIC_f1_minus_f2 : public FunctionIC
 {
 public:
-  MyFunctionIC_f1_minus_f2(const std::string & name, InputParameters parameters);
+  MyFunctionIC_f1_minus_f2(const InputParameters & parameters);
 
 protected:
   /**

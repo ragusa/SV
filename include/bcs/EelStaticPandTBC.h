@@ -15,7 +15,7 @@ class EelStaticPandTBC : public IntegratedBC
 {
 
 public:
-  EelStaticPandTBC(const std::string & name, InputParameters parameters);
+  EelStaticPandTBC(const InputParameters & parameters);
 
   virtual ~EelStaticPandTBC(){}
 

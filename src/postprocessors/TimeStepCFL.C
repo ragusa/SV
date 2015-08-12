@@ -17,8 +17,8 @@ InputParameters validParams<TimeStepCFL>()
   return params;
 }
 
-TimeStepCFL::TimeStepCFL(const std::string & name, InputParameters parameters) :
-  ElementPostprocessor(name, parameters),
+TimeStepCFL::TimeStepCFL(const InputParameters & parameters) :
+  ElementPostprocessor(parameters),
   // Coupled variables
   _h(coupledValue("h")),
   _q_x(coupledValue("q_x")),

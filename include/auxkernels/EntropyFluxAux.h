@@ -26,7 +26,7 @@ class EntropyFluxAux : public AuxKernel
 {
 public:
 
-  EntropyFluxAux(const std::string & name, InputParameters parameters);
+  EntropyFluxAux(const InputParameters & parameters);
 
 protected:
     virtual Real computeValue();

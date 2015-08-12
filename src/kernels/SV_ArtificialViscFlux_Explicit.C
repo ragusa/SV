@@ -27,9 +27,8 @@ InputParameters validParams<SV_ArtificialViscFlux_Expl>()
   return params;
 }
 
-SV_ArtificialViscFlux_Expl::SV_ArtificialViscFlux_Expl(const std::string & name,
-                                                       InputParameters parameters) :
-  Kernel(name, parameters),
+SV_ArtificialViscFlux_Expl::SV_ArtificialViscFlux_Expl(const InputParameters parameters) :
+  Kernel(parameters),
   // Declare equation types
   _equ_type("CONTINUITY X_MOMENTUM Y_MOMENTUM INVALID", getParam<std::string>("equation_name")),
   // Material property: viscosity coefficient.

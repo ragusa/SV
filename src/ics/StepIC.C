@@ -30,9 +30,8 @@ InputParameters validParams<StepIC>()
     return params;
 }
 
-StepIC::StepIC(const std::string & name,
-                     InputParameters parameters) :
-    InitialCondition(name, parameters),
+StepIC::StepIC(const InputParameters & parameters) :
+    InitialCondition(parameters),
 	// IC parameters
     _h_left(getParam<Real>("h_left")),
     _h_right(getParam<Real>("h_right")),

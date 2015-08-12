@@ -26,7 +26,7 @@ InputParameters validParams<RectangleFunction1D>();
 class RectangleFunction1D : public Function
 {
 public:
-  RectangleFunction1D(const std::string & name, InputParameters parameters);
+  RectangleFunction1D(const InputParameters & parameters);
 
   virtual Real value(Real t, const Point & p);
 

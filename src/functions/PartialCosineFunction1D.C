@@ -23,8 +23,8 @@ InputParameters validParams<PartialCosineFunction1D>()
   return params;
 }
 
-PartialCosineFunction1D::PartialCosineFunction1D(const std::string & name, InputParameters parameters) :
-  Function(name, parameters),
+PartialCosineFunction1D::PartialCosineFunction1D(const InputParameters & parameters) :
+  Function(parameters),
     _xmin(getParam<Real>("xmin")),
     _xmax(getParam<Real>("xmax"))
 {

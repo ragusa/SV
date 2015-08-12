@@ -27,8 +27,7 @@ class SV_ArtificialViscFlux_Expl : public Kernel
 {
 public:
 
-  SV_ArtificialViscFlux_Expl(const std::string & name,
-                             InputParameters parameters);
+  SV_ArtificialViscFlux_Expl(const InputParameters parameters);
 
 protected:
 

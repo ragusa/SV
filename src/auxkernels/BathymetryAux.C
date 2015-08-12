@@ -24,8 +24,8 @@ InputParameters validParams<BathymetryAux>()
   return params;
 }
 
-BathymetryAux::BathymetryAux(const std::string & name, InputParameters parameters) :
-  AuxKernel(name, parameters),
+BathymetryAux::BathymetryAux(const InputParameters & parameters) :
+  AuxKernel(parameters),
   _bathymetry(getFunction("bathymetry"))
 {}
 

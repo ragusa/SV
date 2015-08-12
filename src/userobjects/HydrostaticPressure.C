@@ -4,20 +4,15 @@ template<>
 InputParameters validParams<HydrostaticPressure>()
 {
   InputParameters params = validParams<UserObject>();
-//  params.addParam<Real>("gravity", 9.81, "gravity magnitude"); // required?
+  params.addRequiredParam<Real>("gravity","gravity magnitude");
 
   return params;
 }
 
-HydrostaticPressure::HydrostaticPressure(const std::string & name, InputParameters parameters) :
-    GeneralUserObject(name, parameters),
+HydrostaticPressure::HydrostaticPressure(const InputParameters & parameters) :
+    GeneralUserObject(parameters),
     _gravity(getParam<Real>("gravity"))
 {}
-
-HydrostaticPressure::~HydrostaticPressure()
-{
-  // Destructor, empty
-}
 
 Real HydrostaticPressure::pressure(Real h, RealVectorValue vector_q) const
 {

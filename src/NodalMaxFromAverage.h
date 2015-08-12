@@ -14,7 +14,7 @@ InputParameters validParams<NodalMaxFromAverage>();
 class NodalMaxFromAverage : public NodalVariablePostprocessor
 {
 public:
-  NodalMaxFromAverage(const std::string & name, InputParameters parameters);
+  NodalMaxFromAverage(const InputParameters & parameters);
   virtual ~NodalMaxFromAverage();
 
   virtual void initialize();

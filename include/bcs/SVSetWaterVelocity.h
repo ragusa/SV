@@ -14,7 +14,7 @@ InputParameters validParams<SVSetWaterVelocity>();
 class SVSetWaterVelocity : public IntegratedBC
 {
 public:
-  SVSetWaterVelocity(const std::string & name, InputParameters parameters);
+  SVSetWaterVelocity(const InputParameters & parameters);
   virtual ~SVSetWaterVelocity(){}
 
 protected:

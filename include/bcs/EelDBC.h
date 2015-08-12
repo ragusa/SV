@@ -12,7 +12,7 @@ class EelDBC : public IntegratedBC
 {
 
 public:
-  EelDBC(const std::string & name, InputParameters parameters);
+  EelDBC(const InputParameters & parameters);
 
   virtual ~EelDBC(){}
 

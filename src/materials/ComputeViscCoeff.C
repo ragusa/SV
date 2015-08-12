@@ -31,9 +31,8 @@ InputParameters validParams<ComputeViscCoeff>()
   return params;
 }
 
-ComputeViscCoeff::ComputeViscCoeff(const std::string & name, 
-                                   InputParameters parameters) :
-  Material(name, parameters),
+ComputeViscCoeff::ComputeViscCoeff(const InputParameters & parameters) :
+  Material(parameters),
   // Declare viscosity types
   _visc_type("NONE FIRST_ORDER ENTROPY INVALID", getParam<std::string>("viscosity_name")),   
   // Declare variables

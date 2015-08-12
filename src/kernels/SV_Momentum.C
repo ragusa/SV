@@ -37,9 +37,8 @@ InputParameters validParams<SV_Momentum>()
   return params;
 }
 
-SV_Momentum::SV_Momentum(const std::string & name,
-                       InputParameters parameters) :
-  Kernel(name, parameters),
+SV_Momentum::SV_Momentum(const InputParameters & parameters) :
+  Kernel(parameters),
   // Coupled variables
   _h(coupledValue("h")),
   _q_x(coupledValue("q_x")),

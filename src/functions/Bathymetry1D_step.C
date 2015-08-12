@@ -24,8 +24,8 @@ InputParameters validParams<Bathymetry1D_step>()
   return params;
 }
 
-Bathymetry1D_step::Bathymetry1D_step(const std::string & name, InputParameters parameters) :
-  Function(name, parameters),
+Bathymetry1D_step::Bathymetry1D_step(const InputParameters & parameters) :
+  Function(parameters),
   _left(getParam<Real>("left")),
   _right(getParam<Real>("right")),
   _membrane(getParam<Real>("membrane"))

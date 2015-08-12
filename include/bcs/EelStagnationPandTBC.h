@@ -20,7 +20,7 @@ class EelStagnationPandTBC : public IntegratedBC
 {
 
 public:
-  EelStagnationPandTBC(const std::string & name, InputParameters parameters);
+  EelStagnationPandTBC(const InputParameters & parameters);
 
   virtual ~EelStagnationPandTBC(){}
 

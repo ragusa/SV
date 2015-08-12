@@ -26,7 +26,7 @@ InputParameters validParams<PartialCosineFunction1D>();
 class PartialCosineFunction1D : public Function
 {
 public:
-  PartialCosineFunction1D(const std::string & name, InputParameters parameters);
+  PartialCosineFunction1D(const InputParameters & parameters);
 
   virtual Real value(Real t, const Point & p);
 

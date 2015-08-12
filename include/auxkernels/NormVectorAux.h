@@ -27,7 +27,7 @@ class NormVectorAux : public AuxKernel
 {
 public:
 
-  NormVectorAux(const std::string & name, InputParameters parameters);
+  NormVectorAux(const InputParameters & parameters);
 
 protected:
   virtual Real computeValue();

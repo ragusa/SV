@@ -30,7 +30,7 @@ InputParameters validParams<StepFunction>();
 class StepFunction : public Function
 {
 public:
-  StepFunction(const std::string & name, InputParameters parameters);
+  StepFunction(const InputParameters & parameters);
 
   virtual Real value(Real t, const Point & p);
 

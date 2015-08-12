@@ -17,7 +17,7 @@ InputParameters validParams<SVSetWaterHeightInletBC>();
 class SVSetWaterHeightInletBC : public IntegratedBC
 {
 public:
-  SVSetWaterHeightInletBC(const std::string & name, InputParameters parameters);
+  SVSetWaterHeightInletBC(const InputParameters & parameters);
   virtual ~SVSetWaterHeightInletBC(){}
 
 protected:

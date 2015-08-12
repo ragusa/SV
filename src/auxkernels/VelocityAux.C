@@ -27,8 +27,8 @@ InputParameters validParams<VelocityAux>()
   return params;
 }
 
-VelocityAux::VelocityAux(const std::string & name, InputParameters parameters) :
-    AuxKernel(name, parameters),
+VelocityAux::VelocityAux(const InputParameters & parameters) :
+    AuxKernel(parameters),
     _h(coupledValue("h")),
     _q_x(coupledValue("q_x")),
     _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero)

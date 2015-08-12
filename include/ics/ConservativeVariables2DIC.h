@@ -36,8 +36,7 @@ public:
   /**
    * Constructor: Same as the rest of the MOOSE Objects
    */
-  ConservativeVariables2DIC(const std::string & name,
-            InputParameters parameters);
+  ConservativeVariables2DIC(const InputParameters & parameters);
 
   /**
    * The value of the variable at a point.

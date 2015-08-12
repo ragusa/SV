@@ -13,7 +13,7 @@ class JumpInterface : public InternalSideUserObject
 {
 public:
   // Constructor
-  JumpInterface(const std::string & name, InputParameters parameters);
+  JumpInterface(const InputParameters & parameters);
 
   // Destructor
   virtual ~JumpInterface();

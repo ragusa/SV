@@ -23,8 +23,8 @@ InputParameters validParams<Bathymetry1D_rect>()
   return params;
 }
 
-Bathymetry1D_rect::Bathymetry1D_rect(const std::string & name, InputParameters parameters) :
-  Function(name, parameters),
+Bathymetry1D_rect::Bathymetry1D_rect(const InputParameters & parameters) :
+  Function(parameters),
   _length(getParam<Real>("domain_length")),
   _height(getParam<Real>("step_height"))
 {

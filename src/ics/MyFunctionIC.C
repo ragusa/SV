@@ -25,8 +25,8 @@ InputParameters validParams<MyFunctionIC>()
   return params;
 }
 
-MyFunctionIC::MyFunctionIC(const std::string & name, InputParameters parameters) :
-    FunctionIC(name, parameters),
+MyFunctionIC::MyFunctionIC(const InputParameters & parameters) :
+    FunctionIC(parameters),
     _func(getFunction("function")),
     _input_real_value(getParam<Real>("real_input"))
 {

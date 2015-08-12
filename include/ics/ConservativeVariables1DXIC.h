@@ -36,8 +36,7 @@ public:
   /**
    * Constructor: Same as the rest of the MOOSE Objects
    */
-  ConservativeVariables1DXIC(const std::string & name,
-            InputParameters parameters);
+  ConservativeVariables1DXIC(const InputParameters & parameters);
 
   /**
    * The value of the variable at a point.

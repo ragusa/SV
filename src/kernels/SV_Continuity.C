@@ -29,9 +29,8 @@ InputParameters validParams<SV_Continuity>()
   return params;
 }
 
-SV_Continuity::SV_Continuity(const std::string & name,
-                             InputParameters parameters) :
-  Kernel(name, parameters),
+SV_Continuity::SV_Continuity(const InputParameters & parameters) :
+  Kernel(parameters),
     // Coupled variables
     _q_x(coupledValue("q_x")),
     _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero ),

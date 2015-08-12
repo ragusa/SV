@@ -57,8 +57,8 @@ InputParameters validParams<SvApp>()
   return params;
 }
 
-SvApp::SvApp(const std::string & name, InputParameters parameters) :
-    MooseApp(name, parameters)
+SvApp::SvApp(InputParameters parameters) :
+    MooseApp(parameters)
 {
   srand(processor_id());
 

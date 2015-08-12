@@ -11,8 +11,7 @@ class SV_Continuity : public Kernel
 {
 public:
 
-  SV_Continuity(const std::string & name,
-                      InputParameters parameters);
+  SV_Continuity(const InputParameters & parameters);
 
 protected:
  

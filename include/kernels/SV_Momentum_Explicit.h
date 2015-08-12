@@ -15,8 +15,7 @@ class SV_Momentum_Expl : public Kernel
 {
 public:
 
-  SV_Momentum_Expl(const std::string & name,
-                   InputParameters parameters);
+  SV_Momentum_Expl(const InputParameters parameters);
 
 protected:
 

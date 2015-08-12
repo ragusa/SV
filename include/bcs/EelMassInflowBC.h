@@ -15,7 +15,7 @@ class EelMassInflowBC : public IntegratedBC
 {
 
 public:
-  EelMassInflowBC(const std::string & name, InputParameters parameters);
+  EelMassInflowBC(const InputParameters & parameters);
 
   virtual ~EelMassInflowBC(){}
 

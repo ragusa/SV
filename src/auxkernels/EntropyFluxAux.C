@@ -33,8 +33,8 @@ InputParameters validParams<EntropyFluxAux>()
   return params;
 }
 
-EntropyFluxAux::EntropyFluxAux(const std::string & name, InputParameters parameters) :
-                               AuxKernel(name, parameters),
+EntropyFluxAux::EntropyFluxAux(const InputParameters & parameters) :
+                               AuxKernel(parameters),
   // Coupled variables:
   _momentum_cmp(coupledValue("momentum_component")),
   _h(coupledValue("h")),

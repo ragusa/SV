@@ -11,8 +11,8 @@ InputParameters validParams<NodalMaxFromAverage>()
   return params;
 }
 
-NodalMaxFromAverage::NodalMaxFromAverage(const std::string & name, InputParameters parameters) :
-    NodalVariablePostprocessor(name, parameters),
+NodalMaxFromAverage::NodalMaxFromAverage(const InputParameters & parameters) :
+    NodalVariablePostprocessor(parameters),
     _value(-std::numeric_limits<Real>::max()),
     _average_name(getParam<std::string>("average_name_pps")),
     _average(getPostprocessorValueByName(_average_name))

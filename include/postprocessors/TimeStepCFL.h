@@ -17,7 +17,7 @@ InputParameters validParams<TimeStepCFL>();
 class TimeStepCFL : public ElementPostprocessor
 {
 public:
-  TimeStepCFL(const std::string & name, InputParameters parameters);
+  TimeStepCFL(const InputParameters & parameters);
   virtual ~TimeStepCFL();
 
   virtual void initialize();

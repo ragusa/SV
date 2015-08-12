@@ -22,8 +22,8 @@ InputParameters validParams<SVSetWaterVelocity>()
 }
 
 
-SVSetWaterVelocity::SVSetWaterVelocity(const std::string & name, InputParameters parameters) :
-    IntegratedBC(name, parameters),
+SVSetWaterVelocity::SVSetWaterVelocity(const InputParameters & parameters) :
+    IntegratedBC(parameters),
     // Equation name
     _equ_type("CONTINUITY X_MOMENTUM INVALID", getParam<std::string>("equ_name")),
     // Coupled variables
