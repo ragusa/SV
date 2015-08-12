@@ -1,6 +1,5 @@
 ### This is example #3 from "Adaptive artificial viscosity for the Saint-Venant equations",
 ###     by Chen, Kurganov, Lei, Liu. 
-
 ########################
 ### global parameters
 ########################
@@ -19,7 +18,7 @@
 [Mesh]
   type = GeneratedMesh
   dim = 1
-  nx =  10000
+  nx =  100
   xmin = -5.
   xmax =  5.
 []
@@ -229,8 +228,8 @@
     eos = hydro
     viscosity_name = ENTROPY
 #    viscosity_name = FIRST_ORDER
-    Ce = 1.
-    Cjump = 25
+    Ce = 5.
+    Cjump = 5.
   [../]
 []
 
