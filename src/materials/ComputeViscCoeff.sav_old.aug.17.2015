@@ -136,12 +136,12 @@ ComputeViscCoeff::computeQpProperties()
       Real Froude = _vector_vel.size() / c;
 
       // normalization is c^2
-      Real _norm = std::fabs( _gravity * ( std::fabs(_h[_qp]) + _bathymetry[_qp]+ 1.e-06 ) ); // little effect on result
-//      Real _norm = std::fabs( _gravity * ( std::fabs(_h[_qp]) + _bathymetry[_qp]+ _eps ) );
-
+      Real _norm = ( _gravity * ( std::fabs(_h[_qp]) + _bathymetry[_qp] + 1.e-6 ));
+      if ( _norm<0 )
+        mooseError("Compute viscosity: _Norm is <0");
+      
       // Entropy viscosity
-      Real kappa_e = h_cell*h_cell* std::max( _Ce*_residual[_qp], _Cjump*_jump[_qp] ) / _norm;
-//      Real kappa_e = h_cell*h_cell* ( _Ce*_residual[_qp] + _Cjump*_jump[_qp] ) / _norm;
+      Real kappa_e = h_cell*h_cell*std::max( _Ce*_residual[_qp] , _Cjump*_jump[_qp] ) / _norm;
       mooseAssert(kappa_e<0.,"Entropy viscosity <0 in "<<this->name());
 
       // Compute kappa:

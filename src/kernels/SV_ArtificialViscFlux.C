@@ -39,12 +39,18 @@ SV_ArtificialViscFlux::SV_ArtificialViscFlux(const InputParameters & parameters)
 Real SV_ArtificialViscFlux::computeQpResidual()
 {
   // Determine if cell is on boundary or not:
-  if (_mesh.isBoundaryNode(_current_elem->node(_i))==true) 
-  {
-    return 0.;
-  }
-  else 
-  { 
+//  if (_mesh.isBoundaryNode(_current_elem->node(_i))==true) 
+//  {
+//    return 0.;
+//  }
+//  else 
+//  { 
+/*    Moose::out  << "Stabilization_Kernel::qp=" << _q_point[_qp](0) 
+                << ",\t _grad_u[_qp]="         << _grad_u[_qp](0)
+                << ",\t kappa="                << _kappa[_qp]
+                << ",\t RESI="                 << _kappa[_qp]*_grad_u[_qp]*_grad_test[_i][_qp]
+                << std::endl;
+*/
     switch (_equ_type)  // jcr all the same, single line then?
     {
     case CONTINUITY:
@@ -59,7 +65,7 @@ Real SV_ArtificialViscFlux::computeQpResidual()
     default:
       mooseError("ERROR in "<<this->name()<<":INVALID equation name.");
     }
-  }
+//  }
 }
 
 Real SV_ArtificialViscFlux::computeQpJacobian()

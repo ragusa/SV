@@ -136,7 +136,7 @@ ComputeViscCoeff::computeQpProperties()
       Real Froude = _vector_vel.size() / c;
 
       // normalization is c^2
-      Real _norm = std::fabs( _gravity * ( std::fabs(_h[_qp]) + _bathymetry[_qp]+ 1.e-06 ) ); // little effect on result
+      Real _norm = std::fabs( _gravity * ( std::fabs(_h[_qp]) + _bathymetry[_qp]+ 1.e-06 ) ); % little effect on result
 //      Real _norm = std::fabs( _gravity * ( std::fabs(_h[_qp]) + _bathymetry[_qp]+ _eps ) );
 
       // Entropy viscosity

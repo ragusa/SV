@@ -18,7 +18,7 @@
 [Mesh]
   type = GeneratedMesh
   dim = 1
-  nx =  100
+  nx =  1000
   xmin = -5.
   xmax =  5.
 []
@@ -285,12 +285,16 @@
 ########################
 [Preconditioning]
   active = 'fdp'
-  [./fdp]
+  [./dbg]
+    type = SMP
+    full = true
+  [../]
+    [./fdp]
     type = FDP
     full = true
     solve_type = 'PJFNK'
     petsc_options_iname = '-mat_fd_coloring_err  -mat_fd_type  -mat_mffd_type'
-    petsc_options_value = '1.e-10                   ds             wp'
+    petsc_options_value = '1.e-9                   ds             ds'
     line_search = 'default'
   [../]
   [./smp]
@@ -309,26 +313,22 @@
 [Executioner]
   type = Transient
   scheme = bdf2
-
-  dt = 1.e-2
-
-  nl_rel_tol = 1e-12
-  nl_abs_tol = 1e-6
-#  nl_rel_tol = 1e-6
-#  nl_abs_tol = 1e-4
-  nl_max_its = 10
   
-  end_time = 2
-# num_steps = 100
-  
-#   [./TimeStepper]
-#  type = PostprocessorDT
-#  postprocessor = dt
-#  dt = 1.e-2
+  [./TimeStepper]
+  type = PostprocessorDT
+  postprocessor = dt
+  dt = 1.e-3
 #    type = FunctionDT
 #    time_t = '0 50'
 #    time_dt= '1e-1 1e-1'
-#  [../]
+  [../]
+
+  nl_rel_tol = 1e-12
+  nl_abs_tol = 1e-6
+  nl_max_its = 10
+  
+  end_time = 2
+# num_steps = 5
 
  [./Quadrature]
     type = GAUSS
@@ -341,7 +341,7 @@
 ### output
 ########################
 [Outputs]
-  file_base = test1
+  file_base = test1_bad
   output_initial = true
   exodus = true
   print_linear_residuals = false

@@ -42,8 +42,8 @@ SV_Momentum::SV_Momentum(const InputParameters & parameters) :
   // Coupled variables
   _h(coupledValue("h")),
   _q_x(coupledValue("q_x")),
-	// the test with is_implicit is not needed. just use implicit=T/F in the kernel block itself!
-	// _q_y( _mesh.dimension() == 2 ? ( _is_implicit ? coupledValue("q_y") : coupledValueOld("q_y") ) : _zero),
+  // the test with is_implicit is not needed. just use implicit=T/F in the kernel block itself!
+  // _q_y( _mesh.dimension() == 2 ? ( _is_implicit ? coupledValue("q_y") : coupledValueOld("q_y") ) : _zero),
   _q_y(_mesh.dimension() == 2 ? coupledValue("q_y") : _zero),
   // Coupled auxiliary variables
   _grad_bathymetry(isCoupled("B") ? coupledGradient("B") : _grad_zero),
@@ -59,23 +59,23 @@ SV_Momentum::SV_Momentum(const InputParameters & parameters) :
   _q_y_ivar(_mesh.dimension() == 2 ? coupled("q_y") : 0)
 
 {
-    if ( _component > 1 )
-        mooseError("ERROR in "<<this->name()<<": the integer variable 'component' can only take values: 0 or 1 for the shallow water system!");
+  if ( _component > 1 )
+    mooseError("ERROR in "<<this->name()<<": the integer variable 'component' can only take values: 0 or 1 for the shallow water system!");
 }
 
 Real SV_Momentum::computeQpResidual()
 {
 //  if ( !_is_implicit )
-//  	return 0.;  // nothing to do for explicit time integration
-  	
+//    return 0.;  // nothing to do for explicit time integration
+  
   // vector q
   RealVectorValue _vector_q( _q_x[_qp], _q_y[_qp], 0. );
-  if( _h[_qp] < 0. ){
+  if( _h[_qp] < 0. )
+  {
     Moose::out << "NEGATIVE: " << _q_point[0] << " " << _h[_qp] << std::endl;
     //mooseError("ERROR in "<<this->name()<<":h < 0");
-	}
+  }
 
-	
   // advection term q^2/h, integrated by parts:
   // component 0: -\int (qxqx/h dbdx + qxqy/h dbdy) = -\int qx/h \vec{q} \vec{grad}b
   // component 1: -\int (qxqy/h dbdx + qyqy/h dbdy) = -\int qy/h \vec{q} \vec{grad}b
@@ -96,14 +96,16 @@ Real SV_Momentum::computeQpResidual()
   // Return the kernel value (convention: LHS of the = sign):
   // the "-" in front of advection and pressure comes from the integration by parts
   
-/*  if(_q_point[_qp](0) >-1. & _q_point[_qp](0) <0.)
-    Moose::out << "qp="<<_q_point[_qp](0) << " Momentum:" << "\t h="  <<_h[_qp] 
-                                                          << "\t qx=" << _q_x[_qp] 
-                                                          << "\t P="  << _P 
-                                                          << "\t src="<< _source_term 
-                                                          << "\t adv="<< _advection(0) 
-                                                          << "\t RES="<<
-    ( -_advection*_grad_test[_i][_qp] - _P*_grad_test[_i][_qp](_component) + _source_term*_test[_i][_qp] ) << std::endl;
+//  if(_q_point[_qp](0) >-1. & _q_point[_qp](0) <0.)
+/*    Moose::out  << "Momentum::qp="  << _q_point[_qp](0) 
+                << ",\t h="         << _h[_qp]
+                << ",\t qx="        << _q_x[_qp] 
+                << ",\t Press="     << _P
+                << ",\t src="       << _source_term
+                << ",\t adv="       << _advection(0)
+                << ",\t RESI="      << 
+                ( -_advection*_grad_test[_i][_qp] - _P*_grad_test[_i][_qp](_component) + _source_term*_test[_i][_qp] ) 
+                << std::endl;
 */
   return ( -_advection*_grad_test[_i][_qp] - _P*_grad_test[_i][_qp](_component) + _source_term*_test[_i][_qp] ); 
 }
@@ -111,7 +113,7 @@ Real SV_Momentum::computeQpResidual()
 Real SV_Momentum::computeQpJacobian()
 {
 //  if ( !_is_implicit )
-//  	return 0.;  // nothing to do for explicit time integration
+//    return 0.;  // nothing to do for explicit time integration
 
   // derivative of component 0 with respect to component 0:
   //  -\int (2qx/h dbdx + qy/h dbdy) 
@@ -144,7 +146,7 @@ Real SV_Momentum::computeQpJacobian()
 Real SV_Momentum::computeQpOffDiagJacobian(unsigned int _jvar)
 {
 //  if ( !_is_implicit )
-//  	return 0.;  // nothing to do for explicit time integration
+//    return 0.;  // nothing to do for explicit time integration
 
   // Compute the momentum vector q:
   RealVectorValue _vector_q(_q_x[_qp], _q_y[_qp], 0.);
@@ -156,18 +158,18 @@ Real SV_Momentum::computeQpOffDiagJacobian(unsigned int _jvar)
   // 
   if (_jvar == _h_ivar) 
   {
-	// advection off-diag derivative (caveat in comment: qvec/h is later written as vvec)
-	// momentum-0: -d(qx/h qvec.gradb)/dh = -(-qx/h) vvec.gradb
-	// momentum-1: -d(qy/h qvec.gradb)/dh = -(-qy/h) vvec.gradb
-	Real d_advection_dh = -_phi[_j][_qp] * _u[_qp]/_h[_qp] * (_vector_vel * _grad_test[_i][_qp]);
-	// pressure off-diag derivative: -d(0.5gh^2 gradb)/dh = -gh gradb
-	Real d_pressure_dh = _phi[_j][_qp]*_eos.dp_dh(_h[_qp], _vector_q)*_grad_test[_i][_qp](_component);
-	// bathymetry off-diag derivative: d(gh gradB b)/dh = g gradB b
+    // advection off-diag derivative (caveat in comment: qvec/h is later written as vvec)
+    // momentum-0: -d(qx/h qvec.gradb)/dh = -(-qx/h) vvec.gradb
+    // momentum-1: -d(qy/h qvec.gradb)/dh = -(-qy/h) vvec.gradb
+    Real d_advection_dh = -_phi[_j][_qp] * _u[_qp]/_h[_qp] * (_vector_vel * _grad_test[_i][_qp]);
+    // pressure off-diag derivative: -d(0.5gh^2 gradb)/dh = -gh gradb
+    Real d_pressure_dh = _phi[_j][_qp]*_eos.dp_dh(_h[_qp], _vector_q)*_grad_test[_i][_qp](_component);
+    // bathymetry off-diag derivative: d(gh gradB b)/dh = g gradB b
     Real d_bathy_dh  = _phi[_j][_qp] * _gravity *_grad_bathymetry[_qp](_component) *_test[_i][_qp];
     return -d_advection_dh -d_pressure_dh +d_bathy_dh;
     // _phi[_j][_qp] * (_u[_qp]/_h[_qp] * _vector_vel * _grad_test[_i][_qp] + _Psrc_term );
   }
-    
+
   // derivative wrt x-momentum component (thus, this is the q_y equation)
   else if (_jvar == _q_x_ivar ) 
   {
