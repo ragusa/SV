@@ -18,7 +18,7 @@
 [Mesh]
   type = GeneratedMesh
   dim = 1
-  nx =  100
+  nx =  1000
   xmin = -5.
   xmax =  5.
 []
@@ -90,6 +90,7 @@
   [./Continuity_Time]
     type = TimeDerivative
     variable = h
+    implicit=true
   [../]
 
   [./Continuity_InviscidFlx]
@@ -107,6 +108,7 @@
   [./Momentum_Time]
     type = TimeDerivative
     variable = q_x
+    implicit=true
   [../]
 
   [./Momentum_InviscidFlx]
@@ -229,7 +231,7 @@
     viscosity_name = ENTROPY
 #    viscosity_name = FIRST_ORDER
     Ce = 5.
-    Cjump = 5.
+    Cjump = 8.
   [../]
 []
 
@@ -290,7 +292,7 @@
     full = true
     solve_type = 'PJFNK'
     petsc_options_iname = '-mat_fd_coloring_err  -mat_fd_type  -mat_mffd_type'
-    petsc_options_value = '1.e-10                   ds             wp'
+    petsc_options_value = '1.e-9                   wp             wp'
     line_search = 'default'
   [../]
   [./smp]
@@ -310,7 +312,7 @@
   type = Transient
   scheme = bdf2
 
-  dt = 1.e-2
+#  dt = 1.e-2
 
   nl_rel_tol = 1e-12
   nl_abs_tol = 1e-6
@@ -319,18 +321,18 @@
   nl_max_its = 10
   
   end_time = 2
-# num_steps = 100
+# num_steps = 200
   
-#   [./TimeStepper]
-#  type = PostprocessorDT
-#  postprocessor = dt
-#  dt = 1.e-2
+  [./TimeStepper]
+  type = PostprocessorDT
+  postprocessor = dt
+  dt = 1.e-3
 #    type = FunctionDT
 #    time_t = '0 50'
 #    time_dt= '1e-1 1e-1'
-#  [../]
+  [../]
 
- [./Quadrature]
+  [./Quadrature]
     type = GAUSS
     order = SECOND
   [../]
