@@ -9,7 +9,7 @@
 #         regardless of the time integration
 [GlobalParams]
   gravity = 1.0
-  implicit=true
+  implicit=false
 []
 
 ########################
@@ -39,6 +39,12 @@
     x = '-5.  0.   0.00001 5.'
     y = ' 3.  3.   1.      1.'
   [../]
+#   [./ic_func]
+#     axis = 0
+#     type = PiecewiseLinear
+#     x = '-5.  5.'
+#     y = ' 3.  1.'
+#   [../]`
 []
 
 ########################
@@ -49,11 +55,11 @@
   [./hydro]
     type = HydrostaticPressure
   [../]
-  [./jump]
-    type = JumpInterface
-    entropy_flux_x = F_aux
-    var_name_jump = jump_aux
-  [../]
+#   [./jump]
+#     type = JumpInterface
+#     entropy_flux_x = F_aux
+#     var_name_jump = jump_aux
+#   [../]
 []
 
 ########################
@@ -90,12 +96,13 @@
   [./Continuity_Time]
     type = TimeDerivative
     variable = h
+    implicit=true
   [../]
 
   [./Continuity_InviscidFlx]
     type = SV_Continuity
     variable = h
-    q_x = q_x
+    q_x = h
   [../]
 
   [./Continuity_ViscousFlx]
@@ -107,6 +114,7 @@
   [./Momentum_Time]
     type = TimeDerivative
     variable = q_x
+    implicit=true
   [../]
 
   [./Momentum_InviscidFlx]
@@ -117,7 +125,7 @@
     component = 0
     eos = hydro
   [../]
-  
+ 
   [./Momentum_ViscousFlx]
     type = SV_ArtificialViscFlux
     variable = q_x
@@ -132,11 +140,6 @@
 ### entropy and entropy flux for the EVM
 ### kappa: viscosity coefficient
 [AuxVariables]
-  [./vel_aux]
-    family = LAGRANGE
-    order = FIRST
-  [../]
-
   [./entropy_aux]
     family = LAGRANGE
     order = FIRST
@@ -157,42 +160,29 @@
     order = CONSTANT
   [../]
 
-  [./residual_aux]
-    family = MONOMIAL
-    order = CONSTANT
-  [../]
-
-  [./jump_aux]
-    family = MONOMIAL
-    order = CONSTANT
-  [../]
 []
 
 ########################
 ### auxiliary kernels, as needed
 ########################
 [AuxKernels]
-  [./vel_ak]
-    type = VelocityAux
-    variable = vel_aux
-    h = h
-    q_x = q_x
-  [../]
-
  [./entropy_ak]
-    type = EntropyAux
+    type = ConstantAux
     variable = entropy_aux
-    h = h
-    q_x = q_x
+    value =2.
+#     h = h
+#     q_x = q_x
   [../]
 
   [./F_ak]
-    type = EntropyFluxAux
+    type = ConstantAux
     variable = F_aux
-    momentum_component = q_x
-    h = h
-    q_x = q_x
+    value = 6.
+#     momentum_component = q_x
+#     h = h
+#     q_x = q_x
   [../]
+
 
   [./kappa_ak]
     type = MaterialRealAux
@@ -206,11 +196,6 @@
     property = kappa_max
   [../]
 
-  [./residual_ak]
-    type = MaterialRealAux
-    variable = residual_aux
-    property = residual
-  [../]
 []
 
 ########################
@@ -224,11 +209,12 @@
     q_x = q_x
     entropy = entropy_aux
     F = F_aux
-    jump_entropy_flux = jump_aux
+#    jump_entropy_flux = jump_aux
+    jump_entropy_flux = entropy_aux
     eos = hydro
-    viscosity_name = NONE
 #    viscosity_name = ENTROPY
 #    viscosity_name = FIRST_ORDER
+    viscosity_name = NONE
     Ce = 5.
     Cjump = 5.
   [../]
@@ -276,8 +262,9 @@
     h = h
     q_x = q_x
     eos = hydro
-    cfl = 0.5
-    outputs = none
+    cfl = 0.1
+#     outputs = none
+    execute_on = timestep_end
   [../]
 []
 
@@ -313,23 +300,27 @@
 ########################
 [Executioner]
   type = Transient
-  scheme = bdf2
+  scheme = explicit-euler
+  solve_type = 'LINEAR'
+  l_tol =1.e-10
   
-  [./TimeStepper]
-  type = PostprocessorDT
-  postprocessor = dt
-  dt = 1.e-3
-#    type = FunctionDT
-#    time_t = '0 50'
-#    time_dt= '1e-1 1e-1'
-  [../]
+  dt =1.e-4
+  
+#   [./TimeStepper]
+#   type = PostprocessorDT
+#   postprocessor = dt
+#   dt = 1.e-6
+# #    type = FunctionDT
+# #    time_t = '0 50'
+# #    time_dt= '1e-1 1e-1'
+#   [../]
 
-  nl_rel_tol = 1e-12
+  nl_rel_tol = 1e-10
   nl_abs_tol = 1e-6
-  nl_max_its = 10
+#   nl_max_its = 10
   
-  end_time = 2
-# num_steps = 5
+#  end_time = 2
+ num_steps = 5000
 
  [./Quadrature]
     type = GAUSS
@@ -342,7 +333,11 @@
 ### output
 ########################
 [Outputs]
-  file_base = implicit_visc_NONE
+  [./out]
+    type = CSV
+    file_base = cfl
+  [../]
+  file_base = explicit
   output_initial = true
   exodus = true
   print_linear_residuals = false

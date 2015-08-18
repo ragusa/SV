@@ -70,11 +70,12 @@ Real SV_Momentum::computeQpResidual()
   
   // vector q
   RealVectorValue _vector_q( _q_x[_qp], _q_y[_qp], 0. );
-  if( _h[_qp] < 0. )
+/*  if( _h[_qp] < 0. )
   {
     Moose::out << "NEGATIVE: " << _q_point[0] << " " << _h[_qp] << std::endl;
     //mooseError("ERROR in "<<this->name()<<":h < 0");
   }
+*/
 
   // advection term q^2/h, integrated by parts:
   // component 0: -\int (qxqx/h dbdx + qxqy/h dbdy) = -\int qx/h \vec{q} \vec{grad}b

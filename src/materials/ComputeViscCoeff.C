@@ -98,7 +98,7 @@ ComputeViscCoeff::computeQpProperties()
   // Switch statement over viscosity type:
   switch (_visc_type) {
   case NONE:             
-    _kappa[_qp] = 0.;
+    _kappa[_qp] = 3.e-2;
     break;
   case FIRST_ORDER:
     _kappa[_qp] = _kappa_max[_qp];
