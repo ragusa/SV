@@ -102,7 +102,7 @@
   [./Continuity_InviscidFlx]
     type = SV_Continuity
     variable = h
-    q_x = h
+    q_x = q_x
   [../]
 
   [./Continuity_ViscousFlx]
@@ -272,7 +272,7 @@
 ### preconditioner
 ########################
 [Preconditioning]
-  active = 'fdp'
+  active = 'smp'
   [./dbg]
     type = SMP
     full = true
@@ -309,18 +309,18 @@
 #   [./TimeStepper]
 #   type = PostprocessorDT
 #   postprocessor = dt
-#   dt = 1.e-6
-# #    type = FunctionDT
-# #    time_t = '0 50'
-# #    time_dt= '1e-1 1e-1'
+#   dt = 1.e-4
+#    type = FunctionDT
+#    time_t = '0 50'
+#    time_dt= '1e-1 1e-1'
 #   [../]
 
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-6
 #   nl_max_its = 10
   
-#  end_time = 2
- num_steps = 5000
+  end_time = 2
+# num_steps = 20000
 
  [./Quadrature]
     type = GAUSS
@@ -337,7 +337,7 @@
     type = CSV
     file_base = cfl
   [../]
-  file_base = explicit
+  file_base = explicit_NONE
   output_initial = true
   exodus = true
   print_linear_residuals = false
