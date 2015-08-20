@@ -263,8 +263,8 @@
     q_x = q_x
     eos = hydro
     cfl = 0.1
-#     outputs = none
-    execute_on = timestep_end
+    outputs = none
+#     execute_on = timestep_end
   [../]
 []
 
@@ -304,23 +304,20 @@
   solve_type = 'LINEAR'
   l_tol =1.e-10
   
-  dt =1.e-4
-  
-#   [./TimeStepper]
-#   type = PostprocessorDT
-#   postprocessor = dt
-#   dt = 1.e-4
-#    type = FunctionDT
-#    time_t = '0 50'
-#    time_dt= '1e-1 1e-1'
-#   [../]
+#   dt =1.e-4  
+
+  [./TimeStepper]
+  type = PostprocessorDT
+  postprocessor = dt
+  dt = 1.e-4
+  [../]
 
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-6
-#   nl_max_its = 10
+  nl_max_its = 1
   
-  end_time = 2
-# num_steps = 20000
+#  end_time = 2
+ num_steps = 3
 
  [./Quadrature]
     type = GAUSS

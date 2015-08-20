@@ -54,8 +54,20 @@ TimeStepCFL::execute()
     RealVectorValue _vector_q(_q_x[qp], _q_y[qp], 0.);
     Real eigen = _vector_q.size()/_h[qp]+std::sqrt(_eos.c2(_h[qp], _vector_q));
 
+//     Real dt_hyperbolic = _cfl * h_cell / eigen;
+//     Real dt_diffusion  = 2. * _cfl * h_cell * h_cell / _kappa[qp];
+//     Real dt = std::min(dt_hyperbolic, dt_diffusion);
+// 
+//     // Compute the local time step
+//     _value = std::min(_value, dt);
+
+
     // Compute the local time step
     _value = std::min(_value, _cfl * h_cell / eigen);
+
+    // debug
+//     _value = 1.e-4;
+
   }
 }
 
