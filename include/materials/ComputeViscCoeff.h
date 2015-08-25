@@ -17,6 +17,7 @@ public:
   ComputeViscCoeff(const InputParameters & parameters);
 
 protected:
+  virtual void initQpStatefulProperties();  
   virtual void computeQpProperties();
 
 private:
@@ -62,6 +63,7 @@ private:
     Real _gravity;
     
     // Material properties
+    MaterialProperty<Real> & _kappa_old;
     MaterialProperty<Real> & _kappa;
     MaterialProperty<Real> & _kappa_max;
     MaterialProperty<Real> & _residual;    

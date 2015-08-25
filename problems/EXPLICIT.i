@@ -213,10 +213,11 @@
     jump_entropy_flux = entropy_aux
     eos = hydro
 #    viscosity_name = ENTROPY
-#    viscosity_name = FIRST_ORDER
-    viscosity_name = NONE
+    viscosity_name = FIRST_ORDER
+#    viscosity_name = NONE
     Ce = 5.
     Cjump = 5.
+#     Cmax = 2.
   [../]
 []
 
@@ -263,7 +264,7 @@
     q_x = q_x
     eos = hydro
     cfl = 0.1
-    outputs = none
+#    outputs = none
 #     execute_on = timestep_end
   [../]
 []
@@ -307,17 +308,17 @@
 #   dt =1.e-4  
 
   [./TimeStepper]
-  type = PostprocessorDT
-  postprocessor = dt
-  dt = 1.e-4
+    type = PostprocessorDT
+    postprocessor = dt
+    dt = 1.e-4
   [../]
 
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-6
   nl_max_its = 1
   
-#  end_time = 2
- num_steps = 3
+   end_time = 2
+# num_steps = 3
 
  [./Quadrature]
     type = GAUSS
@@ -334,7 +335,7 @@
     type = CSV
     file_base = cfl
   [../]
-  file_base = explicit_NONE
+  file_base = explicit_FOV
   output_initial = true
   exodus = true
   print_linear_residuals = false

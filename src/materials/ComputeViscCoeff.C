@@ -59,6 +59,7 @@ ComputeViscCoeff::ComputeViscCoeff(const InputParameters & parameters) :
   // gravity
   _gravity(getParam<Real>("gravity")),
   // Declare material properties
+  _kappa_old(declarePropertyOld<Real>("kappa")),
   _kappa(    declareProperty<Real>("kappa")),
   _kappa_max(declareProperty<Real>("kappa_max")),
   _residual( declareProperty<Real>("residual")) // jcr: why declare property for residual?, for output
@@ -68,6 +69,18 @@ ComputeViscCoeff::ComputeViscCoeff(const InputParameters & parameters) :
 //  if (_Ce <= 0. || _Ce > 2.)
 //    mooseError("ERROR in "<<this->name()<<": the coefficient Ce has to be positive and should not be larger than 2.");
 }
+
+
+void
+ComputeViscCoeff::initQpStatefulProperties()
+{
+  // Cell size
+  Real h_cell = std::pow(_current_elem->volume(),1./_mesh.dimension());
+
+  // Set value for the material
+  _kappa[_qp] = _Cmax*h_cell;
+}
+
 
 void
 ComputeViscCoeff::computeQpProperties()
