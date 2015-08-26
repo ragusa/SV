@@ -226,8 +226,8 @@
     F = F_aux
     jump_entropy_flux = jump_aux
     eos = hydro
-    viscosity_name = NONE
-#    viscosity_name = ENTROPY
+#     viscosity_name = NONE
+   viscosity_name = ENTROPY
 #    viscosity_name = FIRST_ORDER
     Ce = 5.
     Cjump = 5.
@@ -285,7 +285,7 @@
 ### preconditioner
 ########################
 [Preconditioning]
-  active = 'fdp'
+  active = 'smp'
   [./dbg]
     type = SMP
     full = true
@@ -325,7 +325,7 @@
   [../]
 
   nl_rel_tol = 1e-12
-  nl_abs_tol = 1e-6
+  nl_abs_tol = 1e-8
   nl_max_its = 10
   
   end_time = 2
@@ -342,7 +342,7 @@
 ### output
 ########################
 [Outputs]
-  file_base = implicit_visc_NONE
+  file_base = implicit_visc_EVM
   output_initial = true
   exodus = true
   print_linear_residuals = false

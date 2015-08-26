@@ -55,11 +55,11 @@
   [./hydro]
     type = HydrostaticPressure
   [../]
-#   [./jump]
-#     type = JumpInterface
-#     entropy_flux_x = F_aux
-#     var_name_jump = jump_aux
-#   [../]
+  [./jump]
+    type = JumpInterface
+    entropy_flux_x = F_aux
+    var_name_jump = jump_aux
+  [../]
 []
 
 ########################
@@ -160,6 +160,16 @@
     order = CONSTANT
   [../]
 
+  [./residual_aux]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+
+  [./jump_aux]
+    family = MONOMIAL
+    order = CONSTANT
+  [../]
+
 []
 
 ########################
@@ -167,22 +177,23 @@
 ########################
 [AuxKernels]
  [./entropy_ak]
-    type = ConstantAux
+#     type = ConstantAux
+    type = EntropyAux
     variable = entropy_aux
-    value =2.
-#     h = h
-#     q_x = q_x
+#     value =2.
+    h = h
+    q_x = q_x
   [../]
 
   [./F_ak]
-    type = ConstantAux
+#     type = ConstantAux
+    type = EntropyFluxAux
     variable = F_aux
-    value = 6.
-#     momentum_component = q_x
-#     h = h
-#     q_x = q_x
+#     value = 6.
+    momentum_component = q_x
+    h = h
+    q_x = q_x
   [../]
-
 
   [./kappa_ak]
     type = MaterialRealAux
@@ -194,6 +205,12 @@
     type = MaterialRealAux
     variable = kappa_max_aux
     property = kappa_max
+  [../]
+
+  [./residual_ak]
+    type = MaterialRealAux
+    variable = residual_aux
+    property = residual
   [../]
 
 []
@@ -212,8 +229,8 @@
 #    jump_entropy_flux = jump_aux
     jump_entropy_flux = entropy_aux
     eos = hydro
-#    viscosity_name = ENTROPY
-    viscosity_name = FIRST_ORDER
+   viscosity_name = ENTROPY
+#     viscosity_name = FIRST_ORDER
 #    viscosity_name = NONE
     Ce = 5.
     Cjump = 5.
@@ -333,9 +350,9 @@
 [Outputs]
   [./out]
     type = CSV
-    file_base = cfl
+    file_base = cfl_evm
   [../]
-  file_base = explicit_FOV
+  file_base = explicit_EVM
   output_initial = true
   exodus = true
   print_linear_residuals = false
